@@ -48,7 +48,8 @@ function validateEvidence(evidence: Evidence[], context: string): void {
     throw new Error(`[${context}] Evidence list must be a non-empty array.`);
   }
 
-  for (const [index, ev] of evidence.entries()) {
+  for (let index = 0; index < evidence.length; index++) {
+    const ev = evidence[index];
     if (!ev.url || !ev.url.startsWith("http")) {
       throw new Error(`[${context}#${index}] Invalid evidence URL: ${ev.url}`);
     }
