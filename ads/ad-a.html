@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reklama A - Vizuální náhled (1080x1350)</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .ad-card {
+      width: 400px;
+      height: 500px;
+      background: #F7F8F5;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      border: 1px solid #E1E7E0;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    .badge {
+      display: inline-block;
+      align-self: flex-start;
+      background: #E7F2ED;
+      color: #176B56;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(23,107,86,0.2);
+    }
+    .headline {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #142D29;
+      margin: 12px 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+    .subhead {
+      font-size: 13px;
+      color: #4E635D;
+      line-height: 1.45;
+      margin: 0 0 16px 0;
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      background: #ffffff;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #E1E7E0;
+      text-align: center;
+    }
+    .col-header {
+      font-size: 11px;
+      font-weight: 700;
+      color: #718781;
+    }
+    .rate {
+      font-size: 18px;
+      font-weight: 800;
+      color: #176B56;
+      margin: 4px 0;
+    }
+    .rate-warn {
+      color: #9A6700;
+    }
+    .col-sub {
+      font-size: 10px;
+      color: #4E635D;
+    }
+    .bonus-box {
+      background: #ffffff;
+      border: 1px dashed #176B56;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #142D29;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .cta-btn {
+      background: #176B56;
+      color: #ffffff;
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      display: block;
+      margin-top: 12px;
+      box-shadow: 0 4px 12px rgba(23,107,86,0.25);
+    }
+    .footer-note {
+      font-size: 9px;
+      color: #8C9E98;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ad-card">
+    <div>
+      <span class="badge">Srovnání ETF na NYSE Arca</span>
+      <h1 class="headline">VOO, IVV, SPY: jaký je mezi nimi rozdíl?</h1>
+      <p class="subhead">Stejný index S&amp;P 500, ale rozdílné poplatky i právní forma. Zjistěte fakta před nákupem.</p>
+      
+      <div class="compare-grid">
+        <div>
+          <div class="col-header">VOO</div>
+          <div class="rate">0,03 %</div>
+          <div class="col-sub">Vanguard</div>
+        </div>
+        <div style="border-left: 1px solid #E1E7E0; border-right: 1px solid #E1E7E0;">
+          <div class="col-header">IVV</div>
+          <div class="rate">0,03 %</div>
+          <div class="col-sub">iShares</div>
+        </div>
+        <div>
+          <div class="col-header">SPY</div>
+          <div class="rate rate-warn">0,0945 %</div>
+          <div class="col-sub">State Street</div>
+        </div>
+      </div>
+
+      <div class="bonus-box">
+        <span>📄</span>
+        <span><strong>Zdarma:</strong> Kontrolní seznam před nákupem u českého brokera</span>
+      </div>
+    </div>
+
+    <div>
+      <a href="/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_compare&utm_content=ad_a" class="cta-btn">
+        Zobrazit srovnání &rarr;
+      </a>
+      <div class="footer-note">Vzdělávací srovnání &bull; Data ověřena k 11. 10. 2026</div>
+    </div>
+  </div>
+</body>
+</html>

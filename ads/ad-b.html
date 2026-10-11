@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reklama B - Vizuální náhled (1080x1350)</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .ad-card {
+      width: 400px;
+      height: 500px;
+      background: #F7F8F5;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+      border: 1px solid #E1E7E0;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+    }
+    .badge {
+      display: inline-block;
+      align-self: flex-start;
+      background: #FEF3C7;
+      color: #92400E;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(146,64,14,0.2);
+    }
+    .headline {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #142D29;
+      margin: 12px 0 8px 0;
+      letter-spacing: -0.02em;
+    }
+    .subhead {
+      font-size: 13px;
+      color: #4E635D;
+      line-height: 1.45;
+      margin: 0 0 16px 0;
+    }
+    .calc-box {
+      background: #ffffff;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #E1E7E0;
+    }
+    .input-mock {
+      background: #F7F8F5;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-weight: 800;
+      font-size: 16px;
+      color: #142D29;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 4px 0;
+      border-bottom: 1px solid #F0F3EE;
+    }
+    .highlight-diff {
+      background: #E7F2ED;
+      color: #176B56;
+      font-weight: 700;
+      padding: 6px 8px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+      text-align: center;
+    }
+    .cta-btn {
+      background: #176B56;
+      color: #ffffff;
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      display: block;
+      margin-top: 12px;
+      box-shadow: 0 4px 12px rgba(23,107,86,0.25);
+    }
+    .footer-note {
+      font-size: 9px;
+      color: #8C9E98;
+      text-align: center;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="ad-card">
+    <div>
+      <span class="badge">Kalkulačka nákladů v Kč</span>
+      <h1 class="headline">Kolik znamenají poplatky ETF v korunách?</h1>
+      <p class="subhead">Zadejte svou částku a spočítejte si roční náklady VOO, IVV a SPY za 10 sekund.</p>
+      
+      <div class="calc-box">
+        <div class="input-mock">
+          <span>Částka:</span>
+          <span>100 000 Kč</span>
+        </div>
+
+        <div class="result-row">
+          <span>VOO / IVV (0,03 %):</span>
+          <strong style="color: #176B56;">30 Kč / rok</strong>
+        </div>
+        <div class="result-row">
+          <span>SPY (0,0945 %):</span>
+          <strong style="color: #9A6700;">94,50 Kč / rok</strong>
+        </div>
+
+        <div class="highlight-diff">
+          Rozdíl za 10 let: 645 Kč (při stejné hodnotě)
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <a href="/?utm_source=meta&utm_medium=paid_social&utm_campaign=etf_compare&utm_content=ad_b" class="cta-btn">
+        Spočítat pro vlastní částku &rarr;
+      </a>
+      <div class="footer-note">Ilustrativní výpočet ročních poplatků fondu &bull; NYSE Arca</div>
+    </div>
+  </div>
+</body>
+</html>
