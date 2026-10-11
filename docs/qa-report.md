@@ -26,7 +26,7 @@
 | **T14** | Zákaz podvržení `lead_saved` | Klientský pokus o odeslání `lead_saved` je odmítnut | Endpoint `/api/events` vrací HTTP 400 | **PROŠLO** |
 | **T15** | Ochrana databáze (RLS) | Žádný anonymní přístup ke kontaktům | Všechny tabulky mají RLS bez anonymních politik | **PROŠLO** |
 | **T16** | Rate limiting a omezení velikosti těla | Nadlimitní požadavky vrací 429/413 bez úniku dat | HMAC bucket zablokoval nadlimitní pokusy | **PROŠLO** |
-| **T17** | Čistá instalace a build | `typecheck`, `test` a `next build` projdou bez chyb | Všechny 3 příkazy skončily s exit code 0 | **PROŠLO** |
+| **T17** | Čistá instalace, lint a build | `typecheck`, `next lint`, `test` (31/31) a `next build` projdou bez chyb | Všechny příkazy skončily s exit code 0 | **PROŠLO** |
 
 ---
 

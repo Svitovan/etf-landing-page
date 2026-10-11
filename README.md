@@ -129,8 +129,8 @@ Vývoj probíhal ve spolupráci s asistentem v prostředí Antigravity IDE (Gemi
 
 ## 9. Výsledky testů a QA
 
-- **Automatické testy:** 25/25 testů úspěšných (`npm test` a `npm run validate:data`).
-- **Typová kontrola:** `tsc --noEmit` probíhá s 0 chybami.
+- **Automatické testy:** 31/31 unit testů úspěšných ve Vitestu a 100% validace datasetu (`npm test` a `npm run validate:data`).
+- **Linter a typová kontrola:** `next lint` (0 varování/chyb) a `tsc --noEmit` (0 chyb).
 - **Produkční build:** `next build` probíhá úspěšně s minimální velikostí First Load JS (87.2 kB).
 - Kompletní QA protokol je k dispozici v [docs/qa-report.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/docs/qa-report.md).
 

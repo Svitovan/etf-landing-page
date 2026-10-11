@@ -12,7 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-data.ts",
-    "report:funnel": "tsx scripts/funnel-report.ts"
+    "report:funnel": "tsx scripts/funnel-report.ts",
+    "cleanup:data": "tsx scripts/cleanup-data.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.6",
