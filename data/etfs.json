@@ -1,0 +1,399 @@
+{
+  "version": "2026-10-11",
+  "updatedAt": "2026-10-11T14:00:00.000Z",
+  "etfs": [
+    {
+      "id": "voo",
+      "ticker": {
+        "value": "VOO",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z",
+            "note": "Oficiální profil fondu Vanguard"
+          }
+        ]
+      },
+      "name": {
+        "value": "Vanguard S&P 500 ETF",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "issuer": {
+        "value": "The Vanguard Group, Inc.",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "exchange": {
+        "value": "NYSE Arca",
+        "evidence": [
+          {
+            "url": "https://www.nyse.com/products/exchange-traded-products/exchange-traded-funds",
+            "title": "NYSE Arca ETP Listings",
+            "asOf": null,
+            "checkedAt": "2026-10-11T14:35:00.000Z",
+            "note": "Kótováno a primárně obchodováno na elektronické platformě NYSE Arca"
+          }
+        ]
+      },
+      "benchmark": {
+        "value": "S&P 500 Index",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "expenseRatio": {
+        "value": {
+          "rate": 0.0003,
+          "displayPercent": "0,03 %",
+          "kind": "net"
+        },
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile - Expense Ratio",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z",
+            "note": "Roční nákladovost 0,03 % (30 Kč ročně na každých 100 000 Kč)"
+          }
+        ]
+      },
+      "tradingCurrency": {
+        "value": "USD",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "domicile": {
+        "value": "USA",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Profile",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "distributionPolicy": {
+        "value": "Kvartální výplata dividend",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard S&P 500 ETF Distributions",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "structure": {
+        "value": "Open-End Management Investment Company",
+        "evidence": [
+          {
+            "url": "https://investor.vanguard.com/investment-products/etfs/profile/voo",
+            "title": "Vanguard Prospectus",
+            "asOf": "2026-04-28",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "availability": {
+        "status": "verified-conditional",
+        "explanationCs": "Fond je obchodován na NYSE Arca v USA. Pro české retailové investory závisí nákup na dostupnosti dokumentu KID dle nařízení PRIIPs u zvoleného brokera.",
+        "evidence": [
+          {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32014R1286",
+            "title": "Nařízení EU č. 1286/2014 (PRIIPs) - Články 5 a 13",
+            "asOf": null,
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      }
+    },
+    {
+      "id": "ivv",
+      "ticker": {
+        "value": "IVV",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Profile",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "name": {
+        "value": "iShares Core S&P 500 ETF",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Profile",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "issuer": {
+        "value": "BlackRock Fund Advisors",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Profile",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "exchange": {
+        "value": "NYSE Arca",
+        "evidence": [
+          {
+            "url": "https://www.nyse.com/products/exchange-traded-products/exchange-traded-funds",
+            "title": "NYSE Arca ETP Listings",
+            "asOf": null,
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "benchmark": {
+        "value": "S&P 500 Index",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Profile",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "expenseRatio": {
+        "value": {
+          "rate": 0.0003,
+          "displayPercent": "0,03 %",
+          "kind": "net"
+        },
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Expense Ratio",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z",
+            "note": "Roční nákladovost 0,03 % (30 Kč ročně na každých 100 000 Kč)"
+          }
+        ]
+      },
+      "tradingCurrency": {
+        "value": "USD",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Profile",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "domicile": {
+        "value": "USA",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Profile",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "distributionPolicy": {
+        "value": "Kvartální výplata dividend",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Core S&P 500 ETF Distributions",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "structure": {
+        "value": "Open-End Management Investment Company",
+        "evidence": [
+          {
+            "url": "https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv",
+            "title": "iShares Prospectus",
+            "asOf": "2026-06-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "availability": {
+        "status": "verified-conditional",
+        "explanationCs": "Fond je obchodován na NYSE Arca v USA. Pro české retailové investory závisí nákup na dostupnosti dokumentu KID dle nařízení PRIIPs u zvoleného brokera.",
+        "evidence": [
+          {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32014R1286",
+            "title": "Nařízení EU č. 1286/2014 (PRIIPs) - Články 5 a 13",
+            "asOf": null,
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      }
+    },
+    {
+      "id": "spy",
+      "ticker": {
+        "value": "SPY",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Profile",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "name": {
+        "value": "SPDR S&P 500 ETF Trust",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Profile",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "issuer": {
+        "value": "State Street Global Advisors",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Profile",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "exchange": {
+        "value": "NYSE Arca",
+        "evidence": [
+          {
+            "url": "https://www.nyse.com/products/exchange-traded-products/exchange-traded-funds",
+            "title": "NYSE Arca ETP Listings",
+            "asOf": null,
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "benchmark": {
+        "value": "S&P 500 Index",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Profile",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "expenseRatio": {
+        "value": {
+          "rate": 0.000945,
+          "displayPercent": "0,0945 %",
+          "kind": "gross"
+        },
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Gross Expense Ratio",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z",
+            "note": "Hrubá roční nákladovost 0,0945 % (94,50 Kč ročně na každých 100 000 Kč)"
+          }
+        ]
+      },
+      "tradingCurrency": {
+        "value": "USD",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Profile",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "domicile": {
+        "value": "USA",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Profile",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "distributionPolicy": {
+        "value": "Kvartální výplata dividend",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Distributions",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      },
+      "structure": {
+        "value": "Unit Investment Trust (UIT)",
+        "evidence": [
+          {
+            "url": "https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy",
+            "title": "SPDR S&P 500 ETF Trust Prospectus",
+            "asOf": "2026-09-30",
+            "checkedAt": "2026-10-11T14:35:00.000Z",
+            "note": "Jako Unit Investment Trust nemůže reinvestovat dividendy uvnitř fondu před výplatou"
+          }
+        ]
+      },
+      "availability": {
+        "status": "verified-conditional",
+        "explanationCs": "Fond je obchodován na NYSE Arca v USA. Pro české retailové investory závisí nákup na dostupnosti dokumentu KID dle nařízení PRIIPs u zvoleného brokera.",
+        "evidence": [
+          {
+            "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=celex%3A32014R1286",
+            "title": "Nařízení EU č. 1286/2014 (PRIIPs) - Články 5 a 13",
+            "asOf": null,
+            "checkedAt": "2026-10-11T14:35:00.000Z"
+          }
+        ]
+      }
+    }
+  ]
+}
