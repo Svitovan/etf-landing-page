@@ -1,7 +1,7 @@
 # Handoff Report
 
-- **Datum a čas:** 2026-10-11 18:50 Europe/Prague
-- **Poslední ověřený stav:** Dokončeny fáze E0–E8, 31/31 unit testů v pořádku, linter i build prochází bez chyb.
+- **Datum a čas:** 2026-10-11 18:54 Europe/Prague
+- **Poslední ověřený commit:** `98eb4f4` (QA, ESLint, data cleanup script & sessions log)
 - **Dokončené etapy a důkazy:**
   - **E0 (Příprava):** Audit prostředí (Node.js v24.19.0, npm 11.17.0, Git inicializován, governance dokumenty `AGENTS.md`, `docs/decisions.md`, `docs/product-brief.md`).
   - **E1 (Data a metodika):** Snapshot `data/etfs.json` s primárními prospekty Vanguard, BlackRock, SSGA, NYSE Arca; metodika `docs/data-methodology.md`; validační skript `scripts/validate-data.ts`.
