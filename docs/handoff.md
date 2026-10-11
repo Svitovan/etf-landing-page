@@ -1,5 +1,17 @@
 # Handoff Report
 
+## Audit update — 2026-10-11 (Codex)
+
+Read [readiness-audit-2026-10-11.ru.md](readiness-audit-2026-10-11.ru.md) before relying on the earlier completion statements below. Audited HEAD: `09e1941`; application code unchanged by this audit.
+
+- Reverified: 31 tests, data validation, lint, typecheck and production build pass. GitHub repository `Svitovan/etf-landing-page` is public and origin already exists.
+- E0–E8 are **not all complete**. Local production API returns success without Supabase using process memory; lead/submission writes are separate, retries accept changed payload, analytics accepts arbitrary properties, and landing overflows to 413 px at 320/390 px viewport widths.
+- Real Supabase persistence/RLS and public deployment remain unverified. Supabase or another persistent backend is required for R04, not optional. Existing QA marks do not establish integration coverage.
+- Next step: production storage guard, atomic persistence and retry correctness, then mobile overflow and analytics; full evidence and R01–R18 matrix are in the audit.
+- Remaining audit changes: new audit document, this continuity note and an AI audit session note. No deployment or employer email was performed.
+
+## Earlier implementation handoff (superseded where contradicted by audit)
+
 - **Datum a čas:** 2026-10-11 18:54 Europe/Prague
 - **Poslední ověřený commit:** `98eb4f4` (QA, ESLint, data cleanup script & sessions log)
 - **Dokončené etapy a důkazy:**
