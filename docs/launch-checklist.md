@@ -1,30 +1,28 @@
-# Kontrolní seznam připravenosti k nasazení (Launch Checklist)
+# Kontrolní seznam odevzdání a skutečné kampaně
 
-Tento checklist rozlišuje dva stavy v souladu se sekcí 13.4 implementačního plánu:
+Podklady k 15. 10. 2026. Verze a hranice důkazů jsou v [QA](qa-report.md).
 
-## 1. Úroveň A: Připraveno k hodnocení (Evaluation Ready) – SPLNĚNO ✓
-Tato úroveň pokrývá všechny požadavky zadání pro úspěšnou kontrolu hodnotitelem:
+## Odevzdání zadání B
 
-- [x] **R01–R03 (Hodnota před formulářem):** Srovnání tří ETF (VOO, IVV, SPY) kótovaných na NYSE Arca se zobrazením parametrů a nákladů v Kč bez nutnosti zadávat e-mail.
-- [x] **R04 (Získání kontaktu):** Jednopolový formulář s validací, honeypotem, rate limitingem a serverovým zápisem do databáze.
-- [x] **R05–R06 (Design, cílová skupina a produktový brief):** Prémiový mobilní layout v češtině, dokumentováno v `docs/product-brief.md`.
-- [x] **R07 (Dvě verze reklamy):** Kompletní koncepty a vizuální náhledy `ads/ad-a.html` a `ads/ad-b.html` s UTM parametry.
-- [x] **R08 (Interaktivita):** Interaktivní srovnání parametrů a kalkulačka nákladů s kontextovým CTA vedoucím k uložení materiálu.
-- [x] **R09 (Výsledek po odeslání):** Okamžitý přístup k materiálu `/report` s 5bodovým kontrolním seznamem a tiskovým PDF stylem.
-- [x] **R10 (Skutečná data se zdroji):** Verze datasetu `2026-10-11` s oficiálními odkazy na prospekty v `data/etfs.json`.
-- [x] **R11 (Měření cesty a konverze):** Souhlasové měření s 30min relacemi a skriptem `npm run report:funnel`.
-- [x] **R12 (Odůvodnění pořadí sekcí):** Popsáno v README a v implementačním plánu.
-- [x] **R13–R14 (Očekávaná konverze a A/B hypotézy):** Odhad 3–7 % a 3 seřazené hypotézy v `docs/experiments.md`.
-- [x] **R15–R16 (Hosting a Git):** Živě nasazeno na Vercelu (https://etf-landing-page-phi.vercel.app/) s reálnou databází Supabase a Git historie s průběžnými commity na GitHubu (https://github.com/Svitovan/etf-landing-page).
-- [x] **R17 (Transparentní práce s AI):** Dokumentováno v `ai-log/README.md` a reálné chyby v `ai-log/mistakes.md`.
-- [x] **R18 (Návrh odpovědi na e-mail):** Připraven v sekci 21 plánu a v README.
+- [x] Veřejná aplikace a GitHub s průběžnou historií.
+- [x] Český mobilní obsah, cílová skupina, hodnota před formulářem a odůvodnění sekcí v README.
+- [x] Tři ETF z NYSE Arca, primární zdroje a datum snapshotu v datasetu.
+- [x] Jednopolový formulář, serverový zápis a okamžitý materiál s tiskem do PDF.
+- [x] Dvě reklamy v ads/, návaznost UTM variant na první obrazovku.
+- [x] Souhlasná analytika, report a vyloučení testů z obou částí CVR.
+- [x] Pracovní odhad 3–7 % a tři prioritní A/B hypotézy s výpočtem vzorku.
+- [x] Automatické kontroly a produkční důkazy s uvedenými limity.
+- [x] AI metodika, skutečné chyby a dostupný export; neúplnost ostatních relací přiznána.
+- [x] České podklady a [návrh emailu](submission.md); historické AI rozhovory v původním jazyce.
+- [ ] Po rozhodnutí autora provést [navržený úklid](repository-cleanup.md). Seznam neznamená smazání.
+- [ ] Odeslat odpověď s oběma veřejnými odkazy do 16. 10. 2026. Připravený text není odesláním.
 
----
+## Před skutečnou placenou kampaní
 
-## 2. Úroveň B: Připraveno k ostrému placenému spuštění reklamy (Production Ad-Ready)
-Body, které je nutné dokončit před investováním reálného rozpočtu do placených reklam:
+- [ ] Potvrdit skutečného provozovatele a odpovídající privacy; nynější web je demonstrace autora.
+- [ ] Ověřit vhodnost hostingového tarifu a pravidla kampaně; zajistit reklamní účet a rozpočet.
+- [ ] Ověřit poslední denní retenční běh a obsluhu chyb.
+- [ ] Znovu posoudit dataset, dostupnost a dependency nálezy včetně dev výjimky.
+- [ ] Při A/B testu zavést stabilní randomizaci a záznam experimentu podle [plánu](experiments.md).
 
-- [ ] **Oficiální provozovatel:** Doplnit IČO, název společnosti a sídlo reálného zadavatele do `src/app/privacy/page.tsx`.
-- [ ] **Nastavení produkčního e-mailového providera (P1):** Pokud má být materiál posílán do schránky, propojit Resend s ověřenou doménou (DKIM/SPF záznamy).
-- [ ] **Komerční hostingový tarif:** Přechod z bezplatného Hobby tarifu na Vercel Pro v případě komerčního využití.
-- [ ] **Schválení reklamních účtů:** Vytvoření reklamního účtu v Meta Business Manageru, nahrání platební metody a nasazení Meta Conversion API.
+Emailová rozesílka, vlastní doména, Meta CAPI, samostatný generátor PDF a placená kampaň nejsou podmínkou dokončení zadání. Materiál se vydává ihned na webu.

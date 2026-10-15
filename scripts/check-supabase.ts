@@ -43,7 +43,7 @@ if (isPublishable) {
   console.log("Klíč: sb_publishable_... (PUBLISHABLE / ANON KLÍČ)");
   console.log("⚠️  Upozornění: Tento klíč má roli 'anon'.");
   console.log("   Tabulky v projektu mají zapnuté RLS (Row Level Security) bez veřejného přístupu.");
-  console.log("   Pro serverový zápis kontaktů a analytiky je potřeba Secret Key (sb_secret_... или service_role)!\n");
+  console.log("   Pro serverový zápis kontaktů a analytiky je potřeba Secret Key (sb_secret_... nebo service_role)!\n");
 } else if (isSecret || isJwt) {
   console.log("Klíč: Server Secret / Service Role Key (oprávnění k zápisu přes RLS) ✅\n");
 } else {

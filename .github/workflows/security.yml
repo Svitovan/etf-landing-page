@@ -28,6 +28,7 @@ jobs:
       - run: npm run audit:dependencies
       - run: npm test
       - run: npm run lint
+      - run: npm run check:submission
       - name: Scan full Git history with verified Gitleaks
         shell: bash
         run: |

@@ -13,6 +13,7 @@
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-data.ts",
     "check:supabase": "tsx --env-file=.env scripts/check-supabase.ts",
+    "check:submission": "node scripts/check-submission.mjs",
     "report:funnel": "tsx --env-file=.env scripts/funnel-report.ts",
     "analytics:mark-test": "tsx --env-file=.env scripts/mark-test-traffic.ts",
     "cleanup:data": "tsx --env-file=.env scripts/cleanup-data.ts",

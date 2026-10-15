@@ -1,20 +1,25 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-016: Jazyk a přehled odevzdání (2026-10-15)
+- **Rozhodnutí:** Podklady pro hodnotitele jsou česky; historické AI rozhovory a citované pokyny zůstávají na výslovné přání autora v původním jazyce. Exporty se nemění.
+- **Úklid:** Staré pracovní plány/audity nejsou překládány; jsou v přesném seznamu kandidátů k odstranění. Požadavek je seznam, nikoli automatické mazání nebo přepis Git historie.
+- **Aktuálnost:** Jediný vstup odevzdání je docs/submission.md; QA konsoliduje doložené výsledky, verze a hranice.
+
 ## ADR-015: Testovací kohorta mimo reklamní konverze (2026-10-15)
 - **Rozhodnutí:** Serverové `is_test` na submission/session, automaticky jen pro rezervované email domény nebo předem označenou session; ostatní QA přes service_role-only preview/apply RPC. Žádná veřejná klientská přepínací property, žádné heuristiky typu qa-prefix osobní pošty, žádné mazání kontaktů.
 - **Statistika:** Celá test session vyloučena z obou částí CVR, kroků i UTM. Request ID spojuje staré split/late attempts. Kontakty jsou distinct z ponechaných odeslání; bez pozorovaných netestových relací je CVR N/A. UTM nevydáváme za důkaz placeného provozu.
-- **Baseline:** Uživatel potvrdil, že veškeré dosavadní návštěvy byly testy; jednorázová administrativní klasifikace má přesný cutoff a není součástí obecné migrace. Důkazy a limity: [test traffic](test-traffic.ru.md).
+- **Baseline:** Uživatel potvrdil, že veškeré dosavadní návštěvy byly testy; jednorázová administrativní klasifikace má přesný cutoff a není součástí obecné migrace. Důkazy a limity: [test traffic](test-traffic.md).
 
 ## ADR-014: Podporované závislosti a přesně omezený bezpečnostní review (2026-10-15)
 - **Rozhodnutí:** Next 15.5.28 jako nejmenší podporovaná opravená větev místo plošného upgrade na 16; zachován React 18 podporovaný peer kontraktem balíčku. Async searchParams, Next Link a render testy přizpůsobeny; bez změny finančních dat/API. Vitest 4.1.11, Node 24.x a přesný PostCSS 8.5.30 override.
 - **Mez:** Production npm audit čistý; úplný audit má jeden neopravený braces advisory v pěti dev uzlech. CI toleruje jen přesnou dev-only advisory/řetězec do 2026-11-15; nové problémy a audit chyby blokuje. Pravidla lintingu se nevypínají kvůli dosažení nuly.
-- **Secrets:** Gitleaks full history + current tree a lokální exact/base64 kontrola Git blobs/client assets. Pouze jeden konkrétní historický falešný příklad má fingerprint výjimku; žádná globální allowlist. Podrobnosti: [audit](security-audit-2026-10-15.ru.md).
+- **Secrets:** Gitleaks full history + current tree a lokální exact/base64 kontrola Git blobs/client assets. Pouze jeden konkrétní historický falešný příklad má fingerprint výjimku; žádná globální allowlist. Podrobnosti: [audit](security.md).
 
 ## ADR-013: Tisk dokumentu a omezená koordinace analytiky (2026-10-15)
 - **Rozhodnutí:** Print CSS rozlišuje navigační header/footer a vlastní záhlaví/zdroje reportu. Výstup je A4 se zachováním všech informací a nezalamovanými krátkými bloky.
 - **Souhlas a formulář:** Před lead POST čeká klient nejvýše dvě sekundy na zaznamenání pokusu, včetně případného vytvoření session cookie. Bez souhlasu nic neměří; timeout či chyba analytiky nebrání uložení kontaktu. Při timeoutu není asociace garantována.
 - **Pozdní 403:** Počítadlo úspěšných inicializací rozliší odpověď na požadavek odeslaný před nastavením nové cookie. Pokud mezitím session vznikla, retry ji znovu použije; nezaloží další a nerozdělí attempt a submission mezi dvě session. Ověřeno regresí a production browser/SQL na bf9c207.
-- **Důkaz:** Production reprodukce NULL session a neúplného PDF; čtyři unit regrese, lokální browser se skutečnou Supabase a vizuální kontrola všech tří A4 stran. Viz [finální QA](final-qa-2026-10-15.ru.md).
+- **Důkaz:** Production reprodukce NULL session a neúplného PDF; čtyři unit regrese, lokální browser se skutečnou Supabase a vizuální kontrola všech tří A4 stran. Viz [finální QA](qa-report.md).
 
 ## ADR-012: Jedna číselná sazba pro popisek i výpočet (2026-10-15)
 - **Rozhodnutí:** Veškeré UI procentní sazby se odvozují z `expenseRatio.value.rate` přes sdílené formátování, nikoli z ručních JSX hodnot ani z uloženého displayPercent. Typ sazby je `kind`; původní displayPercent ponechán pro kompatibilitu datasetu, ale UI jej nepoužívá.

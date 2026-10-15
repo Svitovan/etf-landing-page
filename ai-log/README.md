@@ -1,39 +1,41 @@
-# AI Log a transparentní dokumentace spolupráce s LLM
+# Práce s AI: metodika, záznamy a omezení
 
-Tato složka obsahuje záznamy o tom, jak byl projekt realizován ve spolupráci s AI asistenty (Antigravity / Codex) v souladu s požadavky zadání B:
-- Jaké pokyny agenti dostali a jaké prompty řídily jednotlivé fáze,
-- Jak byly deterministicky kontrolovány výstupy modelů (testy, linter, validace datasetu),
-- Kde se AI pomýlila a jak byla chyba reálně odhalena a napravena.
+Projekt vznikal s asistenty Antigravity / Codex. Tento soubor je česky; historické rozhovory a citované pokyny zůstávají podle rozhodnutí autora v původním jazyce, včetně ruštiny.
 
-## Struktura a umístění záznamů
+## Jak byla práce řízena a kontrolována
 
-- `ai-log/README.md`: Tento přehled metodiky řízení a struktury logů.
-- `ai-log/mistakes.md`: Skutečný log zachycených nepřesností a chyb modelu během realizace projektu (žádné syntetické příklady).
-- `ai-log/sessions/`: Záznamy klíčových fází vývoje a promptů:
-  - `session-e0-e8.md`: Fáze E0 až E8 (inicializace, dataset, UI, backend, analytika, testy).
-  - `session-readiness-audit-2026-10-11.md`: První audit připravenosti projektu.
-  - `session-deployment-and-hardening-2026-10-15.md`: Nasazení na produkci, integrace Supabase a bezpečnostní hardenování.
-  - `session-readiness-reaudit-2026-10-15.md`: Nezávislý re-audit a identifikace priorit B01–B06.
-  - `session-request-identity-2026-10-15.md`: Oprava konfliktu při opakování request ID, 52 testů a SQL ověření s rollbackem; nasazení čeká.
-  - `session-documentation-evidence-2026-10-15.md`: Oprava bodu 2: MDE, přenositelné odkazy, skutečný redigovaný export, QA důkazy a exit code reportu; 57 testů.
-  - `session-retention-2026-10-15.md`: Atomické cleanup RPC, skutečně aktivní denní Supabase Cron a ověření bez trvalého mazání kontaktů; 72 testů.
-  - `session-financial-context-2026-10-15.md`: PRIIPs/KID, W-8BEN a srážka s primárními zdroji, společnými texty a doloženým rozsahem; 78 testů.
-  - `session-dataset-ui-2026-10-15.md`: Finanční sazby a parametry UI z datasetu, změnové render testy a mobilní browser kontrola; 87 testů.
-  - `session-final-qa-2026-10-15.md`: Production Lighthouse 91/100/100/100, skutečný lead/409, oprava tisku a obou session race; 92 testů a zkontrolované production PDF.
-  - `session-security-2026-10-15.md`: Bod 5, celá dostupná Git historie a secrets, opravené production závislosti a výslovně omezený dev-only braces review.
-  - `session-test-traffic-2026-10-15.md`: Testovací submission/session odděleny od CVR; uživatelem potvrzený baseline, skutečná automaticky vyloučená production demonstrace a 118 testů.
+- Pokyny stanovily cílovou skupinu českých drobných investorů, mobilní scénář, hodnotu před formulářem a zdrojovaná data. Nesměly vznikat smyšlené reference, výnosy ani konverze.
+- Jednotlivé kroky oddělovaly data, UI, serverové uložení, analytiku a ověření. Agent měl popsat skutečný důkaz i to, co zatím neověřil.
+- Finanční hodnoty pocházejí z data/etfs.json a primárních zdrojů. Testy výpočtů a renderů kontrolují i změnu sazeb a pořadí fondů v izolovaném fixture.
+- Následovaly lint přes ESLint CLI, TypeScript, build, testy handlerů/RPC, živý SQL s rollbackem a vybrané produkční browser/HTTP scénáře. Poslední implementační sada má 118 testů v 17 souborech.
+- Skutečné omyly a jejich opravy jsou v [mistakes](mistakes.md): například falešný úspěch bez DB, chybějící atomická RPC, přeceňování testů, ztracené části PDF, závody relace a započítávání demonstrací do CVR. Nejde o syntetické příklady.
+- Aktuální výsledky a hranice důkazů shrnuje [QA](../docs/qa-report.md); starší odpovědi nebo souhrny mohou popisovat již opravený stav.
 
-### Export skutečných zpráv a jeho omezení
+## Původní export
 
-- [Čitelný export Codex](exports/codex-project-conversation-2026-10-15.md), [JSONL](exports/codex-project-conversation-2026-10-15.jsonl) a [manifest](exports/codex-project-conversation-2026-10-15.manifest.json) obsahují skutečné viditelné zprávy projektového rozhovoru z dostupných lokálních Codex JSONL. Text je zachován kromě označené redakce; nejde o přepsání z paměti ani shrnutí.
-- Manifest určuje období, počet zpráv, názvy zdrojových souborů, jejich SHA-256 a počty redakcí. Export má pevný časový konec, neobsahuje automaticky budoucí zprávy. Starší výroky mohou být překonané následnou kontrolou; aktuální důkazy jsou v [QA reportu](../docs/qa-report.md).
-- Vynechány jsou system/developer instrukce, interní reasoning, nástroje a jejich výstupy, automaticky vložený kontext prostředí a binární obrázky. Email, IP, lokální cesty, UUID a rozpoznané klíče jsou redigovány. Text bez obrázku může být neúplný; obrázky ze Supabase mohou obsahovat kontakty, proto nejsou přibaleny.
-- `sessions/` jsou nadále **kurátorské souhrny**, oddělené od exportu. Export není úplná surová trajektorie ani nativní Claude `/export`, nepokrývá všechny původní vývojové relace Antigravity. Tato mez je výslovně uvedena také v návrhu závěrečného emailu v README.
-- Reprodukce: `node scripts/export-ai-conversation.mjs <source.jsonl> [continuation.jsonl ...]`. Předat pouze soubory tohoto projektového rozhovoru. Skript má allowlist rolí/fází a nic nepublikuje; nové výstupy je před zařazením do Gitu nutné zkontrolovat kvůli PII a případným dalším formátům klíčů. Originální logy se do repozitáře nekopírují.
+- [Čitelný export](exports/codex-project-conversation-2026-10-15.md)
+- [Stejné zprávy v JSONL](exports/codex-project-conversation-2026-10-15.jsonl)
+- [Manifest: zdroje, SHA-256, počty a redakce](exports/codex-project-conversation-2026-10-15.manifest.json)
 
-Kompletní export všech relací Antigravity v tomto balíčku není a není předstírán. Pokud zadavatel vyžaduje i tyto relace, je nutné dodat jejich samostatný bezpečně zkontrolovaný export.
+Export má **56 skutečných viditelných zpráv**, od 2026-10-11 19:22:04 UTC do 2026-10-15 10:24:28 UTC. Text zůstává původní kromě označené redakce; není překladem ani shrnutím.
 
-## Pravidla a dohled nad AI
-1. **Žádné nekontrolované přijímání dat:** Finanční údaje nejsou generovány z parametrů modelu, ale přímo z oficiálních zdrojů (Vanguard, iShares, State Street Global Advisors, NYSE Arca) a ověřeny skriptem `scripts/validate-data.ts`.
-2. **Přísné testování:** Výpočty a backend jsou kontrolovány deterministickými testy (Vitest, po sjednocení finančního UI celkem 87 testů). Jejich rozsah a limity rozlišuje QA matice.
-3. **Audit kódu:** Každý generovaný soubor prochází kontrolou typů (`tsc`), statickou analýzou (`next lint`) a bezpečnostním auditem (žádné unescaped HTML, žádné vystavení serverových secretů, ochrana Origin hlavičky).
+Vynechává system/developer obsah, interní reasoning, nástroje a jejich výstupy, automatický kontext prostředí a binární obrázky. Rozpoznané klíče, emaily, IP, lokální cesty a identifikátory jsou redigovány. Bez obrázků může být okolní text neúplný. Obrázky tabulek mohly obsahovat kontakty a nejsou přiloženy.
+
+**Není to úplná raw trajektorie ani nativní Claude /export. Nepokrývá všechny původní relace Antigravity ani zprávy po uvedeném časovém konci.** Tato mez není nahrazována vymyšlenou historií; uvádí ji i návrh emailu.
+
+## Kurátorské souhrny
+
+Složka sessions/ obsahuje záznamy jednotlivých etap, nikoli doslovný export. Číselné výsledky v nich patří k tehdejší verzi. Dokončené následné opravy nemažou dřívější zjištění z historie.
+
+- [Základní etapy](sessions/session-e0-e8.md)
+- [Nasazení a ochrana API](sessions/session-deployment-and-hardening-2026-10-15.md)
+- [Dokumentace a export](sessions/session-documentation-evidence-2026-10-15.md)
+- [Retence](sessions/session-retention-2026-10-15.md)
+- [Finanční kontext](sessions/session-financial-context-2026-10-15.md)
+- [Dataset v UI](sessions/session-dataset-ui-2026-10-15.md)
+- [PDF a relace](sessions/session-final-qa-2026-10-15.md)
+- [Bezpečnost](sessions/session-security-2026-10-15.md)
+- [Testovací kohorta](sessions/session-test-traffic-2026-10-15.md)
+- [Příprava odevzdání](sessions/session-submission-2026-10-15.md)
+
+Reprodukční nástroj: `node scripts/export-ai-conversation.mjs <source.jsonl> [continuation.jsonl ...]`. Přijímá pouze logy tohoto projektu, nic sám nepublikuje. Nový výstup musí před zařazením do Git projít kontrolou citlivých dat. Původní lokální logy se nekopírují. Při úpravě kompletu odevzdání nebyly existující exporty přegenerovány ani změněny.

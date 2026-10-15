@@ -34,7 +34,7 @@ Toto je **návrh budoucích experimentů**, ne implementovaný experimentální 
 
 Pro každý test je primární metrikou CVR: podíl souhlasných relací s `landing_observed`, ke kterým existuje alespoň jedna uložená submission. Jedna relace je jedna binární pozorovaná jednotka. Proklik a použití kalkulačky jsou sekundární diagnostické metriky, podle kterých se nevyhlašuje vítěz.
 
-Čitatel i jmenovatel zahrnují pouze netestovou kohortu. Test session se vylučuje celá včetně kroků a UTM; příslušné počty jsou uvedeny odděleně. Veškerý dosavadní provoz byl uživatelem potvrzen jako testovací a označen; současný očištěný CVR je N/A, nikoli změřený výsledek reklamy. [Klasifikace, skutečné ověření a instrukce pro další QA](test-traffic.ru.md).
+Čitatel i jmenovatel zahrnují pouze netestovou kohortu. Test session se vylučuje celá včetně kroků a UTM; příslušné počty jsou uvedeny odděleně. Veškerý dosavadní provoz byl uživatelem potvrzen jako testovací a označen; současný očištěný CVR je N/A, nikoli změřený výsledek reklamy. [Klasifikace, skutečné ověření a instrukce pro další QA](test-traffic.md).
 
 | Parametr | Plánovací hodnota |
 |---|---|

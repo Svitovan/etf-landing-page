@@ -5,7 +5,9 @@
 
 ---
 
-## 1. Rychlé ověření za 2 minuty
+Komplet pro hodnotitele: [odevzdání a návrh emailu](docs/submission.md). [Seznam souborů k úklidu](docs/repository-cleanup.md) je návrh, žádné soubory se automaticky nemažou. Dokumentace je česky; původní AI rozhovory a citované pokyny zůstávají na přání autora v původním jazyce.
+
+## 1. Lokální spuštění a ověření
 
 ```bash
 # 1. Instalace závislostí (Node 24.x)
@@ -13,6 +15,7 @@ npm ci
 
 # 2. Ověření platnosti datasetu a finančních zdrojů
 npm run validate:data
+npm run check:submission
 
 # 3. Spuštění unit testů (výpočty, parsování, rate limit, idempotence)
 npm test
@@ -25,12 +28,14 @@ npm run dev
 npm run report:funnel
 ```
 
+Pro lokální UI a paměťové testy není přístup do produkční databáze nutný. Pro skutečné ukládání a serverové CLI vytvořte lokální `.env` podle [.env.example](.env.example): `SUPABASE_URL`, serverový `SUPABASE_SECRET_KEY`, vlastní náhodný `RATE_LIMIT_SECRET`, `APP_ORIGIN` odpovídající adrese aplikace a `DATASET_VERSION=2026-10-11`. Databázové migrace jsou v `supabase/migrations/`; všechny musí být v cílové DB aplikovány v pořadí. Produkce bez správné DB nevrací falešný úspěch. Tajemství nevkládejte do Git ani do proměnných s prefixem `NEXT_PUBLIC_`. CLI v package.json čtou `.env`; `.env.local` pro ně není náhradou.
+
 - **Živá produkční verze:** [https://etf-landing-page-phi.vercel.app/?utm_content=ad_a](https://etf-landing-page-phi.vercel.app/?utm_content=ad_a)
 - **Lokální verze:** [http://localhost:3000/?utm_content=ad_a](http://localhost:3000/?utm_content=ad_a)
 
-Bezpečnostní ověření: `npm run audit:production`, `npm run audit:dependencies`, po buildu také `npm run check:secret-exposure` (poslední kontrola potřebuje lokální `.env`, hodnoty nevypisuje). [Protokol bodu 5](docs/security-audit-2026-10-15.ru.md) rozlišuje čistý production audit a jeden neopravený dev-only braces advisory v pěti závislých uzlech. Výjimka review platí jen do 2026-11-15, nové problémy blokují CI. Historické QA výsledky na Next 14 se nevydávají za měření nové verze Next 15.
+Bezpečnostní ověření: `npm run audit:production`, `npm run audit:dependencies`, po buildu také `npm run check:secret-exposure` (poslední kontrola potřebuje lokální `.env`, hodnoty nevypisuje). [Bezpečnostní přehled](docs/security.md) rozlišuje čistý production audit a jeden neopravený dev-only braces advisory v pěti závislých uzlech. Výjimka review platí jen do 2026-11-15, nové problémy blokují CI. Historické QA výsledky na Next 14 se nevydávají za měření nové verze Next 15.
 
-Report konverzí standardně vylučuje testové odeslání i celé související session z čitatele/jmenovatele, kroků a UTM. Server rozpozná rezervované testovací email domény; další QA označí administrátor předem přes `npm run analytics:mark-test -- --session-id=SESSION_ID --apply` (bez `--apply` pouze preview). Původní demonstrace jsou po potvrzení uživatele označeny, nikoli smazány. Bez skutečných pozorovaných netestových relací je CVR **N/A**. [Pravidla a živé důkazy](docs/test-traffic.ru.md).
+Report konverzí standardně vylučuje testové odeslání i celé související session z čitatele/jmenovatele, kroků a UTM. Server rozpozná rezervované testovací email domény; další QA označí administrátor předem přes `npm run analytics:mark-test -- --session-id=SESSION_ID --apply` (bez `--apply` pouze preview). Původní demonstrace jsou po potvrzení uživatele označeny, nikoli smazány. Bez skutečných pozorovaných netestových relací je CVR **N/A**. [Pravidla a živé důkazy](docs/test-traffic.md).
 
 ---
 
@@ -42,7 +47,7 @@ Report konverzí standardně vylučuje testové odeslání i celé související
 4. **Okamžité doručení materiálu:** Po uložení kontaktu se návštěvníkovi ihned otevře personalizovaný přehled (`/report`) s 5bodovým kontrolním seznamem a optimalizovaným tiskovým stylem pro uložení do PDF.
 5. **Měření cesty v souladu s GDPR/ÚOOÚ:** Relace a události se zaznamenávají výhradně po aktivním souhlasu uživatele.
 6. **Dva koncepty mobilních reklam:** Texty, vizuální koncepty a HTML náhledy (`ads/ad-a.html`, `ads/ad-b.html`) s UTM parametry.
-7. **Transparentní AI protokol:** Skutečný protokol promptů a zachycených chyb modelu v `ai-log/mistakes.md`.
+7. **Transparentní AI protokol:** Dostupný export rozhovoru a kurátorské souhrny v [AI logu](ai-log/README.md), skutečné zachycené chyby v [mistakes](ai-log/mistakes.md).
 
 ---
 
@@ -117,7 +122,7 @@ Procentní popisky i výpočty používají jednu číselnou sazbu z datasetu. H
 
 Stejný `requestId` se stejným obsahem vrací původní výsledek bez nové submission. Změna e-mailu, množiny ETF, částky, verze soukromí nebo datasetu vrací HTTP 409 (`IDEMPOTENCY_CONFLICT`). Pořadí ETF a normalizace e-mailu se nepovažují za změnu. Formulář ponechá ID při síťovém retry, ale při explicitním odeslání změněných údajů vytvoří novou žádost.
 
-**Stav opravy:** lokálně ověřeno, nasazení čeká. Je nutné aplikovat novou migraci `supabase/migrations/20261015101054_enforce_lead_request_identity.sql` a nasadit změny aplikace. Postup a důkazy: [docs/qa-idempotency-2026-10-15.md](docs/qa-idempotency-2026-10-15.md).
+**Stav opravy:** migrace i aplikace jsou publikovány; skutečný production scénář ověřil 200 při shodném opakování, 409 při změně a jedinou původní žádost v DB. Datum, testovaná verze a hranice důkazů jsou v [QA](docs/qa-report.md).
 
 ---
 
@@ -148,35 +153,13 @@ Vývoj a následné kontroly probíhaly s asistenty Antigravity / Codex; záznam
 ## 9. Výsledky testů a QA
 
 - **Automatické testy:** Rozsah a výsledky po poslední kontrole uvádí [QA report](docs/qa-report.md). Odděluje testy v paměti, skutečné handlery s mocky, SQL a historické live ověření; žádný unit test sám neprokazuje produkční zápis.
-- **Linter a typová kontrola:** `next lint` (0 varování/chyb) a `tsc --noEmit` (0 chyb).
-- **Produkční build:** `next build` probíhá úspěšně s minimální velikostí First Load JS (87.2 kB).
+- **Linter a typová kontrola:** `npm run lint` používá ESLint CLI; `npm run typecheck` používá TypeScript. Poslední implementační kontrola prošla bez chyb.
+- **Produkční build:** Next 15.5.28, Node 24.x; poslední automatická sada má 118 testů v 17 souborech. Přesné verze a datované artefakty uvádí QA.
 - Kompletní QA protokol je k dispozici v [docs/qa-report.md](docs/qa-report.md).
 - **Chyba reportu:** `npm run report:funnel` při chybě čtení vrací nenulový exit code a nevypíše falešné nulové statistiky. Test používá lokální HTTP provider; dočasný výpadek produkce kvůli tomu není vyvoláván.
 
 ---
 
-## 10. Návrh odpovědi na e-mail zadavatele
+## 10. Odevzdání
 
-```text
-Dobrý den, pane Lörinci,
-
-zasílám řešení zadání B – konverzní landing page se srovnáním ETF pro českého investora.
-
-GitHub repozitář: https://github.com/Svitovan/etf-landing-page
-Živá verze stránky: https://etf-landing-page-phi.vercel.app/
-
-V repozitáři najdete:
-- Funkční aplikaci (Next.js / TypeScript) se srovnáním VOO, IVV a SPY na NYSE Arca,
-- Reálné uložení kontaktů se serverovou ochranou a okamžitým vydáním HTML/PDF reportu,
-- Dvě verze mobilní reklamy včetně HTML náhledů a UTM odkazů (ads/),
-- Analytiku funnelu v souladu s GDPR/ÚOOÚ (spustitelnou přes npm run report:funnel),
-- Odůvodnění struktury, odhad konverze a 3 seřazené A/B hypotézy v README a dokumentaci,
-- Transparentní protokol práce s AI, skutečný log chyb a redigovaný export dostupného projektového rozhovoru Codex v ai-log/.
-
-Export zahrnuje dostupné zprávy tohoto rozhovoru, nikoli úplnou historii všech relací Antigravity; obrázky, interní instrukce, nástroje a osobní údaje jsou vynechány nebo redigovány. Formát a rozsah popisuje ai-log/README.md.
-
-Přeji příjemné procházení a těším se na Vaši zpětnou vazbu.
-
-S pozdravem,
-[Vaše jméno]
-```
+Aktuální návrh odpovědi zadavateli, veřejné odkazy, rozsah AI exportu a přiznaná omezení jsou na jednom místě: [komplet odevzdání](docs/submission.md). [Scénář demonstrace](docs/demo-script.md) používá rezervovaný testovací email; [seznam k úklidu](docs/repository-cleanup.md) ponechává povinné součásti zadání.

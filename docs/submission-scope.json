@@ -1,0 +1,40 @@
+{
+  "description": "Proposed submission scope. Listed files are not deleted by the checker.",
+  "removeBeforeSubmission": [
+    "assignment-b-implementation-plan.ru.md",
+    "google-stitch-requirements.ru.md",
+    "docs/readiness-audit-2026-10-11.ru.md",
+    "docs/readiness-audit-2026-10-15.ru.md",
+    "docs/readiness-verification-4465301.ru.md",
+    "docs/final-qa-2026-10-15.ru.md",
+    "docs/security-audit-2026-10-15.ru.md",
+    "docs/test-traffic.ru.md",
+    "docs/qa-idempotency-2026-10-15.md",
+    "output/pdf/report-production-f6b4bf1-ivv-250000.pdf"
+  ],
+  "optionalRemoval": [
+    "output/pdf/report-fixed-ivv-250000.pdf",
+    "output/qa/lighthouse-local-fixed.report.html",
+    "output/qa/lighthouse-local-fixed.report.json",
+    "output/qa/lighthouse-production-f6b4bf1.report.html",
+    "output/qa/lighthouse-production-f6b4bf1.report.json",
+    "output/qa/lighthouse-production-f1d0982.report.html",
+    "output/qa/lighthouse-production-f1d0982.report.json",
+    "output/qa/lighthouse-production-bf9c207.report.html",
+    "output/qa/lighthouse-production-bf9c207.report.json",
+    "output/security/npm-audit-before-2026-10-15.json",
+    ".agents/",
+    "skills-lock.json",
+    "AGENTS.md",
+    "Junior AI Developer – postup do ďalšieho kola a praktická úloha - Matej Lorinc (matej@clientelo.cz) - 2026-10-08 1921.txt"
+  ],
+  "originalLanguageRecords": [
+    "ai-log/exports/codex-project-conversation-2026-10-15.md",
+    "ai-log/exports/codex-project-conversation-2026-10-15.jsonl",
+    "ai-log/sessions/session-request-identity-2026-10-15.md",
+    "ai-log/sessions/session-dataset-ui-2026-10-15.md",
+    "ai-log/sessions/session-documentation-evidence-2026-10-15.md",
+    "ai-log/sessions/session-financial-context-2026-10-15.md",
+    "ai-log/sessions/session-retention-2026-10-15.md"
+  ]
+}

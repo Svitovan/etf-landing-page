@@ -1,23 +1,21 @@
-# Scénář prezentace řešení (2–3 minuty)
+# Demonstrace řešení za 2–3 minuty
 
-Tento scénář slouží pro rychlou obhajobu projektu nebo demonstraci hodnotiteli:
+## 1. Reklama a první obrazovka
 
-## 1. Vstup z mobilní reklamy (0:00 – 0:30)
-- **Krok:** Otevřete živou stránku [https://etf-landing-page-phi.vercel.app/?utm_content=ad_a](https://etf-landing-page-phi.vercel.app/?utm_content=ad_a) (případně lokálně `http://localhost:3000/?utm_content=ad_a` či soubor `ads/ad-a.html`).
-- **Komentář:**  
-  *„Uživatel přichází z mobilní reklamy s příslibem vysvětlení rozdílů mezi fondy. Během prvních dvou sekund vidí na prvním displeji (Hero) přesně to, co reklama slíbila: srovnání VOO, IVV a SPY na NYSE Arca a okamžitou ochutnávku jejich roční nákladovosti (0,03 % vs. 0,0945 %).“*
+Otevřete [variantu A](https://etf-landing-page-phi.vercel.app/?utm_content=ad_a), poté [variantu B](https://etf-landing-page-phi.vercel.app/?utm_content=ad_b). Ukažte oba návrhy v ads/ a návaznost slibu na titulní část stránky. Cílovou skupinou je český začátečník na mobilu.
 
-## 2. Hodnota před formulářem a interaktivita (0:30 – 1:15)
-- **Krok:** Prozkoumejte sekci srovnání parametrů a zadejte do kalkulačky částku (např. 250 000 Kč).
-- **Komentář:**  
-  *„Předtím, než po uživateli chceme kontakt, mu dáváme reálnou hodnotu. Všechna data mají auditované primární zdroje přímo z prospektů emitentů. Kalkulačka převádí abstraktní procenta na srozumitelné koruny. Zde uživatel vidí, že u 250 000 Kč zaplatí u VOO 75 Kč ročně, zatímco u SPY 236,25 Kč.“*
+## 2. Hodnota před kontaktem
 
-## 3. Odeslání formuláře a okamžitý materiál (1:15 – 2:00)
-- **Krok:** Zadejte testovací e-mail (např. `test@investor.cz`) a odešlete formulář. Klikněte na *„Otevřít přehled a kontrolní seznam“*.
-- **Komentář:**  
-  *„Formulář má pouze jedno pole a honeypot ochranu. Žádný spam. Na serveru proběhne atomické uložení a návštěvníkovi se okamžitě vygeneruje odkaz na `/report`. Zde dostává kompletní 5bodový kontrolní checklist pro nákup u brokera (KID, měnová konverze, W-8BEN), tabulku parametrů a tiskovou verzi do PDF.“*
+Projděte srovnání, zdroje a kalkulačku. Zadejte například 250000 Kč a vyberte IVV. Náklady a popisky používají stejný dataset; nejde o prognózu výnosu ani kompletní brokerské náklady.
 
-## 4. Analytika a práce s AI (2:00 – 2:45)
-- **Krok:** V terminálu spusťte `npm run report:funnel` a ukažte soubor `ai-log/mistakes.md`.
-- **Komentář:**  
-  *„Měření cesty funguje na principu aktivního souhlasu dle GDPR/ÚOOÚ. Data z trychtýře si můžeme kdykoliv zobrazit příkazem `npm run report:funnel`. V `ai-log/mistakes.md` máme zaznamenány skutečné chyby AI zachycené během vývoje – například nepřesnost v hrubých nákladech SPY (0,0945 %) a záludnost floating-point násobení v JavaScriptu, které jsme ošetřili deterministickými testy.“*
+## 3. Formulář a materiál
+
+Pro demonstraci použijte **demo@example.com**. Tato rezervovaná doména zajistí automatické označení žádosti a související relace jako testovací. Běžná adresa bez předchozího označení QA relace by mohla znečistit statistiku.
+
+Pokud chcete ukázat měřenou cestu, povolte analytiku. Bez souhlasu má být formulář stále funkční. Odešlete jedno pole, otevřete materiál a ukažte zachovaný výběr/částku, checklist, slovník, primární zdroje a tlačítko tisku do PDF. Zpráva o úspěchu sama neprokazuje DB: skutečné zápisy byly ověřeny odděleně, viz QA.
+
+## 4. Měření a AI
+
+S lokální serverovou konfigurací spusťte `npm run report:funnel`. Ukažte oddělený počet testů. Není-li žádná pozorovaná netestová relace, správný výsledek CVR je **N/A**. Demonstrace není reklamní úspěch; UTM není důkaz zaplacené reklamy.
+
+Otevřete [AI metodiku](../ai-log/README.md) a [skutečné chyby](../ai-log/mistakes.md). Export zůstává v původním jazyce a má přesně uvedený rozsah. [QA](qa-report.md) odděluje unit testy, mocky, SQL, produkční průchody a datovaný PDF vzorek.
