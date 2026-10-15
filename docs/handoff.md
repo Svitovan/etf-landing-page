@@ -1,11 +1,15 @@
 # Handoff Report
 
-## Security audit — 2026-10-15 (item 5, verification in progress)
+## Security audit — 2026-10-15 (item 5 complete with explicit dev-only finding)
+
+- **Published/verified:** runtime SHA `99cebb149706efea71684267c295805f1648982a`, Vercel READY `dpl_3X34PKBNeGsGdWsMGnqVP5veCYrg`. First real Linux GitHub Actions run `38747428905` success (install/audits/tests/lint/full-history Gitleaks). Post-commit local Gitleaks: 22 commits, no unhandled findings.
+- Production browser/smoke passed: report IVV/250000, navigation/calculator, 200 pages including repeated queries; private file routes 404, invalid lead input 400, foreign Origin 403. No known local key/Base64 in checked HTML or six public script assets. No contact created by this security smoke. New Next 15 Lighthouse **90/100/100/100**; LCP 3.5 s is a lab result, not field CWV.
+- Remaining finding is the reviewed unpatched development-only braces chain below. Full audit is deliberately not reported as zero. Final docs/evidence-only commit follows the tested runtime SHA.
 
 - Full available Git history (21 commits, non-shallow after fetch) scanned with SHA256-verified Gitleaks 8.30.1. One reviewed invalid commented example only; exact historical fingerprint ignored, placeholder replaced. Tracked/unignored tree scan clean; exact local-secret scan of 293 Git blobs and client assets clean. No real key exposed by these checks; no rewrite/rotation performed.
 - Upgraded Next to 15.5.28, matching lint config, Vitest 4.1.11; pinned PostCSS override 8.5.30 and Node 24.x. Migrated async searchParams and rendering tests. Production audit now zero.
 - Full npm audit still reports five high dev-only nodes from one unpatched braces advisory. Explicit gate allows only that exact reviewed chain, only dev, until 2026-11-15; new issues, prod exposure, unavailable audit or expiry fail. This is a remaining risk, not a zero-findings all-package audit.
-- Actual npm ci clean install passed; final 101/101 tests, lint, typecheck and Next 15.5.28 build passed. Local browser confirmed ad_b, report IVV/250000, navigation, interactive costs and no observed warn/error. GitHub workflow parsed; real CI/publication pending push. Scope, commands and evidence: [security audit](security-audit-2026-10-15.ru.md).
+- Actual npm ci clean install passed; final 101/101 tests, lint, typecheck and Next 15.5.28 build passed. Local browser confirmed ad_b, report IVV/250000, navigation, interactive costs and no observed warn/error. GitHub CI and publication subsequently passed as recorded above. Scope, commands and evidence: [security audit](security-audit-2026-10-15.ru.md).
 
 ## Final QA — 2026-10-15 (item 4 complete)
 

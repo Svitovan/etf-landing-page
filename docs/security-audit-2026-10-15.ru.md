@@ -43,3 +43,15 @@
 - Локальный браузер на production build: рекламный вариант ad_b отображается; report IVV / 250000 Kč выделяет правильный фонд; Link возвращает на главную; калькулятор интерактивно показывает 75 / 75 / 236,25 Kč; console без warn/error в проверенных состояниях. Повторяющиеся query-параметры безопасно игнорируются; это отдельно покрыто тремя regression tests.
 - Workflow YAML распарсен, проверены read-only permissions и fetch-depth 0; реальное выполнение CI ещё ожидает push. [Сводка доказательств](../output/security/security-evidence-2026-10-15.json), исходные npm audit [до](../output/security/npm-audit-before-2026-10-15.json) и [после](../output/security/npm-audit-after-2026-10-15.json). Здесь нет значений секретов или персональных данных из Gitleaks reports.
 - Публикация обновлённого кода и подтверждение Vercel SHA — следующий шаг; локальная сборка не выдаётся за уже обновлённый production.
+
+## Финальный результат после публикации
+
+Пункт 5 выполнен как аудит и устранение исправляемых проблем, **с явно оставленным dev-only риском выше**, не как обещание отсутствия любых уязвимостей.
+
+- Исправленный код **`99cebb149706efea71684267c295805f1648982a`** отправлен в master. Vercel production alias подтверждён READY на этом SHA, deployment `dpl_3X34PKBNeGsGdWsMGnqVP5veCYrg`.
+- Первый реальный [GitHub Actions run 38747428905](https://github.com/Svitovan/etf-landing-page/actions/runs/38747428905) завершился **success**: Linux npm ci, production audit, полный audit gate, тесты, lint и Gitleaks всей истории прошли. Это не только проверка наличия workflow.
+- После commit повторный локальный Gitleaks: **22 commits**, ~7,62 MB, 0 необработанных находок. Exact scan до commit и после clean install: локальный ключ не найден в доступных Git blobs/текущих файлах/клиентской сборке. В CI настоящие production-ключи не использовались.
+- [Production smoke](../output/security/production-smoke-99cebb1.json), 14:01:23 UTC: landing ad_b, report IVV/250000 и повторяющиеся query возвращают 200; `/.env` и `/package-lock.json` — 404. Невалидный body `/api/leads` → 400, foreign Origin → 403. Локально известный секрет и его Base64 не найдены в HTML ответов или **6** ссылочных публичных script assets. Контакты этим smoke не создавались.
+- Production browser: отчёт сохраняет IVV/250000, навигация возвращает на главную, калькулятор интерактивно показывает правильные суммы; в проверенном состоянии нет warn/error. Полный form/DB/PDF сценарий из пункта 4 заново здесь не заявляется выполненным: проверены изменения миграции и security-контракты, API/расчёты дополнительно покрыты тестами.
+- Новый Lighthouse mobile на **Next 15**: **90 / 100 / 100 / 100**, 14:00:44 UTC; LCP 3,5 с, CLS 0. [HTML](../output/qa/lighthouse-security-99cebb1.report.html), [JSON](../output/qa/lighthouse-security-99cebb1.report.json). Пороги performance ≥90/accessibility ≥95 соблюдены; прежние результаты Next 14 не переименованы, field CWV не подтверждаются.
+- Итоговые evidence/docs фиксируются следующим коммитом без изменения приложения. SHA выше намеренно указывает на реально проверенный runtime, а не на последующую запись отчёта.

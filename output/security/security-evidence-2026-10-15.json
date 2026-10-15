@@ -50,5 +50,22 @@
     "No guarantee for unknown/encoded secrets beyond the described checks",
     "Five high development-only nodes remain from one unpatched braces advisory",
     "No full application penetration test"
-  ]
+  ],
+  "publication": {
+    "testedSource": "99cebb149706efea71684267c295805f1648982a",
+    "deployment": "dpl_3X34PKBNeGsGdWsMGnqVP5veCYrg",
+    "state": "READY",
+    "ciRun": 38747428905,
+    "ciConclusion": "success",
+    "postCommitHistoryCommits": 22,
+    "postCommitUnhandledSecretFindings": 0,
+    "lighthouse": {
+      "performance": 90,
+      "accessibility": 100,
+      "bestPractices": 100,
+      "seo": 100,
+      "lcpSeconds": 3.5,
+      "cls": 0
+    }
+  }
 }

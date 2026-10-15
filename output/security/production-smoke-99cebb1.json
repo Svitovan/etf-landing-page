@@ -1,0 +1,43 @@
+{
+  "testedSource": "99cebb149706efea71684267c295805f1648982a",
+  "time": "2026-10-15T14:01:23.420Z",
+  "checks": [
+    {
+      "path": "/?utm_content=ad_b",
+      "status": 200,
+      "secretExposed": false
+    },
+    {
+      "publicScriptAssetsChecked": 6,
+      "secretExposed": false
+    },
+    {
+      "path": "/report?amount=250000&etfs=IVV",
+      "status": 200,
+      "secretExposed": false
+    },
+    {
+      "path": "/report?amount=1&amount=2&etfs=IVV&etfs=SPY",
+      "status": 200,
+      "secretExposed": false
+    },
+    {
+      "path": "/.env",
+      "status": 404,
+      "secretExposed": false
+    },
+    {
+      "path": "/package-lock.json",
+      "status": 404,
+      "secretExposed": false
+    },
+    {
+      "name": "invalid-input",
+      "status": 400
+    },
+    {
+      "name": "foreign-origin",
+      "status": 403
+    }
+  ]
+}
