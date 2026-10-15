@@ -14,6 +14,7 @@ Tato složka obsahuje záznamy o tom, jak byl projekt realizován ve spolupráci
   - `session-readiness-audit-2026-10-11.md`: První audit připravenosti projektu.
   - `session-deployment-and-hardening-2026-10-15.md`: Nasazení na produkci, integrace Supabase a bezpečnostní hardenování.
   - `session-readiness-reaudit-2026-10-15.md`: Nezávislý re-audit a identifikace priorit B01–B06.
+  - `session-request-identity-2026-10-15.md`: Oprava konfliktu při opakování request ID, 52 testů a SQL ověření s rollbackem; nasazení čeká.
 
 ### Poznámka k surovému exportu konverzací
 Kompletní surová trajektorie agentních konverzací (včetně interních volání nástrojů, mezistavů linteru a systémových promptů) je v prostředí Google Antigravity IDE automaticky ukládána do strojového formátu JSON Lines (`transcript.jsonl`) v systémovém adresáři:
@@ -23,5 +24,5 @@ Vzhledem k rozsahu surových souborů (desítky megabajtů strojového JSON s to
 
 ## Pravidla a dohled nad AI
 1. **Žádné nekontrolované přijímání dat:** Finanční údaje nejsou generovány z parametrů modelu, ale přímo z oficiálních zdrojů (Vanguard, iShares, State Street Global Advisors, NYSE Arca) a ověřeny skriptem `scripts/validate-data.ts`.
-2. **Přísné testování:** Všechny kalkulace jsou podloženy deterministickými jednotkovými testy (Vitest, 36 testů).
+2. **Přísné testování:** Výpočty a backend jsou kontrolovány deterministickými testy (Vitest, po opravě identity žádosti 52 testů).
 3. **Audit kódu:** Každý generovaný soubor prochází kontrolou typů (`tsc`), statickou analýzou (`next lint`) a bezpečnostním auditem (žádné unescaped HTML, žádné vystavení serverových secretů, ochrana Origin hlavičky).

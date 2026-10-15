@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { memoryStore } from "../src/lib/server/db";
 import { saveLeadSubmission } from "../src/lib/server/lead-service";
+import { LeadRequestConflictError } from "../src/lib/server/lead-errors";
 import { checkRateLimit } from "../src/lib/server/rate-limit";
 import {
   createAnalyticsSession,
@@ -462,46 +463,71 @@ describe("T17: Strict Analytics Event Properties & PII Rejection (A06)", () => {
   });
 });
 
-describe("T18: Retry Idempotency & Original Payload Preservation (A03)", () => {
-  beforeEach(() => {
+describe("T18: Retry identity and changed-payload conflicts", () => {
+  const payload = {
+    requestId: "55555555-5555-4555-8555-555555555555",
+    email: "investor@example.com",
+    selectedEtfs: ["VOO", "IVV"] as ("VOO" | "IVV" | "SPY")[],
+    positionValueCzk: 100_000,
+    privacyVersion: "2026-10-11",
+  };
+
+  beforeEach(async () => {
     memoryStore.reset();
+    await saveLeadSubmission(payload, null);
   });
 
-  it("returns original submission parameters on retry even if request payload is altered", async () => {
-    const fixedReqId = "55555555-5555-4555-8555-555555555555";
+  afterEach(() => vi.unstubAllEnvs());
 
-    // First attempt: 100 000 CZK for VOO
-    const firstRes = await saveLeadSubmission(
-      {
-        requestId: fixedReqId,
-        email: "investor@example.cz",
-        selectedEtfs: ["VOO"],
-        positionValueCzk: 100_000,
-        privacyVersion: "2026-10-11",
-      },
-      null
-    );
-    expect(firstRes.success).toBe(true);
-    expect(firstRes.isDuplicateRequest).toBe(false);
-    expect(firstRes.reportUrl).toContain("amount=100000");
-    expect(firstRes.reportUrl).toContain("etfs=VOO");
+  it.each([
+    { email: "other@example.com" },
+    { selectedEtfs: ["SPY"] as ("VOO" | "IVV" | "SPY")[] },
+    { positionValueCzk: 500_000 },
+    { privacyVersion: "2026-10-15" },
+  ])("rejects a changed field without changing stored records: %j", async (change) => {
+    const before = structuredClone({ leads: memoryStore.leads, submissions: memoryStore.submissions });
+    await expect(saveLeadSubmission({ ...payload, ...change }, null))
+      .rejects.toBeInstanceOf(LeadRequestConflictError);
+    expect({ leads: memoryStore.leads, submissions: memoryStore.submissions }).toEqual(before);
+  });
 
-    // Retry attempt: same requestId, but attacker/changed payload specifies 500 000 CZK and SPY
-    const retryRes = await saveLeadSubmission(
-      {
-        requestId: fixedReqId,
-        email: "investor@example.cz",
-        selectedEtfs: ["SPY"],
-        positionValueCzk: 500_000,
-        privacyVersion: "2026-10-11",
-      },
-      null
-    );
-    expect(retryRes.success).toBe(true);
-    expect(retryRes.isDuplicateRequest).toBe(true);
-    // Must return the ORIGINAL submission parameters (100 000 CZK, VOO), NOT altered params!
-    expect(retryRes.reportUrl).toContain("amount=100000");
-    expect(retryRes.reportUrl).toContain("etfs=VOO");
+  it("accepts email normalization and reordered/duplicate tickers as the same request", async () => {
+    const result = await saveLeadSubmission({
+      ...payload,
+      email: "  INVESTOR@example.com  ",
+      selectedEtfs: ["IVV", "VOO", "IVV"],
+    }, "a-different-analytics-session");
+    expect(result.isDuplicateRequest).toBe(true);
+    expect(result.submissionId).toBe(memoryStore.submissions[0].id);
+    expect(memoryStore.submissions).toHaveLength(1);
+    expect(memoryStore.submissions[0].analytics_session_id).toBeNull();
+  });
+
+  it("rejects a different dataset version under the same requestId", async () => {
+    const savedVersion = memoryStore.submissions[0].dataset_version;
+    vi.stubEnv("DATASET_VERSION", "another-dataset-version");
+    await expect(saveLeadSubmission(payload, null)).rejects.toBeInstanceOf(LeadRequestConflictError);
+    expect(memoryStore.submissions[0].dataset_version).toBe(savedVersion);
+  });
+
+  it("returns HTTP 409 without PII and still permits a matching retry afterward", async () => {
+    const request = (body: typeof payload) => new NextRequest("http://localhost:3000/api/leads", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body),
+    });
+    const conflict = await leadsPost(request({ ...payload, email: "other@example.com" }));
+    expect(conflict.status).toBe(409);
+    const body = await conflict.json();
+    expect(body).toMatchObject({ success: false, errorCode: "IDEMPOTENCY_CONFLICT" });
+    expect(JSON.stringify(body)).not.toContain(payload.email);
+    expect(JSON.stringify(body)).not.toContain("other@example.com");
+    expect(body.reportUrl).toBeUndefined();
+
+    const retry = await leadsPost(request(payload));
+    expect(retry.status).toBe(200);
+    expect(await retry.json()).toMatchObject({ success: true, isDuplicateRequest: true });
+    expect(memoryStore.submissions).toHaveLength(1);
   });
 });
 

@@ -2,10 +2,11 @@ import crypto from "node:crypto";
 import {
   getSupabaseServerClient,
   memoryStore,
-  LeadRow,
   LeadSubmissionRow,
 } from "./db";
 import { LeadSubmissionPayload } from "../validation";
+import { canonicalizeLeadRequest, leadRequestFingerprint } from "../lead-request";
+import { LeadRequestConflictError } from "./lead-errors";
 
 export interface LeadSaveResult {
   success: boolean;
@@ -24,9 +25,10 @@ export async function saveLeadSubmission(
     throw new Error("INVALID_PAYLOAD: email and requestId are required to save lead submission");
   }
 
-  const normalizedEmail = payload.email.trim().toLowerCase();
+  const canonical = canonicalizeLeadRequest(payload);
+  const normalizedEmail = canonical.email;
   const datasetVersion = process.env.DATASET_VERSION || "2026-10-11";
-  const requestedReportUrl = `/report?amount=${payload.positionValueCzk}&etfs=${(payload.selectedEtfs || []).join(",")}`;
+  const requestedReportUrl = `/report?amount=${canonical.positionValueCzk}&etfs=${canonical.selectedEtfs.join(",")}`;
 
   const supabase = getSupabaseServerClient();
 
@@ -43,16 +45,20 @@ export async function saveLeadSubmission(
       p_request_id: payload.requestId,
       p_email: payload.email.trim(),
       p_normalized_email: normalizedEmail,
-      p_selected_etfs: payload.selectedEtfs,
+      p_selected_etfs: canonical.selectedEtfs,
       p_position_value_czk: payload.positionValueCzk,
       p_privacy_version: payload.privacyVersion,
       p_dataset_version: datasetVersion,
       p_analytics_session_id: analyticsSessionId,
     });
 
+    if (rpcErr?.code === "PT409") {
+      throw new LeadRequestConflictError();
+    }
     if (rpcErr || !rpcResult || !rpcResult.success) {
-      console.error("Database submit_lead RPC error:", rpcErr);
-      throw new Error(`DATABASE_SAVE_FAILED: ${rpcErr?.message || "Atomic transaction failed"}`);
+      // Provider details can contain row values. Log the category only.
+      console.error("Database submit_lead RPC failed:", rpcErr?.code || "INVALID_RESPONSE");
+      throw new Error("DATABASE_SAVE_FAILED");
     }
 
     const reportUrl = `/report?amount=${rpcResult.position_value_czk}&etfs=${(rpcResult.selected_etfs || []).join(",")}`;
@@ -70,7 +76,20 @@ export async function saveLeadSubmission(
   // 1. Check idempotency
   const existingSub = memoryStore.submissions.find((s) => s.request_id === payload.requestId);
   if (existingSub) {
-    // A03: Return the original submission parameters, ignoring any modified retry payload
+    const existingLead = memoryStore.leads.find((lead) => lead.id === existingSub.lead_id);
+    if (
+      !existingLead ||
+      existingSub.dataset_version !== datasetVersion ||
+      leadRequestFingerprint({
+        email: existingLead.normalized_email,
+        selectedEtfs: existingSub.selected_etfs,
+        positionValueCzk: existingSub.position_value_czk,
+        privacyVersion: existingSub.privacy_version,
+      }) !== leadRequestFingerprint(canonical)
+    ) {
+      throw new LeadRequestConflictError();
+    }
+    // A matching retry returns the original result without creating a submission.
     const originalReportUrl = `/report?amount=${existingSub.position_value_czk}&etfs=${existingSub.selected_etfs.join(",")}`;
     return {
       success: true,
@@ -102,7 +121,7 @@ export async function saveLeadSubmission(
     id: crypto.randomUUID(),
     request_id: payload.requestId,
     lead_id: lead.id,
-    selected_etfs: payload.selectedEtfs,
+    selected_etfs: canonical.selectedEtfs,
     position_value_czk: payload.positionValueCzk,
     privacy_version: payload.privacyVersion,
     dataset_version: datasetVersion,

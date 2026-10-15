@@ -3,6 +3,7 @@ import { LeadSubmissionSchema } from "../../../lib/validation";
 import { checkRateLimit } from "../../../lib/server/rate-limit";
 import { saveLeadSubmission } from "../../../lib/server/lead-service";
 import { isSessionValid } from "../../../lib/server/analytics";
+import { LeadRequestConflictError } from "../../../lib/server/lead-errors";
 
 import { isAllowedOrigin } from "../../../lib/server/security";
 
@@ -112,6 +113,16 @@ export async function POST(req: NextRequest) {
       isDuplicateRequest: result.isDuplicateRequest,
     });
   } catch (err: unknown) {
+    if (err instanceof LeadRequestConflictError) {
+      return NextResponse.json(
+        {
+          success: false,
+          errorCode: err.code,
+          error: "Údaje tohoto požadavku se změnily. Zkontrolujte formulář a odešlete jej znovu jako nový požadavek.",
+        },
+        { status: 409 }
+      );
+    }
     console.error("Error processing lead submission:", err instanceof Error ? err.message : err);
     return NextResponse.json(
       {

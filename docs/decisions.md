@@ -1,5 +1,12 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-008: Neměnný obsah jedné žádosti a bezpečný konflikt při retry (2026-10-15)
+- **Kontext:** Opakování stejného `requestId` s jinými daty vracelo původní report jako úspěch; implementační plán vyžaduje odmítnutí změněného obsahu.
+- **Rozhodnutí:** Identita žádosti obsahuje normalizovaný e-mail, množinu ETF, částku, verzi zásad soukromí a verzi datasetu. Pořadí / duplicity ETF ani velikost písmen a okolní mezery e-mailu nevytvářejí konflikt. Analytická relace není součástí identity a při retry se původní vazba nepřepisuje.
+- **Databáze:** Nová migrace `20261015101054_enforce_lead_request_identity.sql` zamyká request ID pomocí transakčního advisory locku ještě před prvním zápisem a porovnává původní obsah. Konflikt vyvolá SQLSTATE `PT409`; role `anon` a `authenticated` nemají EXECUTE. Nezavádí se další sloupec s PII ani uložený otisk e-mailu.
+- **API a formulář:** API vrací HTTP 409 a obecný kód `IDEMPOTENCY_CONFLICT` bez původních dat. Klient drží otisk pouze v paměti komponenty, neposílá jej do analytiky. Stejný obsah ponechá ID; explicitní odeslání změněných údajů vytvoří nové ID. Po 409 se nová žádost vytvoří až dalším odesláním uživatele, bez automatického opakování.
+- **Ověření a stav:** 52 testů, lint, typecheck a build prošly; SQL chování ověřeno na Postgres s rollbackem. Trvalé nasazení migrace a aplikace zatím neproběhlo; viz `docs/qa-idempotency-2026-10-15.md`.
+
 ## ADR-001: Výběr ETF (VOO, IVV, SPY) a burzy (NYSE Arca)
 - **Kontext:** Zadání specifikuje ETF obchodované na NYSE pro českého retailového investora. Většina velkých amerických ETF je primárně kotována a obchodována na NYSE Arca (plně elektronická součást skupiny NYSE).
 - **Rozhodnutí:** Jako srovnávané fondy volíme tři největší a nejlikvidnější americké ETF na stejný benchmark (S&P 500 Index): Vanguard S&P 500 ETF (VOO), iShares Core S&P 500 ETF (IVV) a SPDR S&P 500 ETF Trust (SPY).

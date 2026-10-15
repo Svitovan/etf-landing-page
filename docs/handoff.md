@@ -1,5 +1,26 @@
 # Handoff Report
 
+## Request identity fix — 2026-10-15 (local implementation)
+
+- Implemented item 1 from the latest verification: an identical retry returns the original result; changed email, ETF set, amount, privacy version or dataset version raises `IDEMPOTENCY_CONFLICT` and HTTP 409 without changing the saved submission.
+- Client retries keep the same ID for the same normalized payload. An explicit submission of edited fields starts a new attempt; after a 409 the next explicit submit also gets a fresh ID.
+- Added migration `20261015101054_enforce_lead_request_identity.sql` with a transaction-scoped advisory lock per request ID. Previous migrations remain unchanged.
+- Verified 52/52 tests, lint, typecheck and production build. The replacement function and SQL assertions passed against Supabase Postgres inside a rolled-back transaction. Catalog inspection afterward confirmed the production function still has the old behavior.
+- **Activation pending:** apply the new migration and deploy the application changes. This implementation has not been committed, pushed or deployed. Detailed checks and activation steps: [qa-idempotency-2026-10-15.md](qa-idempotency-2026-10-15.md).
+- The verification below is historical; this patch addresses its changed-payload finding locally. Other readiness findings remain outside this change.
+
+## Verified commit 4465301 — 2026-10-15 (Codex)
+
+Read [readiness-verification-4465301.ru.md](readiness-verification-4465301.ru.md) for the latest evidence. This section supersedes unverified claims below.
+
+- HEAD, origin/master and live Vercel production SHA match `4465301705d9ca22af8ed9ddad45fa25c2150b0d`; working tree was clean before this verification.
+- Both `submit_lead` and `check_rate_limit` are now installed in live Postgres, with service_role EXECUTE and no anon EXECUTE. Sequential lead fallback is removed.
+- Reverified 36 tests, structural data validation, lint, typecheck and build. Actual `npm ci` in a separate temporary copy without secrets succeeded; tests in that copy also passed 36/36.
+- New browser path: IVV / 250000 CZK saved through production, report highlights IVV, and all 7 journey events share one ad_b session. Rate-limit threshold tested within a rolled-back transaction; foreign Origin returns 403. Two concurrent requests with the same ID produced one submission in the tested run.
+- Remaining: changed-payload retry still returns 200/original result despite plan and QA T18 claiming rejection; source/QA/export/package evidence and Lighthouse/new PDF remain partial. See the report for exact scope. MDE is not defined in experiments.md despite the statement below.
+- Two synthetic audit submissions remain as evidence, not advertising conversions. Audit consent was revoked and session marked inactive.
+- No application code change, schema deployment, Git commit/push or email was performed by this verification. Only documentation was added/updated.
+
 ## 1. Souhrnný přehled řešení auditních zjištění (2026-10-15)
 
 Tato sekce dokumentuje nápravu 6 prioritních zjištění z nezávislého auditu (`docs/readiness-audit-2026-10-15.ru.md`):

@@ -105,6 +105,12 @@ npm run report:funnel
   - Idempotentní zpracování přes `requestId` (ochrana proti dvojkliku a timeoutům).
 - **Vydání materiálu:** Po odeslání uživatel získává odkaz na `/report`, kde má kompletní materiál k přečtení i tisku (PDF) přímo na webu.
 
+### Opakování žádosti a konflikt dat
+
+Stejný `requestId` se stejným obsahem vrací původní výsledek bez nové submission. Změna e-mailu, množiny ETF, částky, verze soukromí nebo datasetu vrací HTTP 409 (`IDEMPOTENCY_CONFLICT`). Pořadí ETF a normalizace e-mailu se nepovažují za změnu. Formulář ponechá ID při síťovém retry, ale při explicitním odeslání změněných údajů vytvoří novou žádost.
+
+**Stav opravy:** lokálně ověřeno, nasazení čeká. Je nutné aplikovat novou migraci `supabase/migrations/20261015101054_enforce_lead_request_identity.sql` a nasadit změny aplikace. Postup a důkazy: [docs/qa-idempotency-2026-10-15.md](docs/qa-idempotency-2026-10-15.md).
+
 ---
 
 ## 7. Analytika a odhad konverze
@@ -130,7 +136,7 @@ Vývoj probíhal ve spolupráci s asistentem v prostředí Antigravity IDE (Gemi
 
 ## 9. Výsledky testů a QA
 
-- **Automatické testy:** 35/35 unit/integračních testů úspěšných ve Vitestu a 100% validace datasetu (`npm test` a `npm run validate:data`).
+- **Automatické testy:** 52/52 testů úspěšných ve Vitestu po opravě identity žádosti (2026-10-15). Validace datasetu je popsána v předchozí nezávislé verifikaci; finanční data tato oprava nemění.
 - **Linter a typová kontrola:** `next lint` (0 varování/chyb) a `tsc --noEmit` (0 chyb).
 - **Produkční build:** `next build` probíhá úspěšně s minimální velikostí First Load JS (87.2 kB).
 - Kompletní QA protokol je k dispozici v [docs/qa-report.md](docs/qa-report.md).

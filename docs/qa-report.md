@@ -3,7 +3,9 @@
 **Datum provedení:** 2026-10-15  
 **Prostředí:** Node.js v24.19.0, npm 11.17.0, Next.js 14.2.35 (Production Build), Vitest 2.1.9  
 **Verze datasetu:** `2026-10-11`  
-**Testovací pokrytí:** 36 testů (14 kalkulačních, 22 backendových a bezpečnostních)
+**Testovací pokrytí po opravě idempotence:** 52 testů (14 kalkulačních, 28 backendových, 7 klientské identity žádosti, 3 RPC)
+
+**Aktualizace 2026-10-15:** Oprava T18 je ověřena v lokálním kódu a v SQL transakci s rollbackem; dosud není nasazena na produkci. [Podrobný protokol a aktivace](qa-idempotency-2026-10-15.md). Ostatní řádky níže tato dílčí kontrola znovu neověřovala; aktuální omezení jejich důkazů popisuje [nezávislá verifikace](readiness-verification-4465301.ru.md).
 
 ---
 
@@ -28,7 +30,7 @@
 | **T15** | Ochrana databáze (RLS) | Žádný anonymní přístup ke kontaktům | Všechny tabulky mají RLS bez anonymních politik | **PROŠLO** |
 | **T16** | Atomický Rate Limiting na serveru | Nadlimitní požadavky vrací 429; atomický čítač | Atomická RPC `check_rate_limit` blokuje nadlimitní pokusy | **PROŠLO** |
 | **T17** | Čistá instalace, lint a build | `typecheck`, `next lint`, `test` (36/36) a `next build` projdou bez chyb | Všechny příkazy skončily s exit code 0 | **PROŠLO** |
-| **T18** | Odmítnutí změněného payloadu při shodném requestId | Bezpečnostní integrita parametrů zabraňuje modifikaci existující žádosti | Server odmítá podvržená data se shodným ID | **PROŠLO** |
+| **T18** | Odmítnutí změněného payloadu při shodném requestId | HTTP 409 bez změny původní žádosti | Handler test vrací 409; SQL test odmítá změnu všech 5 polí, shodný retry přijme | **PROŠLO lokálně a SQL s rollbackem; nasazení čeká** |
 | **T19** | Výpočet konverzního trychtýře | Jmenovatel počítá pouze relace s `landing_observed` | Skript `scripts/funnel-report.ts` filtruje nepozorované relace | **PROŠLO** |
 | **T20** | Ochrana proti podvrženému Origin hlavičce | Blokování cross-origin požadavků z neautorizovaných domén | Endpoint `/api/leads` vrací HTTP 403 při cizím Origin | **PROŠLO** |
 

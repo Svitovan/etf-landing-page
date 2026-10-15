@@ -2,6 +2,11 @@
 
 import React, { useState, useId, useRef } from "react";
 import { trackEvent } from "../lib/analytics-client";
+import {
+  getLeadRequestAttempt,
+  LEAD_REQUEST_CONFLICT_CODE,
+  LeadRequestAttempt,
+} from "../lib/lead-request";
 
 interface LeadFormProps {
   selectedEtfs: string[];
@@ -19,8 +24,8 @@ export const LeadForm: React.FC<LeadFormProps> = ({
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
 
-  // A03: Persist attempt requestId across retries so network timeouts/retries do not generate duplicates
-  const attemptRequestIdRef = useRef<string | null>(null);
+  // Identical retries keep their ID; an explicit submission of changed data starts a new attempt.
+  const attemptRef = useRef<LeadRequestAttempt | null>(null);
 
   const emailInputId = useId();
 
@@ -43,13 +48,14 @@ export const LeadForm: React.FC<LeadFormProps> = ({
     setStatus("submitting");
     setErrorMessage(null);
 
-    if (!attemptRequestIdRef.current) {
-      attemptRequestIdRef.current =
-        typeof crypto !== "undefined" && crypto.randomUUID
-          ? crypto.randomUUID()
-          : `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
-    }
-    const requestId = attemptRequestIdRef.current;
+    const payload = {
+      email: trimmed,
+      selectedEtfs,
+      positionValueCzk,
+      privacyVersion: "2026-10-11",
+    };
+    attemptRef.current = getLeadRequestAttempt(attemptRef.current, payload);
+    const { requestId } = attemptRef.current;
 
     trackEvent("form_submit_attempted", { requestId });
 
@@ -61,10 +67,7 @@ export const LeadForm: React.FC<LeadFormProps> = ({
         },
         body: JSON.stringify({
           requestId,
-          email: trimmed,
-          selectedEtfs,
-          positionValueCzk,
-          privacyVersion: "2026-10-11",
+          ...payload,
           website: honeypot, // Honeypot must be empty
         }),
       });
@@ -75,6 +78,10 @@ export const LeadForm: React.FC<LeadFormProps> = ({
         setStatus("success");
         setReportUrl(data.reportUrl || `/report?amount=${positionValueCzk}`);
       } else {
+        if (response.status === 409 && data.errorCode === LEAD_REQUEST_CONFLICT_CODE) {
+          // A new ID is created only on the user's next submit, never by an automatic retry.
+          attemptRef.current = null;
+        }
         setStatus("error");
         const msg = data.error || "Omlouváme se, uložení kontaktu se nezdařilo. Zkuste to prosím znovu.";
         setErrorMessage(msg);
