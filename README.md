@@ -123,16 +123,16 @@ Otevřete v prohlížeči: [http://localhost:3000/?utm_content=ad_a](http://loca
 Vývoj probíhal ve spolupráci s asistentem v prostředí Antigravity IDE (Gemini 3.8 Flash) s přísnými kontrolními mechanismy:
 1. **Nulová tolerance halucinací:** Žádné fiktivní recenze, smyšlené statistiky ani vygenerovaná čísla. Všechny finanční hodnoty pocházejí z auditovaných primárních odkazů.
 2. **Deterministické testování:** Zjištěné floating-point nepřesnosti v JavaScriptu (např. `100 000 * 0.0003 = 29.999999999999996`) byly zachyceny testy Vitest a opraveny zaokrouhlováním na 4 desetinná místa.
-3. **Log chyb:** Skutečné odhalené nepřesnosti AI jsou zaznamenány v [ai-log/mistakes.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/ai-log/mistakes.md).
+3. **Log chyb:** Skutečné odhalené nepřesnosti AI jsou zaznamenány v [ai-log/mistakes.md](ai-log/mistakes.md).
 
 ---
 
 ## 9. Výsledky testů a QA
 
-- **Automatické testy:** 31/31 unit testů úspěšných ve Vitestu a 100% validace datasetu (`npm test` a `npm run validate:data`).
+- **Automatické testy:** 35/35 unit/integračních testů úspěšných ve Vitestu a 100% validace datasetu (`npm test` a `npm run validate:data`).
 - **Linter a typová kontrola:** `next lint` (0 varování/chyb) a `tsc --noEmit` (0 chyb).
 - **Produkční build:** `next build` probíhá úspěšně s minimální velikostí First Load JS (87.2 kB).
-- Kompletní QA protokol je k dispozici v [docs/qa-report.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/docs/qa-report.md).
+- Kompletní QA protokol je k dispozici v [docs/qa-report.md](docs/qa-report.md).
 
 ---
 
@@ -143,7 +143,7 @@ Dobrý den, pane Lörinci,
 
 zasílám řešení zadání B – konverzní landing page se srovnáním ETF pro českého investora.
 
-GitHub repozitář: [URL veřejného repozitáře]
+GitHub repozitář: https://github.com/Svitovan/etf-landing-page
 Živá verze stránky: [URL nasazeného webu na Vercelu]
 
 V repozitáři najdete:

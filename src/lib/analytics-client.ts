@@ -71,13 +71,13 @@ export async function trackEvent(
     return;
   }
 
-  const eventId =
-    typeof crypto !== "undefined" && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `ev-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+  const sendEvent = async (): Promise<Response> => {
+    const eventId =
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `ev-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
 
-  try {
-    await fetch("/api/events", {
+    return fetch("/api/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -86,7 +86,20 @@ export async function trackEvent(
         properties: properties || {},
       }),
     });
+  };
+
+  try {
+    const res = await sendEvent();
+
+    // A05: If session expired (403), re-initialize session and retry event delivery once
+    if (res.status === 403) {
+      const reinitialized = await initAnalyticsSession();
+      if (reinitialized) {
+        await sendEvent();
+      }
+    }
   } catch {
     // Analytics error must never block user flow
   }
 }
+

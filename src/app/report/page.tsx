@@ -9,6 +9,7 @@ import {
   DEFAULT_POSITION_CZK,
 } from "../../lib/calculations";
 import { PrintButton } from "./PrintButton";
+import { ReportViewTracker } from "./ReportViewTracker";
 
 export const metadata: Metadata = {
   title: "Přehled srovnání ETF a kontrolní seznam pro investora | ETF Přehled",
@@ -27,8 +28,9 @@ interface ReportPageProps {
 export default function ReportPage({ searchParams }: ReportPageProps) {
   const allEtfs = etfData.etfs as unknown as EtfRecord[];
 
-  // Safe parsing of amount parameter
+  // Safe parsing of amount and selected ETFs parameters
   const rawAmount = searchParams?.amount || String(DEFAULT_POSITION_CZK);
+  const rawEtfs = searchParams?.etfs || "VOO,IVV,SPY";
   const parsed = parseCzkInput(rawAmount);
   const positionValueCzk = parsed.value !== null ? parsed.value : DEFAULT_POSITION_CZK;
 
@@ -44,6 +46,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
         paddingBottom: "4rem",
       }}
     >
+      <ReportViewTracker amount={positionValueCzk} etfs={rawEtfs} />
       <div className="container print-page" style={{ maxWidth: "780px" }}>
         {/* Navigation & Print Actions bar (hidden in print) */}
         <div
@@ -317,39 +320,79 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
 
             <dl style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.6rem", fontSize: "0.85rem" }}>
               <div>
-                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>Expense Ratio (Roční nákladovost):</dt>
+                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>Expense Ratio (Roční nákladovost fondu):</dt>
                 <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
-                  Procento z hodnoty majetku, které si správce fondu průběžně strhává na pokrytí provozních nákladů. Neplatí se převodem, je zohledněno v kurzu (NAV).
+                  Procento z hodnoty majetku, které si správce fondu průběžně strhává na pokrytí provozních nákladů. Neplatí se převodem, je plynule zohledněno v kurzu (NAV).
                 </dd>
               </div>
 
               <div>
-                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>KID (Key Information Document):</dt>
+                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>NAV (Net Asset Value / Čistá hodnota aktiv):</dt>
                 <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
-                  Zákonem vyžadovaný třístránkový souhrn klíčových informací o produktu v jazyce daného státu EU.
+                  Tržní hodnota veškerého majetku fondu (akcií a hotovosti) po odečtení závazků, přepočtená na jeden podílový list. Stanovuje se po uzavření trhu a slouží jako férová hodnota, od níž se odvíjí burzovní cena.
+                </dd>
+              </div>
+
+              <div>
+                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>Bid-Ask Spread (Rozpětí nákupní a prodejní ceny):</dt>
+                <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
+                  Rozdíl mezi nejvyšší nabídkou k nákupu (Bid) a nejnižší nabídkou k prodeji (Ask) na burze NYSE Arca. U vysoce likvidních fondů SPY, VOO a IVV činí běžně pouhý 1 cent (setiny procenta), což minimalizuje skryté náklady obchodu.
+                </dd>
+              </div>
+
+              <div>
+                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>KID (Key Information Document / Sdělení klíčových informací):</dt>
+                <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
+                  Zákonem vyžadovaný třístránkový souhrn informací v jazyce daného státu EU. Americké fondy (VOO, IVV, SPY) KID v češtině nemají, což je důvodem omezení u části retailových brokerů.
+                </dd>
+              </div>
+
+              <div>
+                <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>Reinvestování dividend (Akumulační vs. Distribuční fondy):</dt>
+                <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
+                  US ETF fondy jsou ze zákona distribuční (vyplácejí dividendy v hotovosti na účet investora, kde podléhají 15% srážkové dani). Evropské ekvivalenty (UCITS) často nabízejí akumulační třídu („Acc“), která dividendy automaticky reinvestuje uvnitř fondu bez vzniku zdanitelného příjmu.
                 </dd>
               </div>
 
               <div>
                 <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>UCITS:</dt>
                 <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
-                  Evropský standard pro fondy splňující přísná pravidla ochrany retailových investorů. UCITS fondy jsou běžně dostupné u všech evropských brokerů.
+                  Evropský regulační standard pro fondy splňující přísná pravidla ochrany retailových investorů v EU.
                 </dd>
               </div>
             </dl>
           </section>
 
-          {/* Footer note */}
+          {/* Footer note with clickable primary sources */}
           <footer
             style={{
               borderTop: "1px solid var(--border-light)",
               paddingTop: "1rem",
               fontSize: "0.78rem",
               color: "var(--text-light)",
-              lineHeight: 1.45,
+              lineHeight: 1.5,
             }}
           >
-            Materiál vygenerován pro vzdělávací účely &bull; Zdroje: oficiální factsheety Vanguard, BlackRock iShares, State Street Global Advisors a NYSE Arca &bull; Nenahrazuje odborné finanční ani daňové poradenství.
+            <div>
+              <strong>Ověřené primární zdroje dat (NYSE Arca):</strong>
+            </div>
+            <div style={{ marginTop: "0.3rem", display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+              <a href="https://corporate.vanguard.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+                Vanguard VOO Prospectus &rarr;
+              </a>
+              <a href="https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+                iShares IVV Factsheet &rarr;
+              </a>
+              <a href="https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+                State Street SPY Prospectus &rarr;
+              </a>
+              <a href="https://www.nyse.com/markets/nyse-arca" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+                NYSE Arca Trading &rarr;
+              </a>
+            </div>
+            <div style={{ marginTop: "0.6rem" }}>
+              Materiál vygenerován pro vzdělávací účely. Nenahrazuje odborné finanční ani daňové poradenství.
+            </div>
           </footer>
         </article>
       </div>

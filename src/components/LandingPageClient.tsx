@@ -24,7 +24,7 @@ export const LandingPageClient: React.FC<LandingPageClientProps> = ({
   campaign,
 }) => {
   const [positionValueCzk, setPositionValueCzk] = useState<number>(100_000);
-  const selectedEtfs = ["VOO", "IVV", "SPY"];
+  const [selectedEtfs, setSelectedEtfs] = useState<string[]>(["VOO", "IVV", "SPY"]);
 
   useEffect(() => {
     // If user already granted consent in previous visit, track landing view
@@ -43,7 +43,7 @@ export const LandingPageClient: React.FC<LandingPageClientProps> = ({
       <Header />
       <main id="main-content">
         <Hero campaign={campaign} />
-        <EtfComparison etfs={etfs} />
+        <EtfComparison etfs={etfs} onSelectEtfs={setSelectedEtfs} />
         <CostCalculator
           etfs={etfs}
           onCalculationChange={handleCalculationChange}

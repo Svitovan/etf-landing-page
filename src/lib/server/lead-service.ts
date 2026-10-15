@@ -22,24 +22,61 @@ export async function saveLeadSubmission(
 ): Promise<LeadSaveResult> {
   const normalizedEmail = payload.email.trim().toLowerCase();
   const datasetVersion = process.env.DATASET_VERSION || "2026-10-11";
-  const reportUrl = `/report?amount=${payload.positionValueCzk}&etfs=${payload.selectedEtfs.join(",")}`;
+  const requestedReportUrl = `/report?amount=${payload.positionValueCzk}&etfs=${payload.selectedEtfs.join(",")}`;
 
   const supabase = getSupabaseServerClient();
 
+  // A01: In production environment, permanent storage is strictly required
+  if (process.env.NODE_ENV === "production" && !supabase) {
+    throw new Error(
+      "PRODUCTION_STORAGE_NOT_CONFIGURED: Permanent storage is required in production environment."
+    );
+  }
+
   if (supabase) {
+    // A02: Attempt atomic database RPC procedure first (single Postgres transaction)
+    try {
+      const { data: rpcResult, error: rpcErr } = await supabase.rpc("submit_lead", {
+        p_request_id: payload.requestId,
+        p_email: payload.email.trim(),
+        p_normalized_email: normalizedEmail,
+        p_selected_etfs: payload.selectedEtfs,
+        p_position_value_czk: payload.positionValueCzk,
+        p_privacy_version: payload.privacyVersion,
+        p_dataset_version: datasetVersion,
+        p_analytics_session_id: analyticsSessionId,
+      });
+
+      if (!rpcErr && rpcResult && rpcResult.success) {
+        const reportUrl = `/report?amount=${rpcResult.position_value_czk}&etfs=${(rpcResult.selected_etfs || []).join(",")}`;
+        return {
+          success: true,
+          leadId: rpcResult.lead_id,
+          submissionId: rpcResult.submission_id,
+          reportUrl,
+          isNewLead: rpcResult.is_new_lead,
+          isDuplicateRequest: rpcResult.is_duplicate_request,
+        };
+      }
+    } catch {
+      // Fall through to sequential handling with rollback if RPC is not deployed yet
+    }
+
     // 1. Check idempotency: Has this requestId already been processed?
     const { data: existingSub } = await supabase
       .from("lead_submissions")
-      .select("id, lead_id, request_id")
+      .select("id, lead_id, request_id, position_value_czk, selected_etfs")
       .eq("request_id", payload.requestId)
       .single();
 
     if (existingSub) {
+      // A03: Return the original submission parameters, ignoring any modified retry payload
+      const originalReportUrl = `/report?amount=${existingSub.position_value_czk}&etfs=${(existingSub.selected_etfs || []).join(",")}`;
       return {
         success: true,
         leadId: existingSub.lead_id,
         submissionId: existingSub.id,
-        reportUrl,
+        reportUrl: originalReportUrl,
         isNewLead: false,
         isDuplicateRequest: true,
       };
@@ -74,7 +111,7 @@ export async function saveLeadSubmission(
       isNewLead = true;
     }
 
-    // 3. Insert submission
+    // 3. Insert submission (with rollback of orphan lead if new lead was created)
     const { data: newSub, error: subErr } = await supabase
       .from("lead_submissions")
       .insert({
@@ -90,6 +127,10 @@ export async function saveLeadSubmission(
       .single();
 
     if (subErr || !newSub) {
+      if (isNewLead) {
+        // Rollback inserted lead to avoid orphan contact records without submissions
+        await supabase.from("leads").delete().eq("id", leadId);
+      }
       throw new Error(`Failed to save submission: ${subErr?.message || "Unknown error"}`);
     }
 
@@ -97,21 +138,23 @@ export async function saveLeadSubmission(
       success: true,
       leadId,
       submissionId: newSub.id,
-      reportUrl,
+      reportUrl: requestedReportUrl,
       isNewLead,
       isDuplicateRequest: false,
     };
   }
 
-  // Fallback to MemoryStore (local / test environment)
+  // Fallback to MemoryStore (strictly for local development and test environment)
   // 1. Check idempotency
   const existingSub = memoryStore.submissions.find((s) => s.request_id === payload.requestId);
   if (existingSub) {
+    // A03: Return the original submission parameters, ignoring any modified retry payload
+    const originalReportUrl = `/report?amount=${existingSub.position_value_czk}&etfs=${existingSub.selected_etfs.join(",")}`;
     return {
       success: true,
       leadId: existingSub.lead_id,
       submissionId: existingSub.id,
-      reportUrl,
+      reportUrl: originalReportUrl,
       isNewLead: false,
       isDuplicateRequest: true,
     };
@@ -150,7 +193,7 @@ export async function saveLeadSubmission(
     success: true,
     leadId: lead.id,
     submissionId: submission.id,
-    reportUrl,
+    reportUrl: requestedReportUrl,
     isNewLead,
     isDuplicateRequest: false,
   };

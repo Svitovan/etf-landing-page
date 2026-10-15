@@ -25,6 +25,20 @@ export const LeadSubmissionSchema = z.object({
 
 export type LeadSubmissionPayload = z.infer<typeof LeadSubmissionSchema>;
 
+// A06: Strictly allowlisted properties preventing any PII (email, rawUrl, ip) from being ingested
+export const AnalyticsPropertiesSchema = z
+  .object({
+    pageVersion: z.string().max(20).optional(),
+    formVersion: z.string().max(30).optional(),
+    selectedEtfs: z.string().max(50).optional(),
+    ctaLocation: z.string().max(30).optional(),
+    requestId: z.string().max(64).optional(),
+    errorCode: z.string().max(50).optional(),
+    amount: z.number().max(100_000_000).optional(),
+    etfs: z.string().max(50).optional(),
+  })
+  .strict("Nepovolené vlastnosti analytické události (PII a neznámé klíče jsou zakázány)");
+
 export const AnalyticsEventSchema = z.object({
   eventId: z.string().uuid("Neplatné eventId"),
   eventName: z.enum([
@@ -37,7 +51,8 @@ export const AnalyticsEventSchema = z.object({
     "form_submit_failed",
     "report_opened",
   ]),
-  properties: z.record(z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
+  properties: AnalyticsPropertiesSchema.optional(),
 });
 
 export type AnalyticsEventPayload = z.infer<typeof AnalyticsEventSchema>;
+

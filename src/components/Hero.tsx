@@ -1,5 +1,6 @@
 import React from "react";
 import { CampaignHeadline } from "../data/campaign-copy";
+import { trackEvent } from "../lib/analytics-client";
 
 interface HeroProps {
   campaign: CampaignHeadline;
@@ -125,6 +126,7 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
               href="#ziskat-prehled"
               className="btn-secondary"
               id="hero-cta-checklist"
+              onClick={() => trackEvent("lead_cta_clicked", { ctaLocation: "hero" })}
               style={{ width: "100%", justifyContent: "center", textAlign: "center" }}
             >
               Získat srovnání a kontrolní seznam

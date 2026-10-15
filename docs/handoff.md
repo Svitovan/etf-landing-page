@@ -1,5 +1,17 @@
 # Handoff Report
 
+## Audit Resolution & System Hardening — 2026-10-15 (Audit defect closure)
+
+- **Vyřešeny kritické nálezy z nezávislého auditu (`docs/readiness-audit-2026-10-11.ru.md`):**
+  - **A01 (Produkční ochrana úložiště):** V `lead-service.ts` zaveden zákaz falešného úspěchu v produkci. Pokud v `NODE_ENV === "production"` není připojeno stálé databázové úložiště, API vrací korektní HTTP 503 namísto zápisu do těkavé paměti.
+  - **A02 (Atomický zápis kontaktu a přihlášky):** Vytvořena PostgreSQL migrace `supabase/migrations/20261015000000_atomic_lead_submission.sql` s transakční funkcí `submit_lead(...)`. V aplikačním kódu doplněn rollback při selhání druhého kroku.
+  - **A03 (Uchování parametrů při retry):** `LeadForm.tsx` udržuje stabilní `requestId` přes opakované pokusy o odeslání. Server při duplicitním `requestId` vrací původní parametry (amount a etfs) z existující submission.
+  - **A05 & A06 (Měření cesty a ochrana soukromí):** Zapojeny chybějící události `comparison_viewed`, `lead_cta_clicked` a `report_opened`. Doplněno automatické obnovení vypršené 30min relace při uděleném souhlasu. `AnalyticsEventSchema` striktně filtruje vlastnosti událostí a odmítá jakákoliv PII pole (email, rawUrl).
+  - **A10 (Obsah reportu a kontrolního seznamu):** `/report` nově dynamicky filtruje/zvýrazňuje fondy dle parametru `etfs`. Ve slovníčku doplněny chybějící definice NAV, Bid-Ask spreadu a reinvestování dividend. V zápatí doplněny přímé klikatelné odkazy na factsheety a NYSE Arca.
+  - **A11 (Čištění dat a soukromí):** Ve skriptu `cleanup-data.ts` opraven dotaz na `rate_limit_buckets` (používá platný sloupec `expires_at`), e-maily v konzoli jsou maskovány (`a***t@domena.cz`). Na stránce `/privacy` uveden konkrétní kontakt správce pro uplatnění práv dle GDPR.
+  - **Přístupnost (Honeypot):** Skryté honeypot pole opatřeno atributem `aria-hidden="true"`.
+  - **Ověřeno:** 35/35 unit a integračních testů prochází (`npm test`), `next lint` (0 varování), `tsc --noEmit` (0 chyb), `next build` úspěšný.
+
 ## Supabase Database Connection & Diagnostics — 2026-10-15
 
 - **Připojení k reálnému Supabase projektu (`hozaudrjlouiggtliwzs`):**

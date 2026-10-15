@@ -1,17 +1,40 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { EtfRecord } from "../types/etf";
+import { trackEvent } from "../lib/analytics-client";
 
 interface EtfComparisonProps {
   etfs: EtfRecord[];
-  onSelectEtfs?: (selectedIds: string[]) => void;
+  onSelectEtfs?: (selectedTickers: string[]) => void;
 }
 
-export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs }) => {
+export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs }) => {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showSources, setShowSources] = useState<boolean>(false);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+  const hasTrackedViewRef = useRef<boolean>(false);
+
+  useEffect(() => {
+    if (!hasTrackedViewRef.current) {
+      hasTrackedViewRef.current = true;
+      trackEvent("comparison_viewed", {
+        selectedEtfs: activeTab === "all" ? "VOO,IVV,SPY" : activeTab.toUpperCase(),
+      });
+    }
+  }, [activeTab]);
+
+  const handleTabChange = (tabId: string) => {
+    setActiveTab(tabId);
+    if (onSelectEtfs) {
+      if (tabId === "all") {
+        onSelectEtfs(["VOO", "IVV", "SPY"]);
+      } else {
+        const found = etfs.find((e) => e.id === tabId);
+        onSelectEtfs(found ? [found.ticker.value] : ["VOO", "IVV", "SPY"]);
+      }
+    }
+  };
 
   const toggleCardDetails = (id: string) => {
     setExpandedCards((prev) => ({
@@ -103,7 +126,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs }) => {
         >
           <button
             type="button"
-            onClick={() => setActiveTab("all")}
+            onClick={() => handleTabChange("all")}
             style={{
               padding: "0.45rem 0.9rem",
               borderRadius: "var(--radius-full)",
@@ -123,7 +146,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs }) => {
             <button
               key={etf.id}
               type="button"
-              onClick={() => setActiveTab(etf.id)}
+              onClick={() => handleTabChange(etf.id)}
               style={{
                 padding: "0.45rem 0.9rem",
                 borderRadius: "var(--radius-full)",

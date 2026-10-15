@@ -36,10 +36,10 @@ export default function PrivacyPage() {
 
           <section style={{ marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-              1. Provozovatel a účel projektu
+              1. Správce a účel projektu
             </h2>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-              Tento web je demonstrativním a vzdělávacím projektem v rámci výběrového řízení na pozici Junior AI Developer. Nejedná se o komerční finanční službu ani registrovaného obchodníka s cennými papíry.
+              Tento web je demonstračním a vzdělávacím projektem v rámci výběrového řízení na pozici Junior AI Developer pro společnost Clientelo. Správcem osobních údajů je autor projektu (kontakt pro uplatnění práv subjektů údajů: <strong>jana4ek@gmail.com</strong>).
             </p>
           </section>
 
@@ -48,12 +48,13 @@ export default function PrivacyPage() {
               2. Zpracování e-mailových adres
             </h2>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-              Při odeslání formuláře zadáváte svou e-mailovou adresu výhradně za účelem vyžádání a doručení vzdělávacího materiálu (Srovnání ETF + kontrolní seznam).
+              Při odeslání formuláře zadáváte svou e-mailovou adresu výhradně za účelem vyžádání a okamžitého zobrazení vzdělávacího materiálu (Srovnání ETF + kontrolní seznam).
             </p>
             <ul style={{ fontSize: "0.88rem", color: "var(--text-muted)", paddingLeft: "1.2rem", marginTop: "0.4rem" }}>
-              <li><strong>Právní základ:</strong> Plnění požadavku uživatele (poskytnutí vyžádaného materiálu).</li>
-              <li><strong>Marketing:</strong> Váš e-mail NENÍ automaticky zařazen do žádné marketingové databáze ani předáván třetím stranám.</li>
-              <li><strong>Doba uchování:</strong> Demonstrační data a kontakty jsou uchovávány maximálně 30 dní, po kterých jsou trvale smazány.</li>
+              <li><strong>Právní základ:</strong> Plnění požadavku uživatele (poskytnutí vyžádaného materiálu dle čl. 6 odst. 1 písm. b GDPR).</li>
+              <li><strong>Marketing a sdílení:</strong> Váš e-mail NENÍ zařazen do marketingových rozesílek ani předáván třetím stranám k reklamním účelům.</li>
+              <li><strong>Technologičtí zpracovatelé:</strong> Data jsou ukládána v zabezpečené databázi Supabase (PostgreSQL) a web je hostován na platformě Vercel.</li>
+              <li><strong>Doba uchování:</strong> Demonstrační data a kontakty jsou uchovávány maximálně 30 dní, po kterých jsou trvale smazány automatizovaným čisticím skriptem.</li>
             </ul>
           </section>
 
@@ -62,19 +63,19 @@ export default function PrivacyPage() {
               3. Cookies a analytika
             </h2>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-              V souladu s pokyny Úřadu pro ochranu osobních údajů (ÚOOÚ) a evropskou legislativou nespouštíme žádnou behaviorální analytiku před vaším výslovným souhlasem.
+              V souladu s pokyny Úřadu pro ochranu osobních údajů (ÚOOÚ) a evropskou směrnicí ePrivacy nespouštíme žádnou behaviorální analytiku před vaším výslovným souhlasem v cookie liště.
             </p>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)", marginTop: "0.4rem" }}>
-              Pokud analytiku povolíte, je vytvořena pseudonymní relace trvající 30 minut. Nesbíráme vaši IP adresu ani osobní údaje v analytických událostech. Svůj souhlas můžete kdykoliv odvolat odkazem v zápatí stránky.
+              Pokud analytiku povolíte, je vytvořena pseudonymní relace trvající 30 minut. Nesbíráme vaši IP adresu ani osobní údaje v analytických událostech (všechny vlastnosti událostí procházejí striktním filtrem bez PII). Svůj souhlas můžete kdykoliv odvolat odkazem v zápatí stránky.
             </p>
           </section>
 
           <section style={{ marginBottom: "1.5rem" }}>
             <h2 style={{ fontSize: "1.15rem", fontWeight: 700, marginBottom: "0.5rem" }}>
-              4. Vaše práva
+              4. Vaše práva dle GDPR
             </h2>
             <p style={{ fontSize: "0.9rem", color: "var(--text-muted)" }}>
-              Dle nařízení GDPR máte právo na přístup k údajům, opravu, výmaz („právo být zapomenut“) nebo vznesení námitky. Pro smazání jakéhokoliv testovacího záznamu se můžete obrátit na repozitář projektu.
+              Dle nařízení GDPR máte právo na přístup k údajům, opravu, výmaz („právo být zapomenut“) nebo vznesení námitky. Pro okamžité smazání jakéhokoliv testovacího záznamu napište na <strong>jana4ek@gmail.com</strong>, případně správce zajistí smazání spuštěním skriptu pro selektivní výmaz.
             </p>
           </section>
         </article>

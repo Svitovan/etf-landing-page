@@ -13,7 +13,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { parseCzkInput, DEFAULT_POSITION_CZK } from "../src/lib/calculations";
 import { cleanupData } from "../scripts/cleanup-data";
-import { LeadSubmissionSchema } from "../src/lib/validation";
+import { LeadSubmissionSchema, AnalyticsEventSchema } from "../src/lib/validation";
 
 describe("T04: Server Payload & Email Validation", () => {
   it("rejects invalid email formats", () => {
@@ -380,4 +380,106 @@ describe("Data Retention & Cleanup (cleanup-data.ts)", () => {
     expect(memoryStore.leads[0].id).toBe("new-lead-id");
   });
 });
+
+describe("T17: Strict Analytics Event Properties & PII Rejection (A06)", () => {
+  it("rejects analytics events containing PII properties like email or rawUrl", () => {
+    const invalidEmailProp = AnalyticsEventSchema.safeParse({
+      eventId: "33333333-3333-4333-8333-333333333333",
+      eventName: "landing_observed",
+      properties: {
+        email: "leak@example.com",
+      },
+    });
+    expect(invalidEmailProp.success).toBe(false);
+
+    const invalidUrlProp = AnalyticsEventSchema.safeParse({
+      eventId: "33333333-3333-4333-8333-333333333333",
+      eventName: "landing_observed",
+      properties: {
+        rawUrl: "https://example.com/?leak=1",
+      },
+    });
+    expect(invalidUrlProp.success).toBe(false);
+  });
+
+  it("accepts valid, allowlisted event properties", () => {
+    const valid = AnalyticsEventSchema.safeParse({
+      eventId: "44444444-4444-4444-8444-444444444444",
+      eventName: "lead_cta_clicked",
+      properties: {
+        ctaLocation: "hero",
+      },
+    });
+    expect(valid.success).toBe(true);
+  });
+});
+
+describe("T18: Retry Idempotency & Original Payload Preservation (A03)", () => {
+  beforeEach(() => {
+    memoryStore.reset();
+  });
+
+  it("returns original submission parameters on retry even if request payload is altered", async () => {
+    const fixedReqId = "55555555-5555-4555-8555-555555555555";
+
+    // First attempt: 100 000 CZK for VOO
+    const firstRes = await saveLeadSubmission(
+      {
+        requestId: fixedReqId,
+        email: "investor@example.cz",
+        selectedEtfs: ["VOO"],
+        positionValueCzk: 100_000,
+        privacyVersion: "2026-10-11",
+      },
+      null
+    );
+    expect(firstRes.success).toBe(true);
+    expect(firstRes.isDuplicateRequest).toBe(false);
+    expect(firstRes.reportUrl).toContain("amount=100000");
+    expect(firstRes.reportUrl).toContain("etfs=VOO");
+
+    // Retry attempt: same requestId, but attacker/changed payload specifies 500 000 CZK and SPY
+    const retryRes = await saveLeadSubmission(
+      {
+        requestId: fixedReqId,
+        email: "investor@example.cz",
+        selectedEtfs: ["SPY"],
+        positionValueCzk: 500_000,
+        privacyVersion: "2026-10-11",
+      },
+      null
+    );
+    expect(retryRes.success).toBe(true);
+    expect(retryRes.isDuplicateRequest).toBe(true);
+    // Must return the ORIGINAL submission parameters (100 000 CZK, VOO), NOT altered params!
+    expect(retryRes.reportUrl).toContain("amount=100000");
+    expect(retryRes.reportUrl).toContain("etfs=VOO");
+  });
+});
+
+describe("T19: Production Storage Guard (A01)", () => {
+  it("throws error in production when permanent database is not configured", async () => {
+    const originalEnv = process.env.NODE_ENV;
+    const env = process.env as Record<string, string | undefined>;
+    try {
+      env.NODE_ENV = "production";
+
+      await expect(
+        saveLeadSubmission(
+          {
+            requestId: "66666666-6666-4666-8666-666666666666",
+            email: "prod-test@example.cz",
+            selectedEtfs: ["VOO"],
+            positionValueCzk: 100_000,
+            privacyVersion: "2026-10-11",
+          },
+          null
+        )
+      ).rejects.toThrow("PRODUCTION_STORAGE_NOT_CONFIGURED");
+    } finally {
+      env.NODE_ENV = originalEnv;
+    }
+  });
+});
+
 

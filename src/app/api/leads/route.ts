@@ -2,12 +2,40 @@ import { NextRequest, NextResponse } from "next/server";
 import { LeadSubmissionSchema } from "../../../lib/validation";
 import { checkRateLimit } from "../../../lib/server/rate-limit";
 import { saveLeadSubmission } from "../../../lib/server/lead-service";
+import { isSessionValid } from "../../../lib/server/analytics";
 
 const MAX_PAYLOAD_BYTES = 8 * 1024; // 8 KB
 
 export async function POST(req: NextRequest) {
   try {
-    // 1. Content size check
+    // A07: Content-Type verification
+    const contentType = req.headers.get("content-type");
+    if (!contentType || !contentType.toLowerCase().includes("application/json")) {
+      return NextResponse.json(
+        { success: false, error: "Neplatný formát požadavku (očekáván application/json)." },
+        { status: 415 }
+      );
+    }
+
+    // A07: Origin / Referer check in production if APP_ORIGIN is specified
+    const appOrigin = process.env.APP_ORIGIN;
+    if (appOrigin && process.env.NODE_ENV === "production") {
+      const origin = req.headers.get("origin");
+      const referer = req.headers.get("referer");
+      const expectedHost = new URL(appOrigin).host;
+
+      const originHost = origin ? new URL(origin).host : null;
+      const refererHost = referer ? new URL(referer).host : null;
+
+      if ((originHost && originHost !== expectedHost) || (refererHost && refererHost !== expectedHost)) {
+        return NextResponse.json(
+          { success: false, error: "Neplatný původ požadavku." },
+          { status: 403 }
+        );
+      }
+    }
+
+    // 1. Content size check (header)
     const contentLength = req.headers.get("content-length");
     if (contentLength && parseInt(contentLength, 10) > MAX_PAYLOAD_BYTES) {
       return NextResponse.json(
@@ -34,7 +62,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 3. Body validation
+    // 3. Body validation & exact UTF-8 byte size limit
     let bodyText: string;
     try {
       bodyText = await req.text();
@@ -45,7 +73,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (bodyText.length > MAX_PAYLOAD_BYTES) {
+    if (Buffer.byteLength(bodyText, "utf8") > MAX_PAYLOAD_BYTES) {
       return NextResponse.json(
         { success: false, error: "Požadavek překračuje povolenou velikost." },
         { status: 413 }
@@ -73,11 +101,18 @@ export async function POST(req: NextRequest) {
 
     const payload = validationResult.data;
 
-    // 4. Extract analytics session cookie if user granted consent
+    // A06: Extract and strictly validate analytics session cookie before linking
+    let validatedSessionId: string | null = null;
     const sessionIdCookie = req.cookies.get("etf_session")?.value || null;
+    if (sessionIdCookie) {
+      const valid = await isSessionValid(sessionIdCookie);
+      if (valid) {
+        validatedSessionId = sessionIdCookie;
+      }
+    }
 
     // 5. Save lead atomically
-    const result = await saveLeadSubmission(payload, sessionIdCookie);
+    const result = await saveLeadSubmission(payload, validatedSessionId);
 
     return NextResponse.json({
       success: true,
@@ -95,3 +130,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

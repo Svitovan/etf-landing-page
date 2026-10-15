@@ -66,8 +66,8 @@ export async function cleanupData(options: CleanupOptions = {}): Promise<Cleanup
 
     const { count: rateLimitsCount } = await supabase
       .from("rate_limit_buckets")
-      .select("id", { count: "exact", head: true })
-      .lt("created_at", rateLimitCutoff);
+      .select("bucket_key", { count: "exact", head: true })
+      .lt("expires_at", new Date().toISOString());
 
     if (!dryRun) {
       if (leadsToDeleteIds.length > 0) {
@@ -76,7 +76,7 @@ export async function cleanupData(options: CleanupOptions = {}): Promise<Cleanup
       }
       await supabase.from("analytics_events").delete().lt("server_timestamp", cutoffIso);
       await supabase.from("analytics_sessions").delete().lt("created_at", cutoffIso);
-      await supabase.from("rate_limit_buckets").delete().lt("created_at", rateLimitCutoff);
+      await supabase.from("rate_limit_buckets").delete().lt("expires_at", new Date().toISOString());
     }
 
     return {
@@ -137,6 +137,13 @@ export async function cleanupData(options: CleanupOptions = {}): Promise<Cleanup
   };
 }
 
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  if (!domain) return "***";
+  const maskedLocal = local.length > 2 ? `${local[0]}***${local[local.length - 1]}` : `${local[0]}***`;
+  return `${maskedLocal}@${domain}`;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const isDryRun = args.includes("--dry-run");
@@ -149,7 +156,7 @@ async function main() {
   console.log(`Mode: ${isDryRun ? "DRY RUN (no changes will be applied)" : "LIVE EXECUTION"}`);
   console.log(`Retention threshold: ${olderThanDays} days`);
   if (targetEmail) {
-    console.log(`Targeting specific email: ${targetEmail}`);
+    console.log(`Targeting specific email: ${maskEmail(targetEmail)}`);
   }
 
   const result = await cleanupData({

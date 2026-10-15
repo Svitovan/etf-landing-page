@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState, useId, useRef } from "react";
 import { trackEvent } from "../lib/analytics-client";
 
 interface LeadFormProps {
@@ -18,6 +18,9 @@ export const LeadForm: React.FC<LeadFormProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [reportUrl, setReportUrl] = useState<string | null>(null);
   const [hasStarted, setHasStarted] = useState<boolean>(false);
+
+  // A03: Persist attempt requestId across retries so network timeouts/retries do not generate duplicates
+  const attemptRequestIdRef = useRef<string | null>(null);
 
   const emailInputId = useId();
 
@@ -40,9 +43,13 @@ export const LeadForm: React.FC<LeadFormProps> = ({
     setStatus("submitting");
     setErrorMessage(null);
 
-    const requestId = typeof crypto !== "undefined" && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    if (!attemptRequestIdRef.current) {
+      attemptRequestIdRef.current =
+        typeof crypto !== "undefined" && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `req-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    }
+    const requestId = attemptRequestIdRef.current;
 
     trackEvent("form_submit_attempted", { requestId });
 
@@ -176,8 +183,8 @@ export const LeadForm: React.FC<LeadFormProps> = ({
           }}
         />
 
-        {/* Honeypot field (hidden for assistive technology and humans) */}
-        <div style={{ position: "absolute", opacity: 0, pointerEvents: "none", height: 0, width: 0, overflow: "hidden" }}>
+        {/* Honeypot field (strictly hidden from screen readers and humans) */}
+        <div aria-hidden="true" style={{ position: "absolute", opacity: 0, pointerEvents: "none", height: 0, width: 0, overflow: "hidden" }}>
           <label htmlFor="website-field">Nevyplňujte toto pole:</label>
           <input
             id="website-field"

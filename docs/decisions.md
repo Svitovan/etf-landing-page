@@ -33,3 +33,12 @@
   3. Přestavba výsledků kalkulačky v `CostCalculator.tsx` z pevného 3-sloupcového gridu na řádkový přehled fondů v souladu s mobilním screenem Stitch.
   4. Odstranění pevných šířek v `ConsentBanner.tsx` a `Header.tsx`, zabránění horizontálnímu přetečení na viewportech 320 px a 390 px.
 
+## ADR-007: Atomická persistence, ochrana produkčního úložiště a striktní analytika (Audit closure)
+- **Kontext:** Nezávislý audit `docs/readiness-audit-2026-10-11.ru.md` identifikoval riziko tichého ukládání do paměti v produkci (A01), neatomické zápisy kontaktů (A02), ztrátu původních parametrů při retry (A03) a možnost podvržení PII do analytiky (A06).
+- **Rozhodnutí:**
+  1. Zaveden produkční guard: při `NODE_ENV === "production"` a chybějícím / neplatném Supabase backendu vrací API kontrolovanou chybu 503, čímž brání falešnému dojmu úspěšného uložení do dočasné paměti.
+  2. Vytvořena atomická PostgreSQL RPC procedura `submit_lead(...)` (`supabase/migrations/20261015000000_atomic_lead_submission.sql`), která provádí idempotenci, upsert kontaktu a vložení submission v jediné transakci.
+  3. Stabilní `requestId` přes pokusy o odeslání na klientovi (`LeadForm.tsx`) a návrat původních parametrů submission při duplikaci.
+  4. Striktní `AnalyticsPropertiesSchema` zakazující jakákoliv PII pole (email, rawUrl, ip) a serverová validace platnosti relace před asociací s kontaktem.
+
+
