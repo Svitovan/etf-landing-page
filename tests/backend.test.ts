@@ -251,7 +251,7 @@ describe("T16: Server Rate Limiting", () => {
   });
 });
 
-describe("T07: Storage Error Handling & Graceful Recovery", () => {
+describe("Invalid lead-service input (not a storage-outage simulation)", () => {
   it("rejects saving lead when required email or fields are missing", async () => {
     await expect(
       saveLeadSubmission(

@@ -1,72 +1,62 @@
-# QA a verifikační report projektu (Zadání B)
+# QA a důkazy ověření projektu (Zadání B)
 
-**Datum provedení:** 2026-10-15  
-**Prostředí:** Node.js v24.19.0, npm 11.17.0, Next.js 14.2.35 (Production Build), Vitest 2.1.9  
-**Verze datasetu:** `2026-10-11`  
-**Testovací pokrytí po opravě idempotence:** 52 testů (14 kalkulačních, 28 backendových, 7 klientské identity žádosti, 3 RPC)
+Aktualizováno 2026-10-15 po opravě bodu 2 z [verifikace 4465301](readiness-verification-4465301.ru.md). Tento přehled nahrazuje dřívější jednotné značky „PROŠLO“, které nerozlišovaly úroveň důkazu.
 
-**Aktualizace 2026-10-15:** Oprava T18 je ověřena v lokálním kódu a v SQL transakci s rollbackem; dosud není nasazena na produkci. [Podrobný protokol a aktivace](qa-idempotency-2026-10-15.md). Ostatní řádky níže tato dílčí kontrola znovu neověřovala; aktuální omezení jejich důkazů popisuje [nezávislá verifikace](readiness-verification-4465301.ru.md).
+## Aktuální automatické kontroly
 
----
+| Kontrola | Výsledek a rozsah |
+|---|---|
+| `npm test` | **57/57**, 6 souborů: 14 výpočtů, 28 backend, 7 klientská identita, 3 RPC, 3 storage handler, 2 funnel CLI |
+| `npm run lint` | Bez chyb a varování |
+| `npm run typecheck` | Bez chyb |
+| `npm run build` | Prošlo; Next.js 14.2.35, vygenerováno 9 stránek, shared JS 87,2 kB |
+| `node scripts/experiment-sample-size.mjs` | 8 158 relací / rameno; plánovací zaokrouhlení 8 200 |
 
-## 1. Matice akceptačních testů (T01–T20)
+HTTP test CLI spouští samostatný proces proti lokálnímu serveru. V omezeném sandboxu spojení selhalo i při simulaci úspěchu; po povolení localhost spojení prošly oba scénáře. Nejde o výpadek Supabase ani opravu produkční sítě.
 
-| ID | Název testu | Očekávaný výsledek | Skutečný výsledek | Status |
-|---|---|---|---|---|
-| **T01** | Schéma datasetu a integrita | 3 fondy, NYSE Arca, platné URL, asOf/checkedAt | Skript `scripts/validate-data.ts` potvrdil 100% shodu | **PROŠLO** |
-| **T02** | Kontrolní výpočty (sekce 6.3) | 100 000 Kč $\times$ 0,0003 = 30 Kč; SPY = 94,50 Kč; Rozdíl = 64,50 Kč | Vitest potvrdil přesné hodnoty s ošetřením IEEE 754 | **PROŠLO** |
-| **T03** | Parsování vstupu, české čárky, mezery | Akceptuje mezery a čárku; odmítá záporná čísla a extrémy | 100 000 i 250 000 Kč parsováno správně; záporná čísla odmítnuta | **PROŠLO** |
-| **T04** | Validace e-mailu a honeypotu | Odmítnutí neplatných e-mailů a vyplněného honeypotu | Zod schéma `LeadSubmissionSchema` zachytilo chyby | **PROŠLO** |
-| **T05** | Uložení kontaktu na serveru | Vytvoření záznamu leadu i submission přes transakční logiku | Serverový `saveLeadSubmission` vytvořil oba záznamy | **PROŠLO** |
-| **T06** | Dvojklik / opakovaný requestId | Žádná duplicitní submission ani falešná konverze | Idempotence zachována, vrácen stejný existující záznam | **PROŠLO** |
-| **T07** | Ošetření chyb úložiště | Žádný únik stacktrace, kontrolovaná chyba bez falešného úspěchu | Kontrolovaná chyba, zákaz tichého in-memory zápisu v produkci | **PROŠLO** |
-| **T08** | Opakované odeslání stejného e-mailu | Uživatelský úspěch, ale počet unikátních kontaktů neroste | Submission přiřazena k existujícímu `lead_id` | **PROŠLO** |
-| **T09** | Report a neplatné query parametry | Bezpečné sanitizování na výchozí hodnoty (100 000 Kč) | Report funguje i při chybných či chybějících parametrech | **PROŠLO** |
-| **T10** | Analytika před souhlasem a po odmítnutí | Žádné požadavky na události ani sledovací cookies | Klient neposílá žádné události před kliknutím na souhlas | **PROŠLO** |
-| **T11** | Analytika po souhlasu | Relace vytvořena, cookie nastavena, UTM zachyceno | Úspěšně zaznamenáno v session i událostech | **PROŠLO** |
-| **T12** | Odvolání souhlasu (Opt-out) | Ukončení relace, zablokování dalších událostí | Relace deaktivována, endpoint událostí vrací 403 | **PROŠLO** |
-| **T13** | Deduplikace událostí (Event Replay) | Identické `eventId` není vloženo dvakrát | Idempotence ověřena v testu | **PROŠLO** |
-| **T14** | Zákaz podvržení `lead_saved` | Klientský pokus o odeslání `lead_saved` je odmítnut | Endpoint `/api/events` vrací HTTP 400 | **PROŠLO** |
-| **T15** | Ochrana databáze (RLS) | Žádný anonymní přístup ke kontaktům | Všechny tabulky mají RLS bez anonymních politik | **PROŠLO** |
-| **T16** | Atomický Rate Limiting na serveru | Nadlimitní požadavky vrací 429; atomický čítač | Atomická RPC `check_rate_limit` blokuje nadlimitní pokusy | **PROŠLO** |
-| **T17** | Čistá instalace, lint a build | `typecheck`, `next lint`, `test` (36/36) a `next build` projdou bez chyb | Všechny příkazy skončily s exit code 0 | **PROŠLO** |
-| **T18** | Odmítnutí změněného payloadu při shodném requestId | HTTP 409 bez změny původní žádosti | Handler test vrací 409; SQL test odmítá změnu všech 5 polí, shodný retry přijme | **PROŠLO lokálně a SQL s rollbackem; nasazení čeká** |
-| **T19** | Výpočet konverzního trychtýře | Jmenovatel počítá pouze relace s `landing_observed` | Skript `scripts/funnel-report.ts` filtruje nepozorované relace | **PROŠLO** |
-| **T20** | Ochrana proti podvrženému Origin hlavičce | Blokování cross-origin požadavků z neautorizovaných domén | Endpoint `/api/leads` vrací HTTP 403 při cizím Origin | **PROŠLO** |
+## Úrovně důkazů
 
----
+- **Unit / memory:** výpočet, schéma nebo služba v paměti; neprokazuje zápis do Postgres.
+- **Handler + mock:** skutečný Next.js handler, ale řízená odpověď databázového klienta nebo jiné závislosti; ověřuje HTTP kontrakt, ne dostupnost externí služby.
+- **CLI + lokální HTTP:** skutečný proces a Supabase klient proti řízenému HTTP serveru; ověřuje návratový kód programu a čtení, nikoli živou DB.
+- **SQL s rollbackem:** skutečná funkce v Postgres v testovací transakci; změny nejsou trvalým nasazením.
+- **Historické live / browser:** konkrétní dříve zaznamenaný průchod publikovanou verzí. Není automaticky důkazem novějšího commitu.
+- **Kontrola zdroje:** ověřuje přítomnost konfigurace/kódu, ne jeho runtime účinek.
 
-## 2. Mobilní responzivita a testování layoutu
+## Matice T01–T20
 
-- **320 px (nejmenší podporovaný mobilní displej):**
-  - Žádné globální horizontální přetékání (overflow-x).
-  - Tlačítka a vstupy zachovávají minimální doporučenou dotykovou výšku 44–48 px.
-  - Vstup pro e-mail má font-size 16 px (zabraňuje nechtěnému přiblížení v iOS Safari).
-- **390 px (standardní moderní smartphone – iPhone 14/15):**
-  - Optimální čitelnost typografie s link-height 1.55–1.6.
-  - Srovnávací karty se adaptují do vertikálního toku s detailními akordeony pro právní formu a zdroje.
-- **768 px a 1440 px (tablet a desktop):**
-  - Hero i obsah jsou zarovnány do čitelného editorial sloupce s centrovaným rozvržením.
-  - Tři fondy se přehledně zobrazují vedle sebe s jasným vyznačením parametrů.
+| ID | Požadované chování | Dostupný důkaz | Stav / hranice důkazu |
+|---|---|---|---|
+| T01 | Integrita datasetu a zdrojů | `validate:data` v historické verifikaci 4465301 | Struktura prošla; úplný provenance finančních tvrzení zůstává bodem 3 auditu |
+| T02 | Přesné kontrolní náklady | `tests/calculations.test.ts`, unit | Prošlo; 30 Kč, 94,50 Kč a rozdíl 64,50 Kč |
+| T03 | Parsování českého vstupu a rozsah | `tests/calculations.test.ts`, unit | Prošlo; neprokazuje samo o sobě mobilní ovládání |
+| T04 | Email, tickery a honeypot | Zod v `tests/backend.test.ts`, unit | Prošlo; schema test, ne browser test |
+| T05 | Uložení kontaktu + submission | Memory test; historický production průchod a read-only SQL ve verifikaci 4465301 | Memory prošlo nyní; live platí pro tehdy ověřený commit |
+| T06 | Stejný request ID nevytvoří duplicitu | Memory; historické dva souběžné live POST; SQL rollback z opravy identity | Prošlo v uvedeném rozsahu; nejde o úplný zátěžový test |
+| T07 | Selhání úložiště nevrátí úspěch/report | `tests/lead-storage-handler.test.ts`: skutečný handler, mock `submit_lead` a povolený rate limiter | Prošlo: provider error, chybějící výsledek i `success:false` → 503, bez PII a memory zápisu. Skutečný produkční výpadek není vyvoláván |
+| T08 | Stejný email sdílí lead | `tests/backend.test.ts`, memory | Prošlo; není to nový live test |
+| T09 | Bezpečné parametry reportu | Unit parser v backend testu; vybraný IVV v historickém browser průchodu | Parser prošel; současný handler `/report` není tímto unit testem celý pokryt |
+| T10 | Bez souhlasu se neměří | Memory kontrola chybějící session, kontrola klienta; dřívější browser pozorování | Částečné; unit test nedokazuje všechny síťové požadavky prohlížeče |
+| T11 | Souhlasná session a UTM | Memory + historický live průchod se sedmi událostmi v jedné session | Prošlo pro popsaný průchod; ne všechny souběhy/expiry |
+| T12 | Odvolání souhlasu | Memory deaktivace + historická live session `is_active=false` | Prošlo pro uvedené scénáře |
+| T13 | Deduplikace event ID | `tests/backend.test.ts`, memory | Prošlo; není to test unikátního omezení živé DB |
+| T14 | Klient nesmí vytvořit `lead_saved` | Skutečný `/api/events` handler v backend testu, lokální session | Prošlo: HTTP 400 |
+| T15 | Uzavřené tabulky a práva | Test textu počáteční migrace; historický live security advisor a kontrola EXECUTE; SQL rollback nové funkce | Test souboru sám neprokazuje RLS živé DB. Anonymní REST pokusy proti všem tabulkám touto sadou pokryty nejsou |
+| T16 | Rate limit / ochrana payloadu | Memory rate limiter; historický SQL rollback `check_rate_limit` | Limit v testovaných scénářích prošel. Úplná matice velkých payloadů není doložena tímto testem |
+| T17 | Reprodukovatelné spuštění | Nynější test/lint/typecheck/build; historický skutečný `npm ci` v oddělené kopii + 36/36 | Čistá instalace novější verze v tomto kroku neopakována; dry-run se za ni nevydává |
+| T18 | Změněný obsah stejného ID → 409 | Memory/handler, mock RPC `PT409`, skutečný SQL rollback; [protokol](qa-idempotency-2026-10-15.md) | Prošlo v těchto vrstvách. Aktivace nové migrace a live HTTP 409 nebyly tímto krokem ověřeny |
+| T19 | Správný jmenovatel a selhání reportu | Memory funnel test; historický live srovnávací řez; nyní CLI proti lokálnímu HTTP | Prošlo: distinct `landing_observed`; chyba čtení → exit 1 bez statistik, úspěch → exit 0. Paginace velkých dat není řešena |
+| T20 | Nepovolený Origin → 403 | Skutečný lead handler v backend testu + historické live 403 | Prošlo v uvedených scénářích |
 
----
+Původní test pod názvem T07 pouze předával poškozený vstup; nyní je pojmenován jako kontrola neplatného vstupu. Za test výpadku storage se již nevydává. T15 zůstává kontrolou zdrojového souboru, nikoli testem skutečného anonymního přístupu do databáze.
 
-## 3. Tisk a export do PDF (`/report`)
+## Mobil, PDF a produkční nasazení
 
-- Stránka `/report` obsahuje vyhrazená pravidla `@media print`:
-  - Skrytí navigace, tlačítek (včetně samotného tlačítka pro tisk) a lišty cookies (`.no-print`, `button`, `.consent-banner`).
-  - Čisté bílé pozadí a vysoce kontrastní černý text pro úsporný a čitelný tisk.
-  - Automatické vypsání cílových URL odkazů za jejich textem (`a::after { content: " (" attr(href) ")" }`).
-  - Vizuální zvýraznění zvoleného fondu (např. VOO) i v tisku bez ztráty čitelnosti.
-  - Tlačítko *„🖨️ Vytisknout / Uložit do PDF“* (`#print-report-button`) vyvolává nativní dialog prohlížeče `window.print()`.
+- [Verifikace 4465301](readiness-verification-4465301.ru.md) zaznamenala landing na 320/360/390 px bez globálního overflow a bez error/warn v kontrolovaných stavech. Neobsahuje aktuální Lighthouse mobile skóre.
+- PDF dříve otevřel/uložil uživatel. Vizuální kontrola nového PDF po posledních obsahových změnách zůstává nedoložená. Přítomnost `@media print` není důkazem kvality výsledného PDF.
+- Live kontrola SHA v historickém protokolu platí pro `4465301`. V tomto kroku nedošlo k deployi ani novému porovnání production SHA; stav novějších změn na webu z toho nelze odvodit.
+- Atomická původní RPC a limiter byly v 4465301 ověřeny v živé DB. Nová migrace identity byla v předchozím kroku ověřena s rollbackem. Trvalé nasazení nelze odvozovat z existence SQL souboru.
 
----
+## Co tímto krokem není uzavřeno
 
-## 4. Stav externích závislostí a PostgreSQL migrací
-
-- **Supabase připojení:** Ověřeno skriptem `npm run check:supabase`.
-  - Všech 5 základních tabulek (`leads`, `lead_submissions`, `analytics_sessions`, `analytics_events`, `rate_limit_buckets`) existuje v databázi s aktivním RLS.
-  - Vytvořena migrace `supabase/migrations/20261015000000_atomic_lead_submission.sql` obsahující:
-    1. Transakční funkci `public.submit_lead(...)` (atomický upsert kontaktu a submission).
-    2. Atomickou funkci `public.check_rate_limit(...)` (atomický přírůstek bucketu s expirací).
-  - Skript `npm run check:supabase` automaticky detekuje, zda jsou tyto RPC funkce nainstalovány, a poskytuje přesný návod pro spuštění v Supabase Dashboard SQL Editoru.
+Úplné ověření finančních zdrojů, odstranění duplikovaných finančních hodnot v JSX, Lighthouse, nové PDF, potvrzení skutečně spuštěného cleanup scheduleru, bezpečnost celé Git historie/závislostí a případné finální nasazení. Jde o zbývající práci z bodu 3 a širšího auditu, ne o důvod označit všechny automatické testy jako live evidence.

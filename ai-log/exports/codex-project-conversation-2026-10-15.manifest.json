@@ -1,0 +1,32 @@
+{
+  "format": "Redacted visible-message export from Codex JSONL; not a full raw trajectory or native /export",
+  "sources": [
+    {
+      "sourceFile": "rollout-2026-10-11T21-22-01-01a12c6a-3a01-7462-87af-5ffa21929102.jsonl",
+      "sha256": "ee820d8f4cc1c4a1c844848f35f573948de0f8121e41756470344d425df1db57"
+    },
+    {
+      "sourceFile": "rollout-2026-10-15T11-48-20-01a12c6a-3a01-7462-87af-5ffa21929102_01a13ef6-6ed8-7a93-9270-72d8a05575a4.jsonl",
+      "sha256": "62798eed5728c051ffe43659ba302a5bcb5c70159db686164863a1c3c68f78b0"
+    }
+  ],
+  "firstMessage": "2026-10-11T19:22:04.023Z",
+  "lastMessage": "2026-10-15T10:24:28.424Z",
+  "messages": 56,
+  "roles": {
+    "user": 15,
+    "assistant": 41
+  },
+  "omittedContextBlocks": 6,
+  "omittedAttachments": 7,
+  "redactions": {
+    "local-path": 21,
+    "private-id": 7
+  },
+  "limitations": [
+    "Only supplied project logs, not all Antigravity or Codex sessions",
+    "No system/developer content, reasoning or tools",
+    "Images/binary attachments omitted; surrounding text retained",
+    "Historical claims are not current QA evidence"
+  ]
+}

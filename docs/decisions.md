@@ -1,5 +1,12 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-009: Důkazy místo jednotného „prošlo“ a přenositelný AI export (2026-10-15)
+- **Kontext:** Dokumentace směšovala unit testy s produkčními kontrolami; odhad vzorku neměl MDE a AI shrnutí nebylo exportem skutečných zpráv.
+- **Rozhodnutí:** QA uvádí pro každý scénář úroveň důkazu a omezení. Selhání storage se testuje skutečným handlerem s řízenou odpovědí providera; chyba reportu také samostatným CLI procesem. Produkční outage se kvůli testu nevyvolává.
+- **Experimenty:** Baseline 5 % a MDE +1 procentní bod jsou plánovací předpoklady; α 0,05 / síla 0,80 vychází na 8 158 relací v každém rameni normální aproximací, zaokrouhlený cíl 8 200. Nejde o naměřenou konverzi ani spuštěný randomizovaný experiment. Přesný návrh a podmínky jsou v `docs/experiments.md`.
+- **AI artefakty:** Z dostupných projektových Codex JSONL se exportují pouze skutečné viditelné zprávy s redakcí a manifestem zdrojových hashů. Bez system/developer instrukcí, reasoning, nástrojů a obrázků; souhrny zůstávají oddělené. Úplnost historie Antigravity se neslibuje a omezení je uvedeno v emailovém návrhu.
+- **CLI:** Chyba čtení funnelu nastaví `process.exitCode = 1`; žádné nulové výsledky a žádné soukromé detaily providera. Vnější automatizace tak může chybu rozpoznat.
+
 ## ADR-008: Neměnný obsah jedné žádosti a bezpečný konflikt při retry (2026-10-15)
 - **Kontext:** Opakování stejného `requestId` s jinými daty vracelo původní report jako úspěch; implementační plán vyžaduje odmítnutí změněného obsahu.
 - **Rozhodnutí:** Identita žádosti obsahuje normalizovaný e-mail, množinu ETF, částku, verzi zásad soukromí a verzi datasetu. Pořadí / duplicity ETF ani velikost písmen a okolní mezery e-mailu nevytvářejí konflikt. Analytická relace není součástí identity a při retry se původní vazba nepřepisuje.

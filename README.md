@@ -90,7 +90,7 @@ npm run report:funnel
 - **Vzorec ročních nákladů:**
   $$\text{Roční náklad fondu (Kč)} = \text{Hodnota pozice (Kč)} \times \text{Sazba Expense Ratio}$$
   *(Např. 100 000 Kč $\times$ 0,0003 = 30 Kč; 100 000 Kč $\times$ 0,000945 = 94,50 Kč).*
-- **Omezení výpočtu:** Zahrnuje pouze interní náklad fondu strhávaný správcem z NAV. Nezahrnuje brokerské komise, spread, směnu CZK/USD ani daně. Podrobně viz [docs/data-methodology.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/docs/data-methodology.md).
+- **Omezení výpočtu:** Zahrnuje pouze interní náklad fondu strhávaný správcem z NAV. Nezahrnuje brokerské komise, spread, směnu CZK/USD ani daně. Podrobně viz [docs/data-methodology.md](docs/data-methodology.md).
 
 ---
 
@@ -121,25 +121,27 @@ Stejný `requestId` se stejným obsahem vrací původní výsledek bez nové sub
   1. *Konkrétní pojmenování materiálu a náhled obsahu* (očekávaný nejvyšší dopad na CVR).
   2. *Kontextové CTA přímo u výsledku kalkulačky* (zkrácení cesty k formuláři).
   3. *Message matching prvního zobrazení dle kreativy* (snížení okamžitého odchodu).
-  *Podrobně v [docs/experiments.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/docs/experiments.md).*
+  *Podrobně v [docs/experiments.md](docs/experiments.md): baseline 5 %, MDE +1 procentní bod (5 % → 6 %), α = 0,05, síla 80 %, plán 8 200 relací na variantu. Jde o návrh; UTM varianty samy nejsou randomizovaný experiment.*
 
 ---
 
 ## 8. Práce s AI (AI-Log)
 
-Vývoj probíhal ve spolupráci s asistentem v prostředí Antigravity IDE (Gemini 3.8 Flash) s přísnými kontrolními mechanismy:
+Vývoj a následné kontroly probíhaly s asistenty Antigravity / Codex; záznamy jednotlivých etap a jejich omezení jsou v [AI logu](ai-log/README.md):
 1. **Nulová tolerance halucinací:** Žádné fiktivní recenze, smyšlené statistiky ani vygenerovaná čísla. Všechny finanční hodnoty pocházejí z auditovaných primárních odkazů.
 2. **Deterministické testování:** Zjištěné floating-point nepřesnosti v JavaScriptu (např. `100 000 * 0.0003 = 29.999999999999996`) byly zachyceny testy Vitest a opraveny zaokrouhlováním na 4 desetinná místa.
 3. **Log chyb:** Skutečné odhalené nepřesnosti AI jsou zaznamenány v [ai-log/mistakes.md](ai-log/mistakes.md).
+4. **Export rozhovoru:** [Redigované skutečné zprávy Codex](ai-log/exports/codex-project-conversation-2026-10-15.md), [JSONL](ai-log/exports/codex-project-conversation-2026-10-15.jsonl) a [manifest zdrojů](ai-log/exports/codex-project-conversation-2026-10-15.manifest.json). Nejde o shrnutí ani kompletní raw export všech vývojových relací; obrázky, nástroje, interní instrukce a osobní údaje jsou vynechány nebo redigovány.
 
 ---
 
 ## 9. Výsledky testů a QA
 
-- **Automatické testy:** 52/52 testů úspěšných ve Vitestu po opravě identity žádosti (2026-10-15). Validace datasetu je popsána v předchozí nezávislé verifikaci; finanční data tato oprava nemění.
+- **Automatické testy:** Rozsah a výsledky po poslední kontrole uvádí [QA report](docs/qa-report.md). Odděluje testy v paměti, skutečné handlery s mocky, SQL a historické live ověření; žádný unit test sám neprokazuje produkční zápis.
 - **Linter a typová kontrola:** `next lint` (0 varování/chyb) a `tsc --noEmit` (0 chyb).
 - **Produkční build:** `next build` probíhá úspěšně s minimální velikostí First Load JS (87.2 kB).
 - Kompletní QA protokol je k dispozici v [docs/qa-report.md](docs/qa-report.md).
+- **Chyba reportu:** `npm run report:funnel` při chybě čtení vrací nenulový exit code a nevypíše falešné nulové statistiky. Test používá lokální HTTP provider; dočasný výpadek produkce kvůli tomu není vyvoláván.
 
 ---
 
@@ -159,7 +161,9 @@ V repozitáři najdete:
 - Dvě verze mobilní reklamy včetně HTML náhledů a UTM odkazů (ads/),
 - Analytiku funnelu v souladu s GDPR/ÚOOÚ (spustitelnou přes npm run report:funnel),
 - Odůvodnění struktury, odhad konverze a 3 seřazené A/B hypotézy v README a dokumentaci,
-- Transparentní protokol práce s AI a skutečný log zachycených nepřesností v ai-log/.
+- Transparentní protokol práce s AI, skutečný log chyb a redigovaný export dostupného projektového rozhovoru Codex v ai-log/.
+
+Export zahrnuje dostupné zprávy tohoto rozhovoru, nikoli úplnou historii všech relací Antigravity; obrázky, interní instrukce, nástroje a osobní údaje jsou vynechány nebo redigovány. Formát a rozsah popisuje ai-log/README.md.
 
 Přeji příjemné procházení a těším se na Vaši zpětnou vazbu.
 

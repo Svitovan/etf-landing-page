@@ -15,14 +15,19 @@ Tato složka obsahuje záznamy o tom, jak byl projekt realizován ve spolupráci
   - `session-deployment-and-hardening-2026-10-15.md`: Nasazení na produkci, integrace Supabase a bezpečnostní hardenování.
   - `session-readiness-reaudit-2026-10-15.md`: Nezávislý re-audit a identifikace priorit B01–B06.
   - `session-request-identity-2026-10-15.md`: Oprava konfliktu při opakování request ID, 52 testů a SQL ověření s rollbackem; nasazení čeká.
+  - `session-documentation-evidence-2026-10-15.md`: Oprava bodu 2: MDE, přenositelné odkazy, skutečný redigovaný export, QA důkazy a exit code reportu; 57 testů.
 
-### Poznámka k surovému exportu konverzací
-Kompletní surová trajektorie agentních konverzací (včetně interních volání nástrojů, mezistavů linteru a systémových promptů) je v prostředí Google Antigravity IDE automaticky ukládána do strojového formátu JSON Lines (`transcript.jsonl`) v systémovém adresáři:
-`C:\Users\Oddman\.gemini\antigravity-ide\brain\<conversation-id>\.system_generated\logs\`
+### Export skutečných zpráv a jeho omezení
 
-Vzhledem k rozsahu surových souborů (desítky megabajtů strojového JSON s tokeny nástrojů) jsou v repozitáři verzovány kurátorské souhrny relací (`ai-log/sessions/`) zachycující přesné zadání, rozhodovací body a výsledky verifikace, a detailní tabulka reálných chyb (`ai-log/mistakes.md`).
+- [Čitelný export Codex](exports/codex-project-conversation-2026-10-15.md), [JSONL](exports/codex-project-conversation-2026-10-15.jsonl) a [manifest](exports/codex-project-conversation-2026-10-15.manifest.json) obsahují skutečné viditelné zprávy projektového rozhovoru z dostupných lokálních Codex JSONL. Text je zachován kromě označené redakce; nejde o přepsání z paměti ani shrnutí.
+- Manifest určuje období, počet zpráv, názvy zdrojových souborů, jejich SHA-256 a počty redakcí. Export má pevný časový konec, neobsahuje automaticky budoucí zprávy. Starší výroky mohou být překonané následnou kontrolou; aktuální důkazy jsou v [QA reportu](../docs/qa-report.md).
+- Vynechány jsou system/developer instrukce, interní reasoning, nástroje a jejich výstupy, automaticky vložený kontext prostředí a binární obrázky. Email, IP, lokální cesty, UUID a rozpoznané klíče jsou redigovány. Text bez obrázku může být neúplný; obrázky ze Supabase mohou obsahovat kontakty, proto nejsou přibaleny.
+- `sessions/` jsou nadále **kurátorské souhrny**, oddělené od exportu. Export není úplná surová trajektorie ani nativní Claude `/export`, nepokrývá všechny původní vývojové relace Antigravity. Tato mez je výslovně uvedena také v návrhu závěrečného emailu v README.
+- Reprodukce: `node scripts/export-ai-conversation.mjs <source.jsonl> [continuation.jsonl ...]`. Předat pouze soubory tohoto projektového rozhovoru. Skript má allowlist rolí/fází a nic nepublikuje; nové výstupy je před zařazením do Gitu nutné zkontrolovat kvůli PII a případným dalším formátům klíčů. Originální logy se do repozitáře nekopírují.
+
+Kompletní export všech relací Antigravity v tomto balíčku není a není předstírán. Pokud zadavatel vyžaduje i tyto relace, je nutné dodat jejich samostatný bezpečně zkontrolovaný export.
 
 ## Pravidla a dohled nad AI
 1. **Žádné nekontrolované přijímání dat:** Finanční údaje nejsou generovány z parametrů modelu, ale přímo z oficiálních zdrojů (Vanguard, iShares, State Street Global Advisors, NYSE Arca) a ověřeny skriptem `scripts/validate-data.ts`.
-2. **Přísné testování:** Výpočty a backend jsou kontrolovány deterministickými testy (Vitest, po opravě identity žádosti 52 testů).
+2. **Přísné testování:** Výpočty a backend jsou kontrolovány deterministickými testy (Vitest, po opravě bodu 2 celkem 57 testů). Jejich rozsah a limity rozlišuje QA matice.
 3. **Audit kódu:** Každý generovaný soubor prochází kontrolou typů (`tsc`), statickou analýzou (`next lint`) a bezpečnostním auditem (žádné unescaped HTML, žádné vystavení serverových secretů, ochrana Origin hlavičky).

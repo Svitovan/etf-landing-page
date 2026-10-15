@@ -1,5 +1,18 @@
 # Handoff Report
 
+## Documentation evidence fix — 2026-10-15 (item 2)
+
+- Base checkout is commit `aceae4b` (the user committed the prior request-identity patch). This step does not infer its production deployment status.
+- Replaced the unsupported 1,000-sessions/power claim with an explicit planning baseline of 5%, MDE +1 percentage point (20% relative), two-sided alpha .05 / power .80, and a reproducible normal-approximation calculation: 8,158 per arm, rounded target 8,200. `docs/experiments.md` separates the proposed randomized experiment from existing UTM creative variants and defines stopping/measurement limitations.
+- README now uses repository-relative document links. Added an actual redacted visible-message export from the available project Codex JSONL, with readable Markdown, JSONL and source hashes in a manifest. It is explicitly partial, excludes images/tools/internal instructions, and is not labelled a complete Antigravity or native `/export`. The handoff email draft states this limitation.
+- Rewrote `docs/qa-report.md` to distinguish memory, handler mocks, CLI HTTP, SQL rollback and historical live evidence. The old invalid-input test is no longer called a storage-failure simulation. New handler tests exercise provider error, absent result and failed save → 503 without report/PII/memory persistence.
+- `report:funnel` now sets exit code 1 on a query failure without printing provider details or fabricated zero statistics. A separate-process test using a local HTTP provider verifies both success (0) and failure (1).
+- **Verified:** 57/57 tests; lint, typecheck and production build passed. Initial CLI tests could not reach localhost in the restricted sandbox; the same tests passed with local networking available. No database outage or production mutation was induced.
+- **Remaining:** complete Antigravity history is unavailable in the submission package and is explicitly disclosed. Item 3 (sources / Lighthouse / current PDF / cleanup execution) is still outside this step. No commit, push, deployment or email was performed.
+- Details: [qa-report.md](qa-report.md), [experiments.md](experiments.md), [AI log](../ai-log/README.md).
+
+The older sections below are dated historical records; their blanket readiness claims do not override the evidence and limits above or the current QA matrix.
+
 ## Request identity fix — 2026-10-15 (local implementation)
 
 - Implemented item 1 from the latest verification: an identical retry returns the original result; changed email, ETF set, amount, privacy version or dataset version raises `IDEMPOTENCY_CONFLICT` and HTTP 409 without changing the saved submission.

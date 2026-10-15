@@ -1,0 +1,52 @@
+import { createServer } from "node:http";
+import { spawn } from "node:child_process";
+import path from "node:path";
+import { describe, expect, it } from "vitest";
+
+describe("Funnel CLI exit status with a local HTTP provider", () => {
+  it.each([false, true])("exits correctly when query failure is %s", async (fail) => {
+    let requests = 0;
+    const server = createServer((_request, response) => {
+      requests++;
+      response.writeHead(fail ? 503 : 200, { "content-type": "application/json" });
+      response.end(JSON.stringify(fail
+        ? { code: "XX000", message: "private-row@example.com" }
+        : []));
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    try {
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("Missing test port");
+      const result = await new Promise<{ code: number | null; output: string }>((resolve, reject) => {
+        const child = spawn(process.execPath, ["--import", "tsx", path.resolve("scripts/funnel-report.ts")], {
+          cwd: process.cwd(),
+          env: {
+            ...process.env,
+            SUPABASE_URL: `http://127.0.0.1:${address.port}`,
+            SUPABASE_SECRET_KEY: "sb_secret_local_test_only",
+            NODE_ENV: "test",
+          },
+          timeout: 15000,
+        });
+        let output = "";
+        child.stdout.on("data", (data) => { output += data; });
+        child.stderr.on("data", (data) => { output += data; });
+        child.on("error", reject);
+        child.on("close", (code) => resolve({ code, output }));
+      });
+      expect(result.code, result.output).toBe(fail ? 1 : 0);
+      expect(requests).toBeGreaterThan(0);
+      expect(result.output).not.toContain("private-row@example.com");
+      if (fail) {
+        expect(result.output).toContain("Funnel report failed");
+        expect(result.output).not.toContain("Observed CVR");
+      } else {
+        expect(requests).toBe(4);
+        expect(result.output).toContain("Observed CVR");
+        expect(result.output).toContain("0.0 %");
+      }
+    } finally {
+      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    }
+  }, 20000);
+});

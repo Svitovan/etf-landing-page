@@ -192,6 +192,10 @@ async function run() {
   }
 }
 
-if (process.argv[1]?.endsWith("funnel-report.ts") || process.argv[1]?.includes("funnel-report")) {
-  run().catch(console.error);
+if (/(^|[\\/])funnel-report\.ts$/.test(process.argv[1] || "")) {
+  run().catch(() => {
+    // Provider errors can contain private row values. Do not print their details.
+    console.error("Funnel report failed: data could not be read. No statistics were produced.");
+    process.exitCode = 1;
+  });
 }
