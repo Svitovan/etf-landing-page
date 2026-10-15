@@ -55,5 +55,18 @@
         "submissions": 0
       }
     }
+  },
+  "publication": {
+    "source": "e2353e9521edb3cb168222749cf3cd85bdae5d22",
+    "deployment": "dpl_HNrm5SPzqWVJpUeUC1zhTap7DN8P",
+    "state": "READY",
+    "ciRun": 38750577133,
+    "ciConclusion": "success",
+    "finalFunnelVerifiedAt": "2026-10-15T14:22:26Z",
+    "excludedTestSubmissions": 10,
+    "excludedTestSessions": 24,
+    "nonTestObservedSessions": 0,
+    "nonTestSubmissions": 0,
+    "cvr": "N/A"
   }
 }

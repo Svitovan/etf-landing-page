@@ -59,3 +59,9 @@ npm run report:funnel
 - Supabase security advisor: только прежние пять INFO `RLS enabled no policy`, новых предупреждений нет. Это ожидаемо для закрытых server-only таблиц.
 - **118/118 тестов, 17 файлов**, lint/typecheck/build прошли. Тесты проверяют сохранение настоящего CVR 50% при смешанном наборе, исключение обеих частей дроби, all-demo/N/A, отсутствие consent, mixed lead, manual/split/late classification, preview/error контракты и вторую страницу из 1050 строк.
 - SQL и production HTTP-проверка уже выполнены; публикация обновлённого report/memory-кода и итоговые CI/commit evidence фиксируются следующим шагом. Признак в БД уже действует и для прежнего production API; статический файл миграции сам по себе не выдаётся за доказательство её активации.
+
+### Публикация подтверждена
+
+Код `e2353e9521edb3cb168222749cf3cd85bdae5d22` отправлен в master и подтверждён на production alias Vercel: READY, deployment `dpl_HNrm5SPzqWVJpUeUC1zhTap7DN8P`. Реальный [GitHub CI 38750577133](https://github.com/Svitovan/etf-landing-page/actions/runs/38750577133) завершился **success**: чистая установка Linux, оба audit, 118 тестов, lint и full-history Gitleaks. Локальный Gitleaks после commit проверил 24 доступных коммита, необработанных находок нет.
+
+Повторный live `npm run report:funnel` **2026-10-15 14:22:26 UTC** подтвердил: 10 исключённых отправок, 24 исключённые session; нетестовые session/заявки/контакты/UTM-конверсии — 0, CVR N/A. Это закрывает задачу в описанном объёме. Последующий коммит фиксирует только эти документы и агрегированное evidence, не меняя приложение или классификацию базы.

@@ -2,11 +2,13 @@
 
 ## Separate test traffic — 2026-10-15
 
+- **Complete/published:** code `e2353e9521edb3cb168222749cf3cd85bdae5d22`, production Vercel READY `dpl_HNrm5SPzqWVJpUeUC1zhTap7DN8P`; GitHub CI `38750577133` success. Final live report at 14:22:26 UTC still excludes 10 submissions/24 sessions, non-test cohort 0 and CVR N/A. Final follow-up commit only records evidence/docs.
+
 - Applied `20261015141254_classify_test_traffic.sql`: server-side is_test on submissions/sessions, reserved-domain classification, early/late attempt linkage, private invoker admin RPC. RLS unchanged; anon/authenticated cannot classify. Existing seven reserved-domain submissions auto-marked; two screenshot-demo submissions previewed/marked through the new admin CLI.
 - User explicitly confirmed all existing visits were tests. One-time administrative transaction marked the complete baseline through **2026-10-15 14:14:57.874269 UTC**: 9 submissions/23 sessions retained, none deleted. This broad baseline action is not embedded in a migration or a recurring rule.
 - Real subsequent production HTTP demo automatically marked both new submission and session. Final snapshot: **10 excluded submissions / 24 excluded sessions**, non-test sessions/submissions/leads 0, **CVR N/A**. No demo conversion presented as a real ad result. [Evidence and future QA instructions](test-traffic.ru.md).
 - Report excludes whole contaminated sessions from both numerator/denominator, steps and UTM; distinct real lead counting preserves a real conversion in another session. Includes separate excluded counters, server-only paginated reads and fail-closed provider errors; no email/IP read by report. Memory path mirrors SQL classification.
-- 118/118 tests, lint/typecheck/build passed. Actual SQL fixtures passed under service_role with rollback; security advisor unchanged (five expected INFO closed RLS tables). Report/RPC CLI live checks passed; code publication/CI verification follows.
+- 118/118 tests, lint/typecheck/build passed. Actual SQL fixtures passed under service_role with rollback; security advisor unchanged (five expected INFO closed RLS tables). Report/RPC CLI live checks and subsequent publication/CI verification passed.
 
 ## Security audit — 2026-10-15 (item 5 complete with explicit dev-only finding)
 
