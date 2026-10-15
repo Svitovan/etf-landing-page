@@ -10,3 +10,7 @@ Autor požádal o aktualizaci kompletu odevzdání, kontrolu ruštiny a seznam o
 - Původní exporty .md/.jsonl a manifest nebyly změněny. Historické citované pokyny a ruský záznam opravy identity zůstávají jako explicitní jazyková výjimka.
 
 Tato etapa neprovádí databázové změny, nepředstírá nový průchod reklamní kampaní a neodesílá email zadavateli. Výsledky následných lokálních kontrol jsou uvedeny v handoff.
+
+## Následný úklid na výslovný pokyn autora
+
+Autor schválil odstranění doporučené skupiny a odeslání změn do repozitáře. Odstraněno přesně 10 souborů z removeBeforeSubmission, včetně starého vadného PDF. Volitelné kandidáty, původní exporty a ostatní AI záznamy jsme ponechali. Aktuální podklady a instrukce odkazují na konsolidované dokumenty; historie se nepřepisuje.

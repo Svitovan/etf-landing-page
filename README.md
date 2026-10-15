@@ -5,7 +5,7 @@
 
 ---
 
-Komplet pro hodnotitele: [odevzdání a návrh emailu](docs/submission.md). [Seznam souborů k úklidu](docs/repository-cleanup.md) je návrh, žádné soubory se automaticky nemažou. Dokumentace je česky; původní AI rozhovory a citované pokyny zůstávají na přání autora v původním jazyce.
+Komplet pro hodnotitele: [odevzdání a návrh emailu](docs/submission.md). [Záznam úklidu](docs/repository-cleanup.md): všech 10 doporučených souborů bylo na pokyn autora odstraněno; volitelné kandidáty jsme ponechali. Dokumentace je česky; původní AI rozhovory a citované pokyny zůstávají na přání autora v původním jazyce.
 
 ## 1. Lokální spuštění a ověření
 

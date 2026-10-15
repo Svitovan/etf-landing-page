@@ -12,6 +12,11 @@ const names = [...new Set(execFileSync("git", ["ls-files", "-z", "--cached", "--
   encoding: "utf8", maxBuffer: 20 * 1024 * 1024,
 }).split("\0").filter(Boolean))];
 const failures = [];
+if (scope.recommendedCleanupCompleted) {
+  for (const file of scope.removeBeforeSubmission) {
+    if (existsSync(file)) failures.push(`Recommended cleanup file still present: ${file}`);
+  }
+}
 let checked = 0;
 let links = 0;
 for (const file of records) if (!existsSync(file)) failures.push(`Missing original AI record: ${file}`);
@@ -39,6 +44,6 @@ for (const file of names) {
 }
 console.log(`Proposed retained content: ${checked} text files, ${links} local Markdown links checked.`);
 console.log(`Original-language AI records: ${records.size}. Cleanup candidates still present: ${names.filter(f => existsSync(f) && isExcluded(f)).length}.`);
-console.log("This is a proposed-scope check; no files were removed and Russian AI records remain unchanged.");
+console.log("This checker does not remove files; original-language AI records are explicitly retained.");
 if (failures.length) { console.error(failures.join("\n")); process.exitCode = 1; }
 else console.log("PASS: no Cyrillic outside declared historical AI records; local Markdown links resolve without cleanup candidates.");

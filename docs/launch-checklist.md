@@ -14,7 +14,7 @@ Podklady k 15. 10. 2026. Verze a hranice důkazů jsou v [QA](qa-report.md).
 - [x] Automatické kontroly a produkční důkazy s uvedenými limity.
 - [x] AI metodika, skutečné chyby a dostupný export; neúplnost ostatních relací přiznána.
 - [x] České podklady a [návrh emailu](submission.md); historické AI rozhovory v původním jazyce.
-- [ ] Po rozhodnutí autora provést [navržený úklid](repository-cleanup.md). Seznam neznamená smazání.
+- [x] Na pokyn autora odstraněno 10 doporučených souborů; [záznam úklidu](repository-cleanup.md). Volitelné kandidáty jsme ponechali.
 - [ ] Odeslat odpověď s oběma veřejnými odkazy do 16. 10. 2026. Připravený text není odesláním.
 
 ## Před skutečnou placenou kampaní

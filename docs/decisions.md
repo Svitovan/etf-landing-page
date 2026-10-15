@@ -2,7 +2,7 @@
 
 ## ADR-016: Jazyk a přehled odevzdání (2026-10-15)
 - **Rozhodnutí:** Podklady pro hodnotitele jsou česky; historické AI rozhovory a citované pokyny zůstávají na výslovné přání autora v původním jazyce. Exporty se nemění.
-- **Úklid:** Staré pracovní plány/audity nejsou překládány; jsou v přesném seznamu kandidátů k odstranění. Požadavek je seznam, nikoli automatické mazání nebo přepis Git historie.
+- **Úklid:** Staré pracovní plány/audity nejsou překládány; jsou v přesném seznamu kandidátů k odstranění. Nejprve byl připraven seznam bez mazání. Následně autor výslovně schválil odstranění doporučených souborů: všech 10 je odstraněno, volitelné kandidáty jsme ponechali; Git historie se nepřepisuje.
 - **Aktuálnost:** Jediný vstup odevzdání je docs/submission.md; QA konsoliduje doložené výsledky, verze a hranice.
 
 ## ADR-015: Testovací kohorta mimo reklamní konverze (2026-10-15)

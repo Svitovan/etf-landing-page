@@ -4,10 +4,10 @@ Tento repozitář implementuje praktické zadání B pro pozici Junior AI Develo
 
 ## 1. Primární dokumenty a pravidla
 
-1. **Implementační plán:** [assignment-b-implementation-plan.ru.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/assignment-b-implementation-plan.ru.md) — detailní fázovaný plán (E0–E9), akceptační kritéria (R01–R18), bezpečnost, analytika, metodika.
-2. **Výchozí zadání:** [Junior AI Developer – postup do ďalšieho kola a praktická úloha...txt](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/Junior%20AI%20Developer%20%E2%80%93%20postup%20do%20%C4%8Fal%C5%A1ieho%20kola%20a%20praktick%C3%A1%20%C3%BAloha%20-%20Matej%20Lorinc%20%28matej@clientelo.cz%29%20-%202026-10-08%201921.txt).
-3. **Handoff a kontinuita:** [docs/handoff.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/docs/handoff.md) a [docs/decisions.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/docs/decisions.md) — po každé etapě aktualizovat skutečný stav, ověřené kroky a co zbývá.
-4. **Záznam práce s AI:** [ai-log/README.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/ai-log/README.md) a [ai-log/mistakes.md](file:///c:/Users/Oddman/Desktop/Junior%20AI%20Developer/ai-log/mistakes.md) — evidovat pouze reálné zásahy a zjištěné omyly, nevymýšlet syntetické chyby.
+1. **Aktuální podklady:** [docs/submission.md](docs/submission.md), [docs/product-brief.md](docs/product-brief.md) a [docs/qa-report.md](docs/qa-report.md). Původní interní plán byl na pokyn autora odstraněn při finálním úklidu; zůstává v Git historii.
+2. **Výchozí zadání:** Původní email zadavatele v kořeni repozitáře; přehled požadavků a termínu je v [docs/submission.md](docs/submission.md).
+3. **Handoff a kontinuita:** [docs/handoff.md](docs/handoff.md) a [docs/decisions.md](docs/decisions.md) — po každé etapě aktualizovat skutečný stav, ověřené kroky a co zbývá.
+4. **Záznam práce s AI:** [ai-log/README.md](ai-log/README.md) a [ai-log/mistakes.md](ai-log/mistakes.md) — evidovat pouze reálné zásahy a zjištěné omyly, nevymýšlet syntetické chyby.
 
 ## 2. Závazná pravidla vývoje
 

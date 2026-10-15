@@ -1,8 +1,8 @@
 # Co lze odstranit před odevzdáním
 
-Návrh k 15. 10. 2026. **Nic z tohoto seznamu nebylo automaticky odstraněno.** Cílem je přehledná aktuální verze repozitáře. Průběžnou Git historii zachovat; smazání souboru z aktuálního stromu neodstraňuje starší kopie z historie.
+Stav k 15. 10. 2026. **Všech 10 souborů v doporučené části níže bylo odstraněno na výslovný pokyn autora. Volitelné kandidáty jsme ponechali.** Cílem je přehledná aktuální verze repozitáře. Průběžnou Git historii zachovat; smazání souboru z aktuálního stromu neodstraňuje starší kopie z historie.
 
-## Doporučeno odstranit
+## Provedeno: odstraněné doporučené soubory
 
 Tyto pracovní dokumenty nejsou nutné pro spuštění ani doložení požadavků zadání. Nepřekládají se. Aktuální shrnutí je v README, submission, QA, security a test-traffic.
 
@@ -41,4 +41,4 @@ Starší kurátorské AI souhrny mohou obsahovat historické názvy odstraněný
 
 ## Opakovatelná kontrola
 
-Přesné cesty a výjimky jsou v [rozsahu odevzdání](submission-scope.json). `npm run check:submission` kontroluje cyrilici a místní Markdown odkazy v navrženém ponechaném obsahu. Historické AI záznamy jsou výslovné jazykové výjimky; kandidáti k odstranění se kontrolují jako vynechaní. Výsledek proto **netvrdí, že v celém dnešním repozitáři není ruština**. Po skutečném úklidu je třeba kontrolu zopakovat. Nástroj nic nemaže.
+Přesné cesty a výjimky jsou v [rozsahu odevzdání](submission-scope.json). `npm run check:submission` kontroluje cyrilici a místní Markdown odkazy v navrženém ponechaném obsahu. Historické AI záznamy jsou výslovné jazykové výjimky; kandidáti k odstranění se kontrolují jako vynechaní. Výsledek proto **netvrdí, že v celém dnešním repozitáři není ruština**. Kontrola byla po odstranění zopakována. Příznak recommendedCleanupCompleted v rozsahu navíc vyžaduje nepřítomnost všech 10 odstraněných cest. Nástroj sám nic nemaže.

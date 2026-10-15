@@ -15,7 +15,7 @@ Aktualizováno 15. 10. 2026. Vstup pro hodnotitele: [komplet odevzdání](submis
 
 README, komplet odevzdání, QA, checklist a demo scénář odpovídají dokončeným opravám. Provozní instrukce k testům a bezpečnosti jsou česky. Historické rozhovory a citované pokyny zůstávají v původním jazyce podle rozhodnutí autora; nejsou aktuálním stavem.
 
-[Seznam k úklidu](repository-cleanup.md) rozlišuje pracovní dokumenty, staré artefakty a povinné soubory. Nic se automaticky nemaže a historie se nepřepisuje. Staré ruské pracovní dokumenty se nepřekládají.
+[Seznam k úklidu](repository-cleanup.md) rozlišuje pracovní dokumenty, staré artefakty a povinné soubory. Na následný výslovný pokyn autora bylo odstraněno všech 10 doporučených souborů. Volitelné kandidáty a původní AI záznamy jsme ponechali; historie se nepřepisuje. Staré ruské pracovní dokumenty se nepřekládají.
 
 Před skutečnou kampaní potvrdit provozovatele, hosting a reklamní účet, aktuálnost dat a bezpečnosti, poslední ostrý běh retence a případnou randomizaci A/B testů.
 
@@ -23,6 +23,6 @@ Dosavadní provoz byl testovací; poslední snapshot 10/24 vyloučených žádos
 
 ## Ověření této dokumentační etapy
 
-`npm run check:submission` prošel: 118 textových souborů a 80 místních Markdown odkazů v navrženém ponechaném obsahu; cyrilice pouze v explicitně vyjmenovaných historických AI záznamech. Kandidáti k odstranění stále existují. Exporty a manifest mají proti výchozímu Git stavu nulový diff.
+`npm run check:submission` prošel: 118 textových souborů a 80 místních Markdown odkazů v ponechaném obsahu; cyrilice pouze v explicitně vyjmenovaných historických AI záznamech. Po schválení úklidu byla kontrola zopakována: 10 doporučených cest již neexistuje, volitelné kandidáty jsme ponechali. Lint prošel. Exporty a manifest mají proti výchozímu Git stavu nulový diff.
 
 Znovu prošlo 118/118 testů v 17 souborech, lint, typecheck, validate:data a produkční build. První omezený Windows sandbox běh selhal na dočasných souborech/localhost a vytvoření .next adresáře; opakování s potřebným přístupem prošlo bez změny testů či aplikační logiky. Nejde o nový produkční browser/DB/PDF průchod ani nový audit registru závislostí.

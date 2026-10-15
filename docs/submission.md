@@ -29,7 +29,7 @@ Zdrojový kód, dataset s primárními zdroji, migrace, testy a obě reklamy jso
 
 Dokumenty pro hodnotitele jsou česky, technické části mohou být anglicky. **Historické AI rozhovory a citované pokyny zůstávají rusky podle rozhodnutí autora.** Jde o výslovnou výjimku pro původní záznam práce s AI. Aktuální stav popisují README a QA, nikoli starší odpovědi v rozhovoru.
 
-Staré pracovní plány a audity v ruštině nejsou vstupními dokumenty odevzdání. [Seznam kandidátů k odstranění](repository-cleanup.md) je návrh; soubory se touto úpravou nemažou a historie se nepřepisuje.
+Staré pracovní plány a audity v ruštině nejsou vstupními dokumenty odevzdání. [Záznam úklidu](repository-cleanup.md) potvrzuje odstranění 10 doporučených souborů na pokyn autora. Volitelné kandidáty jsme ponechali; historie se nepřepisuje.
 
 ## Návrh odpovědi zadavateli
 

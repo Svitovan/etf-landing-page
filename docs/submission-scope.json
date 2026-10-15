@@ -1,5 +1,5 @@
 {
-  "description": "Proposed submission scope. Listed files are not deleted by the checker.",
+  "description": "Submission scope after removal of all 10 recommended files; optional cleanup candidates remain.",
   "removeBeforeSubmission": [
     "assignment-b-implementation-plan.ru.md",
     "google-stitch-requirements.ru.md",
@@ -36,5 +36,6 @@
     "ai-log/sessions/session-documentation-evidence-2026-10-15.md",
     "ai-log/sessions/session-financial-context-2026-10-15.md",
     "ai-log/sessions/session-retention-2026-10-15.md"
-  ]
+  ],
+  "recommendedCleanupCompleted": true
 }
