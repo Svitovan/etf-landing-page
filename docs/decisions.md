@@ -1,5 +1,10 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-013: Tisk dokumentu a omezená koordinace analytiky (2026-10-15)
+- **Rozhodnutí:** Print CSS rozlišuje navigační header/footer a vlastní záhlaví/zdroje reportu. Výstup je A4 se zachováním všech informací a nezalamovanými krátkými bloky.
+- **Souhlas a formulář:** Před lead POST čeká klient nejvýše dvě sekundy na zaznamenání pokusu, včetně případného vytvoření session cookie. Bez souhlasu nic neměří; timeout či chyba analytiky nebrání uložení kontaktu. Při timeoutu není asociace garantována.
+- **Důkaz:** Production reprodukce NULL session a neúplného PDF; čtyři unit regrese, lokální browser se skutečnou Supabase a vizuální kontrola všech tří A4 stran. Viz [finální QA](final-qa-2026-10-15.ru.md).
+
 ## ADR-012: Jedna číselná sazba pro popisek i výpočet (2026-10-15)
 - **Rozhodnutí:** Veškeré UI procentní sazby se odvozují z `expenseRatio.value.rate` přes sdílené formátování, nikoli z ručních JSX hodnot ani z uloženého displayPercent. Typ sazby je `kind`; původní displayPercent ponechán pro kompatibilitu datasetu, ale UI jej nepoužívá.
 - **Prezentace:** Hero dostává stejná ETF props jako kalkulačka. Tabulka reportu se generuje z datových polí včetně emitenta, formy a dividend. Výsledek/varovná barva se nepřipisuje napevno tickeru SPY a text rozdílu nepředpokládá rovnost VOO a IVV.

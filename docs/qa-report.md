@@ -1,15 +1,15 @@
 # QA a důkazy ověření projektu (Zadání B)
 
-Aktualizováno 2026-10-15 po opravě bodu 2 z [verifikace 4465301](readiness-verification-4465301.ru.md). Tento přehled nahrazuje dřívější jednotné značky „PROŠLO“, které nerozlišovaly úroveň důkazu.
+Aktualizováno 2026-10-15. Nejnovější production a lokální důkazy: [finální QA bodu 4](final-qa-2026-10-15.ru.md). Historická matice níže popisuje původní rozsah jednotlivých testů; novější protokol ji doplňuje.
 
 ## Aktuální automatické kontroly
 
 | Kontrola | Výsledek a rozsah |
 |---|---|
-| `npm test` | **87/87**, 10 souborů: předchozích 78 + 9 regresí UI při změně datasetu |
+| `npm test` | **91/91**, 11 souborů: 87 předchozích + 4 regrese koordinace session při odeslání |
 | `npm run lint` | Bez chyb a varování |
 | `npm run typecheck` | Bez chyb |
-| `npm run build` | Prošlo; Next.js 14.2.35, vygenerováno 9 stránek, shared JS 87,2 kB |
+| `npm run build` | Prošlo; Next.js 14.2.35, vygenerováno 10 stránek včetně app icon, shared JS 87,2 kB |
 | `node scripts/experiment-sample-size.mjs` | 8 158 relací / rameno; plánovací zaokrouhlení 8 200 |
 
 HTTP test CLI spouští samostatný proces proti lokálnímu serveru. V omezeném sandboxu spojení selhalo i při simulaci úspěchu; po povolení localhost spojení prošly oba scénáře. Nejde o výpadek Supabase ani opravu produkční sítě.
@@ -59,7 +59,7 @@ Původní test pod názvem T07 pouze předával poškozený vstup; nyní je pojm
 
 ## Co tímto krokem není uzavřeno
 
-Lighthouse, nové PDF, bezpečnost celé Git historie/závislostí a případné finální nasazení. Jde o zbývající práci z širšího auditu, ne o důvod označit všechny automatické testy jako live evidence.
+Bezpečnost celé Git historie/závislostí je samostatný zbývající bod. Nový Lighthouse, PDF, live 409 a stav publikace oprav jsou doloženy v [protokolu bodu 4](final-qa-2026-10-15.ru.md); starší tvrzení o chybějících měřeních nejsou aktuálním stavem.
 
 ### Dodatečné ověření změny finančního datasetu
 

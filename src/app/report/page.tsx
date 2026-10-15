@@ -61,6 +61,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
 
   return (
     <div
+      className="report-document"
       style={{
         backgroundColor: "var(--bg-page)",
         minHeight: "100vh",
@@ -114,6 +115,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
         >
           {/* Header */}
           <header
+            className="report-header"
             style={{
               borderBottom: "2px solid var(--accent)",
               paddingBottom: "1.25rem",
@@ -265,6 +267,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
 
           {/* Section 2: Calculated Cost */}
           <section
+            className="report-costs"
             style={{
               marginBottom: "2rem",
               padding: "1.25rem",
@@ -362,18 +365,18 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", fontSize: "0.88rem" }}>
-              <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
+              <div className="report-checklist-item" style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 1. Dostupnost fondu a nařízení PRIIPs: </strong>
                 {context.priips.value}
                 <SourceLinks evidence={context.priips.evidence} />
               </div>
 
-              <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
+              <div className="report-checklist-item" style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 2. Měnová konverze (CZK &rarr; USD): </strong>
                 Zkontrolujte poplatky a kurzové rozpětí svého brokera za směnu měny z CZK do USD před nákupem, neboť měnová konverze může představovat významný vstupní náklad.
               </div>
 
-              <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
+              <div className="report-checklist-item" style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 3. Formulář W-8BEN: </strong>
                 <p>{context.w8ben.value}</p>
                 <p style={{ marginTop: "0.4rem" }}>{context.dividendTreaty.value}</p>
@@ -381,12 +384,12 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
                 <SourceLinks evidence={[...context.w8ben.evidence, ...context.dividendTreaty.evidence, ...context.withholding.evidence]} />
               </div>
 
-              <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
+              <div className="report-checklist-item" style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 4. Poplatky za nákup a custody: </strong>
                 Zjistěte, zda broker účtuje fixní poplatek za realizaci pokynu a zda neúčtuje měsíční či roční poplatek za úschovu zahraničních cenných papírů.
               </div>
 
-              <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
+              <div className="report-checklist-item" style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 5. Časový horizont a investiční cíl: </strong>
                 Zvažte, zda rizika akciového produktu a možné ztráty odpovídají vašemu cíli a době, po kterou můžete peníze postrádat. Tento přehled neurčuje vhodnost investice ani doporučený horizont pro vaši situaci.
               </div>
@@ -454,6 +457,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
 
           {/* Footer note with clickable primary sources */}
           <footer
+            className="report-sources"
             style={{
               borderTop: "1px solid var(--border-light)",
               paddingTop: "1rem",

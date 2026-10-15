@@ -1,5 +1,14 @@
 # Handoff Report
 
+## Final QA — 2026-10-15 (item 4, before publication of fixes)
+
+- Production alias verified READY at `f6b4bf19090a40ddec0490a73b47b1fc57aab746`. Mobile Lighthouse: Performance 91, Accessibility 96, Best Practices 96, SEO 100. LCP 3.3 s, FCP 1.2 s, TBT 10 ms, CLS 0; this is lab evidence, not a field Core Web Vitals pass.
+- Production browser → lead → database → report worked for synthetic IVV / 250000 CZK. Identical retries returned 200 with duplicate=true; changing amount with the same ID returned 409. SQL confirmed one unchanged submission.
+- Found and fixed missing report header/footer in printed PDF, low contrast of muted labels, missing favicon and a fast-submit analytics-session race. The form now waits at most two seconds for its attempt/session initialization or recovery; analytics failure never prevents delivery. Linking remains best effort if that timeout expires.
+- Local fixed build: 91/91 tests, lint, typecheck, data structure validation and build passed. Mobile Lighthouse 91/100/100/100. Local browser using the real backend confirmed saved IVV / 250000 CZK, non-null valid session, ad_b and one matching form attempt. Three A4 PDF pages visually reviewed and text presence checked; title, version, selected IVV, primary sources and disclaimer survive printing.
+- QA records are synthetic, not customer conversions. Temporary Chrome profiles/renders are ignored. Evidence and production recheck status: [final-qa-2026-10-15.ru.md](final-qa-2026-10-15.ru.md).
+- Publication/recheck of these source fixes is the next action; this section does not claim they were already live when the checks above ran.
+
 ## Dataset-driven financial UI — 2026-10-15 (item 3)
 
 - Hero, comparison cards, calculator, FAQ and report now format percentages from the same numeric `expenseRatio.value.rate` used in calculations. Gross/Net comes from `kind`; the legacy `displayPercent` field is no longer read by the UI.

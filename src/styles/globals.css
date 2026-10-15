@@ -7,7 +7,7 @@
   
   --text-main: #142d29;
   --text-muted: #4e635d;
-  --text-light: #718781;
+  --text-light: #52685f;
   --text-on-accent: #ffffff;
   
   --accent: #176b56;
@@ -360,13 +360,15 @@ button {
 }
 
 /* Print styles for /report */
+@page { size: A4; margin: 14mm; }
+
 @media print {
   body {
     background-color: #ffffff !important;
     color: #000000 !important;
   }
 
-  header, footer, .no-print, .consent-banner, button {
+  header:not(.report-header), footer:not(.report-sources), .no-print, .consent-banner, button {
     display: none !important;
   }
 
@@ -376,8 +378,17 @@ button {
   }
 
   .print-page {
-    page-break-after: always;
+    page-break-after: auto;
+    padding: 0 !important;
   }
+
+  .print-page article { padding: 0 !important; border: 0 !important; box-shadow: none !important; }
+  .report-document { padding: 0 !important; background: white !important; }
+  .print-page { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .print-page h1, .print-page h2 { break-after: avoid; }
+  .print-page thead { display: table-header-group; }
+  .print-page tr, .report-costs, .report-checklist-item, .print-page dl > div { break-inside: avoid; }
+  .print-page a { overflow-wrap: anywhere; }
 
   a {
     text-decoration: none !important;

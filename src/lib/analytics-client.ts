@@ -39,6 +39,22 @@ export function getSanitizedUtm(): { utmContent: string | null } {
 
 let initSessionPromise: Promise<boolean> | null = null;
 
+// Let consent initialization/recovery set its cookie before the lead POST.
+// A slow or unavailable analytics service must not prevent contact delivery.
+export async function trackLeadSubmissionAttempt(requestId: string, timeoutMs = 2000): Promise<void> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    await Promise.race([
+      trackEvent("form_submit_attempted", { requestId }),
+      new Promise<void>(resolve => { timer = setTimeout(resolve, timeoutMs); }),
+    ]);
+  } catch {
+    // Even unexpected browser storage/analytics errors must not cancel the lead.
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function initAnalyticsSession(): Promise<boolean> {
   if (getConsentStatus() !== "granted") return false;
 

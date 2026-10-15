@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useId, useRef } from "react";
-import { trackEvent } from "../lib/analytics-client";
+import { trackEvent, trackLeadSubmissionAttempt } from "../lib/analytics-client";
 import {
   getLeadRequestAttempt,
   LEAD_REQUEST_CONFLICT_CODE,
@@ -57,9 +57,8 @@ export const LeadForm: React.FC<LeadFormProps> = ({
     attemptRef.current = getLeadRequestAttempt(attemptRef.current, payload);
     const { requestId } = attemptRef.current;
 
-    trackEvent("form_submit_attempted", { requestId });
-
     try {
+      await trackLeadSubmissionAttempt(requestId);
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: {
