@@ -1,13 +1,19 @@
 # Handoff Report
 
-## Final QA — 2026-10-15 (item 4, before publication of fixes)
+## Final QA — 2026-10-15 (item 4 complete)
+
+- **Final production recheck passed:** code SHA `bf9c20774ea4e22d2685ac303cb6f5a33aae4a49`, Vercel READY. Mobile Lighthouse **91/100/100/100** at 13:40:47 UTC; lab LCP 3.2 s is not a field CWV pass. 92/92 tests, lint and production build/typecheck passed.
+- Initial bounded-wait fix revealed a second race in production: a delayed 403 could replace an already initialized session. Session generation now prevents that replacement; a dedicated delayed-response test verifies one initialization. Final live browser/SQL confirms one IVV / 250000 submission, ad_b and one matching attempt plus report_opened in the same session. Duplicate/409/original retry returned 200/409/200, preserving one original row.
+- Three-page production A4 PDF visually checked; report TSX/CSS/data unchanged by the later analytics fix. Full closure, artifacts, synthetic request IDs and limitations: [final QA](final-qa-2026-10-15.ru.md). Only QA evidence/docs are committed after this tested code SHA; no further app change.
+
+### Intermediate observations before final recheck
 
 - Production alias verified READY at `f6b4bf19090a40ddec0490a73b47b1fc57aab746`. Mobile Lighthouse: Performance 91, Accessibility 96, Best Practices 96, SEO 100. LCP 3.3 s, FCP 1.2 s, TBT 10 ms, CLS 0; this is lab evidence, not a field Core Web Vitals pass.
 - Production browser → lead → database → report worked for synthetic IVV / 250000 CZK. Identical retries returned 200 with duplicate=true; changing amount with the same ID returned 409. SQL confirmed one unchanged submission.
 - Found and fixed missing report header/footer in printed PDF, low contrast of muted labels, missing favicon and a fast-submit analytics-session race. The form now waits at most two seconds for its attempt/session initialization or recovery; analytics failure never prevents delivery. Linking remains best effort if that timeout expires.
 - Local fixed build: 91/91 tests, lint, typecheck, data structure validation and build passed. Mobile Lighthouse 91/100/100/100. Local browser using the real backend confirmed saved IVV / 250000 CZK, non-null valid session, ad_b and one matching form attempt. Three A4 PDF pages visually reviewed and text presence checked; title, version, selected IVV, primary sources and disclaimer survive printing.
 - QA records are synthetic, not customer conversions. Temporary Chrome profiles/renders are ignored. Evidence and production recheck status: [final-qa-2026-10-15.ru.md](final-qa-2026-10-15.ru.md).
-- Publication/recheck of these source fixes is the next action; this section does not claim they were already live when the checks above ran.
+- The preceding observations describe intermediate versions; final publication/recheck is recorded at the top of this section.
 
 ## Dataset-driven financial UI — 2026-10-15 (item 3)
 

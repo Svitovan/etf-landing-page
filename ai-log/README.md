@@ -19,7 +19,7 @@ Tato složka obsahuje záznamy o tom, jak byl projekt realizován ve spolupráci
   - `session-retention-2026-10-15.md`: Atomické cleanup RPC, skutečně aktivní denní Supabase Cron a ověření bez trvalého mazání kontaktů; 72 testů.
   - `session-financial-context-2026-10-15.md`: PRIIPs/KID, W-8BEN a srážka s primárními zdroji, společnými texty a doloženým rozsahem; 78 testů.
   - `session-dataset-ui-2026-10-15.md`: Finanční sazby a parametry UI z datasetu, změnové render testy a mobilní browser kontrola; 87 testů.
-  - `session-final-qa-2026-10-15.md`: Production Lighthouse, skutečný lead/409, oprava tisku a session race; 91 testů a zkontrolované PDF.
+  - `session-final-qa-2026-10-15.md`: Production Lighthouse 91/100/100/100, skutečný lead/409, oprava tisku a obou session race; 92 testů a zkontrolované production PDF.
 
 ### Export skutečných zpráv a jeho omezení
 

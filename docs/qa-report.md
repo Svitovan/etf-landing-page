@@ -52,6 +52,8 @@ Původní test pod názvem T07 pouze předával poškozený vstup; nyní je pojm
 
 ## Mobil, PDF a produkční nasazení
 
+**Aktuální stav bodu 4:** production kód `bf9c207` ověřen READY; Lighthouse mobile **91/100/100/100**, production PDF všechny tři A4 strany vizuálně zkontrolovány. Reálný browser → DB → report, společná session/UTM, duplicate 200 a conflict 409 potvrzeny. [Úplný protokol](final-qa-2026-10-15.ru.md) včetně přesného SHA, podmínek, synthetic request IDs a mezí důkazu. Níže uvedené starší body jsou historickým kontextem, nikoli zbývající prací bodu 4.
+
 - [Verifikace 4465301](readiness-verification-4465301.ru.md) zaznamenala landing na 320/360/390 px bez globálního overflow a bez error/warn v kontrolovaných stavech. Neobsahuje aktuální Lighthouse mobile skóre.
 - PDF dříve otevřel/uložil uživatel. Vizuální kontrola nového PDF po posledních obsahových změnách zůstává nedoložená. Přítomnost `@media print` není důkazem kvality výsledného PDF.
 - Live kontrola SHA v historickém protokolu platí pro `4465301`. V tomto kroku nedošlo k deployi ani novému porovnání production SHA; stav novějších změn na webu z toho nelze odvodit.

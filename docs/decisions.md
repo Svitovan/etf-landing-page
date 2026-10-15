@@ -3,6 +3,7 @@
 ## ADR-013: Tisk dokumentu a omezená koordinace analytiky (2026-10-15)
 - **Rozhodnutí:** Print CSS rozlišuje navigační header/footer a vlastní záhlaví/zdroje reportu. Výstup je A4 se zachováním všech informací a nezalamovanými krátkými bloky.
 - **Souhlas a formulář:** Před lead POST čeká klient nejvýše dvě sekundy na zaznamenání pokusu, včetně případného vytvoření session cookie. Bez souhlasu nic neměří; timeout či chyba analytiky nebrání uložení kontaktu. Při timeoutu není asociace garantována.
+- **Pozdní 403:** Počítadlo úspěšných inicializací rozliší odpověď na požadavek odeslaný před nastavením nové cookie. Pokud mezitím session vznikla, retry ji znovu použije; nezaloží další a nerozdělí attempt a submission mezi dvě session. Ověřeno regresí a production browser/SQL na bf9c207.
 - **Důkaz:** Production reprodukce NULL session a neúplného PDF; čtyři unit regrese, lokální browser se skutečnou Supabase a vizuální kontrola všech tří A4 stran. Viz [finální QA](final-qa-2026-10-15.ru.md).
 
 ## ADR-012: Jedna číselná sazba pro popisek i výpočet (2026-10-15)
