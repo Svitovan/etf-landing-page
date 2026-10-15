@@ -1,5 +1,25 @@
 # Handoff Report
 
+## Supabase Database Connection & Diagnostics — 2026-10-15
+
+- **Připojení k reálnému Supabase projektu (`hozaudrjlouiggtliwzs`):**
+  - V `.env` nakonfigurováno `SUPABASE_URL=https://hozaudrjlouiggtliwzs.supabase.co`.
+  - Vytvořen diagnostický nástroj `npm run check:supabase` (`scripts/check-supabase.ts`), který automaticky ověřuje dostupnost REST API, existenci všech 5 tabulek (`leads`, `lead_submissions`, `analytics_sessions`, `analytics_events`, `rate_limit_buckets`) a provádí zkušební zápis/výmaz přes RLS.
+  - **Ověřený stav tabulek:** Všech 5 tabulek z migrace `supabase/migrations/20261011000000_initial_schema.sql` v databázi existuje a odpovídá schématu.
+  - **Ochrana RLS a klíčů v `db.ts`:** Detekován publishable klíč (`sb_publishable_...`) v `.env`. Vzhledem k tomu, že RLS zakazuje zápisy z role `anon`, byl v `src/lib/server/db.ts` zaveden bezpečný fallback s varováním v konzoli, který zabraňuje chybám 503 na webu. Pro aktivaci reálného zápisu do databáze stačí do `.env` vložit Secret key (`sb_secret_...` nebo `service_role` JWT) ze Supabase Dashboardu.
+  - Do `package.json` přidány příkazy s `--env-file=.env` pro `check:supabase`, `report:funnel` a `cleanup:data`.
+  - Vytvořen soubor `.env.example`.
+  - Ověřeno: 31/31 unit/backend testů prochází, `next lint`, `tsc --noEmit` a `next build` bez chyb.
+
+## Visual & Layout Update — 2026-10-15 (Stitch alignment)
+
+- **Synchronizace s Google Stitch (projekt `ETF Přehled Landing Design`):**
+  - Integrován typografický systém *Serene Editorial Finance*: `Newsreader` (serif pro H1, H2) a `Inter` (sans, `tabular-nums`) zavedeny přes `next/font/google` bez varování v buildu.
+  - Srovnání ETF v `EtfComparison.tsx`: přidán Stitch alert banner o dostupnosti u brokera a KID, vertikální responzivní karty na mobilu namísto pevného gridu, interaktivní přístupné akordeony pro právní formu a zdroje.
+  - Kalkulačka v `CostCalculator.tsx`: výsledky přepracovány do řádkového responzivního rozvržení dle mobilního screenu Stitch, čímž byl vyřešen dříve reportovaný problém s horizontálním overflow na 413 px.
+  - Odstraněno přetečení v `Header.tsx` a `ConsentBanner.tsx` na úzkých viewportech 320 px a 390 px.
+  - Ověřeno: `npm test` (31/31), `npm run validate:data`, `next lint`, `tsc --noEmit` a `next build` procházejí bez chyb.
+
 ## Audit update — 2026-10-11 (Codex)
 
 Read [readiness-audit-2026-10-11.ru.md](readiness-audit-2026-10-11.ru.md) before relying on the earlier completion statements below. Audited HEAD: `09e1941`; application code unchanged by this audit.

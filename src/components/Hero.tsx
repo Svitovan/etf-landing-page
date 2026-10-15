@@ -22,11 +22,12 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
 
           <h1
             style={{
-              fontSize: "clamp(1.85rem, 5vw, 2.5rem)",
-              fontWeight: 800,
-              lineHeight: 1.15,
+              fontFamily: "var(--font-serif)",
+              fontSize: "clamp(1.75rem, 5vw, 2.5rem)",
+              fontWeight: 500,
+              lineHeight: 1.2,
               color: "var(--text-main)",
-              letterSpacing: "-0.03em",
+              letterSpacing: "-0.02em",
               marginBottom: "1rem",
             }}
           >
@@ -38,7 +39,7 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
               fontSize: "1.05rem",
               lineHeight: 1.6,
               color: "var(--text-muted)",
-              marginBottom: "1.75rem",
+              marginBottom: "1.5rem",
             }}
           >
             {campaign.subheadline}
@@ -49,28 +50,31 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "0.5rem",
-              marginBottom: "1.75rem",
-              padding: "0.85rem",
+              gap: "0.35rem",
+              marginBottom: "1.5rem",
+              padding: "0.75rem 0.5rem",
               backgroundColor: "var(--bg-surface)",
               borderRadius: "var(--radius-md)",
               border: "1px solid var(--border-light)",
               boxShadow: "var(--shadow-sm)",
             }}
           >
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center", minWidth: 0 }}>
               <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
                 VOO
               </div>
-              <div style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--accent)" }}>
+              <div className="tabular-nums" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent)" }}>
                 0,03 %
               </div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>Vanguard</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                Vanguard
+              </div>
             </div>
 
             <div
               style={{
                 textAlign: "center",
+                minWidth: 0,
                 borderLeft: "1px solid var(--border-light)",
                 borderRight: "1px solid var(--border-light)",
               }}
@@ -78,53 +82,61 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
               <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
                 IVV
               </div>
-              <div style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--accent)" }}>
+              <div className="tabular-nums" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent)" }}>
                 0,03 %
               </div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>iShares</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                iShares
+              </div>
             </div>
 
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: "center", minWidth: 0 }}>
               <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
                 SPY
               </div>
-              <div style={{ fontSize: "1.15rem", fontWeight: 700, color: "var(--color-warning)" }}>
+              <div className="tabular-nums" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-warning)" }}>
                 0,0945 %
               </div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>State Street</div>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                State Street
+              </div>
             </div>
           </div>
 
           <div
             style={{
               display: "flex",
-              flexWrap: "wrap",
-              gap: "0.75rem",
-              alignItems: "center",
+              flexDirection: "column",
+              gap: "0.6rem",
+              width: "100%",
+              maxWidth: "420px",
             }}
           >
             <a
               href="#srovnani"
               className="btn-primary"
               id="hero-cta-compare"
+              style={{ width: "100%", justifyContent: "center", textAlign: "center" }}
             >
               {campaign.heroCta}
             </a>
 
             <a
-              href="#kalkulacka"
+              href="#ziskat-prehled"
               className="btn-secondary"
-              id="hero-cta-calculator"
+              id="hero-cta-checklist"
+              style={{ width: "100%", justifyContent: "center", textAlign: "center" }}
             >
-              Kalkulačka nákladů v Kč
+              Získat srovnání a kontrolní seznam
             </a>
           </div>
 
           <p
             style={{
-              marginTop: "0.9rem",
-              fontSize: "0.8rem",
+              marginTop: "0.85rem",
+              fontSize: "0.78rem",
               color: "var(--text-light)",
+              lineHeight: 1.4,
             }}
           >
             ✓ Ověřená data z NYSE Arca &bull; Bez registrace k okamžitému zobrazení &bull; Vzdělávací přehled

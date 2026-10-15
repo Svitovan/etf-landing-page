@@ -47,7 +47,7 @@ export const ConsentBanner: React.FC = () => {
         right: 0,
         backgroundColor: "var(--bg-surface)",
         borderTop: "1px solid var(--border-light)",
-        padding: "1rem",
+        padding: "0.75rem 0",
         boxShadow: "var(--shadow-lg)",
         zIndex: 100,
       }}
@@ -59,10 +59,10 @@ export const ConsentBanner: React.FC = () => {
           flexWrap: "wrap",
           justifyContent: "space-between",
           alignItems: "center",
-          gap: "1rem",
+          gap: "0.75rem",
         }}
       >
-        <div style={{ flex: "1 1 300px", fontSize: "0.85rem", color: "var(--text-muted)", lineHeight: 1.45 }}>
+        <div style={{ flex: "1 1 200px", minWidth: 0, fontSize: "0.82rem", color: "var(--text-muted)", lineHeight: 1.45 }}>
           <strong>Respektujeme vaše soukromí: </strong>
           Tento web používá anonymní analytiku návštěvnosti pouze s vaším souhlasem. Srovnání i kalkulačka fungují plnohodnotně i bez povolení cookies (
           <a href="/privacy" style={{ color: "var(--accent)" }}>

@@ -56,10 +56,32 @@ class MemoryStore {
 
 export const memoryStore = new MemoryStore();
 
+let warnedPublishableKey = false;
+
 export function isSupabaseConfigured(): boolean {
-  const url = process.env.SUPABASE_URL;
+  const url = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  return Boolean(url && key && !url.includes("your-project") && !key.includes("your-supabase"));
+
+  if (!url || !key || url.includes("your-project") || key.includes("your-supabase")) {
+    return false;
+  }
+
+  // A publishable key (sb_publishable_...) carries the 'anon' role and cannot write
+  // to tables protected by Row Level Security (RLS) without anon policies.
+  if (key.startsWith("sb_publishable_")) {
+    if (!warnedPublishableKey) {
+      console.warn(
+        "\n[Supabase Configuration Warning] SUPABASE_SECRET_KEY is configured with a publishable key ('sb_publishable_...').\n" +
+        "Server Route Handlers require the Secret key ('sb_secret_...' or 'service_role' JWT) to bypass Row Level Security.\n" +
+        "Using local fallback store to prevent 503 errors on lead submissions.\n" +
+        "To enable real Supabase storage, copy the Secret Key from Supabase Dashboard > Project Settings > API Keys.\n"
+      );
+      warnedPublishableKey = true;
+    }
+    return false;
+  }
+
+  return true;
 }
 
 let supabaseInstance: SupabaseClient | null = null;
@@ -69,7 +91,7 @@ export function getSupabaseServerClient(): SupabaseClient | null {
     return null;
   }
   if (!supabaseInstance) {
-    const url = process.env.SUPABASE_URL!;
+    const url = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!;
     const key = (process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY)!;
     supabaseInstance = createClient(url, key, {
       auth: { persistSession: false, autoRefreshToken: false },
@@ -77,3 +99,4 @@ export function getSupabaseServerClient(): SupabaseClient | null {
   }
   return supabaseInstance;
 }
+

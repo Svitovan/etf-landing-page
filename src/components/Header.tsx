@@ -6,7 +6,7 @@ export const Header: React.FC = () => {
       style={{
         borderBottom: "1px solid var(--border-light)",
         backgroundColor: "var(--bg-surface)",
-        padding: "0.85rem 0",
+        padding: "0.75rem 0",
         position: "sticky",
         top: 0,
         zIndex: 50,
@@ -18,28 +18,39 @@ export const Header: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: "0.5rem",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+        <a
+          href="#"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
           <span
             style={{
-              fontWeight: 800,
-              fontSize: "1.15rem",
-              color: "var(--text-main)",
+              fontWeight: 700,
+              fontSize: "1.1rem",
+              color: "var(--accent)",
               letterSpacing: "-0.02em",
             }}
           >
             ETF Přehled
           </span>
-          <span
-            className="badge"
-            style={{ fontSize: "0.7rem", padding: "0.15rem 0.5rem" }}
-          >
-            S&amp;P 500
-          </span>
-        </div>
+        </a>
 
-        <nav style={{ display: "flex", gap: "1rem", fontSize: "0.88rem" }}>
+        <nav
+          style={{
+            display: "flex",
+            gap: "0.85rem",
+            fontSize: "0.85rem",
+            alignItems: "center",
+          }}
+        >
           <a
             href="#srovnani"
             style={{

@@ -17,10 +17,11 @@ export const CzechContext: React.FC = () => {
             <span className="badge">3. Krok: Kontext pro českého investora</span>
             <h2
               style={{
-                fontSize: "clamp(1.4rem, 3.5vw, 1.85rem)",
-                fontWeight: 800,
+                fontSize: "clamp(1.4rem, 3.5vw, 1.95rem)",
+                fontWeight: 500,
+                fontFamily: "var(--font-serif)",
                 color: "var(--text-main)",
-                letterSpacing: "-0.02em",
+                letterSpacing: "-0.015em",
                 marginTop: "0.5rem",
                 marginBottom: "0.5rem",
               }}

@@ -24,3 +24,12 @@
 ## ADR-005: Soukromí, GDPR a analytika
 - **Kontext:** Český ÚOOÚ a evropská legislativa vyžadují aktivní souhlas pro ne-technické cookies a sledování.
 - **Rozhodnutí:** Analytické sledování se spouští výhradně po aktivním souhlasu uživatele v liště soukromí. Bez souhlasu se neposílají žádné behaviorální události. Samotný formulář funguje nezávisle na analytice. Kanonický stav konverze (`lead_saved`) vzniká na serveru z potvrzené transakce, nikoliv z nespolehlivého požadavku z prohlížeče.
+
+## ADR-006: Sladění s Google Stitch (Serene Editorial Finance, mobilní stacked cards a odstranění overflow)
+- **Kontext:** Původní implementace srovnání a kalkulačky používala rigidní 3-sloupcové mřížky, což na úzkých mobilních zařízeních (320px–390px) vedlo k horizontálnímu přetečení dokumentu na 413 px. Současně nebyl načten redakční serif font navržený v designovém systému Google Stitch.
+- **Rozhodnutí:**
+  1. Zavedení `Newsreader` (serif pro H1, H2) a `Inter` (sans & tabular-nums) přes `next/font/google`.
+  2. Přestavba srovnání ETF v `EtfComparison.tsx` na responzivní rozvržení (vertikálně skládané karty na mobile < 768px a 3 sloupce na desktopu) s akordeony pro právní formu a zdroje.
+  3. Přestavba výsledků kalkulačky v `CostCalculator.tsx` z pevného 3-sloupcového gridu na řádkový přehled fondů v souladu s mobilním screenem Stitch.
+  4. Odstranění pevných šířek v `ConsentBanner.tsx` a `Header.tsx`, zabránění horizontálnímu přetečení na viewportech 320 px a 390 px.
+

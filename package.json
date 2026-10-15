@@ -12,11 +12,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "validate:data": "tsx scripts/validate-data.ts",
-    "report:funnel": "tsx scripts/funnel-report.ts",
-    "cleanup:data": "tsx scripts/cleanup-data.ts"
+    "check:supabase": "tsx --env-file=.env scripts/check-supabase.ts",
+    "report:funnel": "tsx --env-file=.env scripts/funnel-report.ts",
+    "cleanup:data": "tsx --env-file=.env scripts/cleanup-data.ts"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.6",
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.3",
     "next": "^14.2.15",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

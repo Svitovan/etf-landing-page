@@ -25,18 +25,19 @@ export const LeadMagnet: React.FC<LeadMagnetProps> = ({
             <span className="badge">4. Krok: Uložení materiálu</span>
             <h2
               style={{
-                fontSize: "clamp(1.6rem, 4vw, 2.2rem)",
-                fontWeight: 800,
+                fontSize: "clamp(1.5rem, 4vw, 2.1rem)",
+                fontWeight: 500,
+                fontFamily: "var(--font-serif)",
                 color: "var(--text-main)",
-                letterSpacing: "-0.03em",
+                letterSpacing: "-0.015em",
                 marginTop: "0.5rem",
                 marginBottom: "0.5rem",
               }}
             >
-              Získejte kompletní srovnání a kontrolní seznam v PDF
+              Srovnání ETF + kontrolní seznam pro českého investora
             </h2>
-            <p style={{ color: "var(--text-muted)", fontSize: "0.98rem" }}>
-              Vše, co potřebujete mít při ruce, než otevřete účet u brokera nebo provedete první nákup.
+            <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>
+              Přehledný dokument bez paywallu a skrytých poplatků připravený k tisku a prostudování přímo na této stránce.
             </p>
           </div>
 
@@ -46,8 +47,8 @@ export const LeadMagnet: React.FC<LeadMagnetProps> = ({
               backgroundColor: "var(--bg-surface)",
               borderRadius: "var(--radius-lg)",
               border: "1px solid var(--border-light)",
-              padding: "1.5rem",
-              marginBottom: "1.5rem",
+              padding: "1.25rem",
+              marginBottom: "1.25rem",
               boxShadow: "var(--shadow-sm)",
             }}
           >
