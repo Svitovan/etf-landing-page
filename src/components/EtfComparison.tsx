@@ -1,15 +1,20 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { EtfRecord } from "../types/etf";
+import { EtfRecord, InvestorContext } from "../types/etf";
+import { SourceLinks } from "./SourceLinks";
+import { formatPercent } from "../lib/calculations";
 import { trackEvent, getConsentStatus } from "../lib/analytics-client";
 
 interface EtfComparisonProps {
   etfs: EtfRecord[];
+  investorContext: InvestorContext;
   onSelectEtfs?: (selectedTickers: string[]) => void;
 }
 
-export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs }) => {
+export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, investorContext, onSelectEtfs }) => {
+  const highestRate = Math.max(...etfs.map(etf => etf.expenseRatio.value.rate));
+  const lowestRate = Math.min(...etfs.map(etf => etf.expenseRatio.value.rate));
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showSources, setShowSources] = useState<boolean>(false);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
@@ -147,7 +152,8 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
               lineHeight: 1.5,
             }}
           >
-            <strong>Dostupnost u konkrétního brokera nebyla ověřena.</strong> Ověřte si ji před nákupem. Podle evropské regulace PRIIPs vyžadují čeští brokeři pro retailové nákupy dokument klíčových informací (KID) v češtině.
+            <strong>Dostupnost u konkrétního brokera nebyla ověřena.</strong> {investorContext.priips.value}
+            <SourceLinks evidence={investorContext.priips.evidence} />
           </div>
         </div>
 
@@ -206,7 +212,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
         {/* Responsive Cards Grid */}
         <div className="etf-comparison-grid" style={{ marginBottom: "1.5rem" }}>
           {filteredEtfs.map((etf) => {
-            const isSpy = etf.id === "spy";
+            const isHighest = highestRate > lowestRate && etf.expenseRatio.value.rate === highestRate;
             const isExpanded = !!expandedCards[etf.id];
 
             return (
@@ -266,12 +272,12 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
                       style={{
                         fontSize: "1.4rem",
                         fontWeight: 800,
-                        color: isSpy ? "var(--color-warning)" : "var(--accent)",
+                        color: isHighest ? "var(--color-warning)" : "var(--accent)",
                         display: "block",
                         lineHeight: 1.1,
                       }}
                     >
-                      {etf.expenseRatio.value.displayPercent}
+                      {formatPercent(etf.expenseRatio.value.rate)}
                     </span>
                     <span style={{ fontSize: "0.72rem", color: "var(--text-light)" }}>
                       ročně ({etf.expenseRatio.value.kind})
@@ -329,7 +335,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
                       className="tabular-nums"
                       style={{ fontWeight: 700, color: "var(--text-main)" }}
                     >
-                      {etf.expenseRatio.value.displayPercent} p.a.
+                      {formatPercent(etf.expenseRatio.value.rate)} p.a.
                     </span>
                   </div>
                   <p
@@ -541,7 +547,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
               {etfs.map((e) => (
                 <li key={e.id}>
                   <strong>{e.ticker.value}: </strong>
-                  Expense ratio {e.expenseRatio.value.displayPercent} ({e.expenseRatio.value.kind}) &ndash;{" "}
+                  Expense ratio {formatPercent(e.expenseRatio.value.rate)} ({e.expenseRatio.value.kind}) &ndash;{" "}
                   <a
                     href={e.expenseRatio.evidence[0].url}
                     target="_blank"

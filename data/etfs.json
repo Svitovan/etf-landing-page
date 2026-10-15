@@ -395,5 +395,39 @@
         ]
       }
     }
-  ]
+  ],
+  "investorContext": {
+    "reviewedAt": "2026-10-15T10:52:22.000Z",
+    "priips": {
+      "value": "PRIIPs upravuje vypracování a předání KID retailovému investorovi, zpravidla před uzavřením obchodu. Při propagaci v češtině je nutný český KID; v jiných případech ČNB připouští další jazyk za stanovených podmínek. Dostupnost konkrétního ETF a přijatelný KID si ověřte u brokera.",
+      "evidence": [
+        { "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32014R1286", "title": "PRIIPs: články 5, 7 a 13", "asOf": null, "checkedAt": "2026-10-15T10:52:22.000Z", "note": "Povinnost vypracovat a předat KID; jazyk podle čl. 7. Text ověřen přes indexované znění EUR-Lex, přímé načtení konsolidace blokováno anti-bot kontrolou." },
+        { "url": "https://www.cnb.cz/cs/dohled-financni-trh/legislativni-zakladna/stanoviska-k-regulaci-financniho-trhu/RS2018-12/", "title": "ČNB: jazyk a poskytování KID", "asOf": null, "checkedAt": "2026-10-15T10:52:22.000Z", "note": "Sekce A, otázka 1: čeština při české propagaci; v dalších případech přijatelný cizí jazyk s podmínkami. Nejde o ověření KID konkrétního fondu či dostupnosti u brokera." }
+      ]
+    },
+    "kidDefinition": {
+      "value": "KID je stručné sdělení klíčových informací o produktu podle PRIIPs, nejvýše na třech stranách A4 při tisku. Jazykové podmínky stanoví čl. 7 a příslušný regulátor; tento přehled není KID.",
+      "evidence": [
+        { "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=CELEX%3A32014R1286", "title": "PRIIPs: čl. 6 odst. 4 a čl. 7", "asOf": null, "checkedAt": "2026-10-15T10:52:22.000Z", "note": "Maximálně tři strany, nikoli přesně tři. Ověřeno v indexovaném úředním znění EUR-Lex." }
+      ]
+    },
+    "dividendTreaty": {
+      "value": "Pro oprávněného skutečného vlastníka dividend, rezidenta ČR, stanoví smlouva USA–ČR při splnění podmínek limit 15 % z hrubých dividend. Nejde o automatickou sazbu pro každou distribuci ETF ani o celkové zdanění v ČR.",
+      "evidence": [
+        { "url": "https://www.irs.gov/pub/irs-trty/czech.pdf", "title": "Smlouva USA–ČR: článek 10", "asOf": "1993-09-16", "checkedAt": "2026-10-15T10:52:22.000Z", "note": "Čl. 10 odst. 2 písm. b), odst. 3 pro RIC; podmínka skutečného vlastnictví a rezidence. Čl. 1 a 17 omezují nárok, čl. 24 řeší dvojí zdanění. Sazba není obecnou garancí pro každou ETF výplatu. Existence smlouvy ověřena také v aktuálním seznamu IRS pro ČR." }
+      ]
+    },
+    "w8ben": {
+      "value": "Fyzická osoba, která není osobou USA, předává W-8BEN plátci nebo brokerovi k doložení zahraničního statusu a případného nároku na smluvní výhody. Ověřte správné vyplnění a platnost; formulář se neposílá IRS.",
+      "evidence": [
+        { "url": "https://www.irs.gov/instructions/iw8ben", "title": "IRS: pokyny k W-8BEN", "asOf": null, "checkedAt": "2026-10-15T10:52:22.000Z", "note": "Revize pokynů 10/2021; přesný den revize není uveden. Purpose of Form; Who Must Provide Form W-8BEN; Giving Form W-8BEN to the withholding agent; Expiration. W-8BEN není určen osobám USA ani obecně právnickým osobám." }
+      ]
+    },
+    "withholding": {
+      "value": "Obecná americká srážka z příjmů ze zdrojů v USA pro zahraniční osoby činí 30 %, pokud se neuplatní smluvní nebo zákonná výjimka. Konkrétní režim závisí také na povaze příjmu a doloženém nároku.",
+      "evidence": [
+        { "url": "https://www.irs.gov/individuals/international-taxpayers/nra-withholding", "title": "IRS: obecný režim NRA withholding", "asOf": null, "checkedAt": "2026-10-15T10:52:22.000Z", "note": "Withholding on payments of U.S. source income to foreign persons, IRC 1441–1443. Nejde o tvrzení, že se 30 % použije vždy nebo že každá distribuce fondu je běžnou dividendou." }
+      ]
+    }
+  }
 }

@@ -54,7 +54,7 @@ export default function PrivacyPage() {
               <li><strong>Právní základ:</strong> Plnění požadavku uživatele (poskytnutí vyžádaného materiálu dle čl. 6 odst. 1 písm. b GDPR).</li>
               <li><strong>Marketing a sdílení:</strong> Váš e-mail NENÍ zařazen do marketingových rozesílek ani předáván třetím stranám k reklamním účelům.</li>
               <li><strong>Technologičtí zpracovatelé:</strong> Data jsou ukládána v zabezpečené databázi Supabase (PostgreSQL) a web je hostován na platformě Vercel.</li>
-              <li><strong>Doba uchování:</strong> Demonstrační data a kontakty jsou uchovávány maximálně 30 dní, po kterých jsou trvale smazány automatizovaným čisticím skriptem.</li>
+              <li><strong>Doba uchování:</strong> Po uplynutí 30 dní jsou demonstrační data a kontakty odstraněny při nejbližším denním běhu automatické databázové úlohy (za běžného provozu do dalších 24 hodin). Úloha běží denně v 03:15 UTC. Stav spuštění je zaznamenán v historii úloh; technický výpadek vyžaduje nápravu a opakování běhu správcem. Tato lhůta se týká aktivní databáze; případné zálohy podléhají retenčním pravidlům poskytovatele.</li>
             </ul>
           </section>
 

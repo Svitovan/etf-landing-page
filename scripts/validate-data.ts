@@ -41,6 +41,7 @@ interface EtfDataset {
   version: string;
   updatedAt: string;
   etfs: EtfRecord[];
+  investorContext: import("../src/types/etf").InvestorContext;
 }
 
 function validateEvidence(evidence: Evidence[], context: string): void {
@@ -118,6 +119,27 @@ export function validateEtfDataset(data: EtfDataset): { success: boolean; errors
         errors.push(`ETF ${ticker} availability explanation should explain PRIIPs/KID or broker availability.`);
       }
     }
+
+    const context = data.investorContext;
+    if (!context || !context.reviewedAt || isNaN(Date.parse(context.reviewedAt))) {
+      errors.push("Missing or invalid investorContext review timestamp.");
+    } else {
+      for (const key of ["priips", "kidDefinition", "dividendTreaty", "w8ben", "withholding"] as const) {
+        const claim = context[key];
+        if (!claim || typeof claim.value !== "string" || !claim.value.trim()) {
+          errors.push(`Missing investorContext.${key} statement.`);
+          continue;
+        }
+        validateEvidence(claim.evidence, `investorContext.${key}`);
+        for (const source of claim.evidence) {
+          const url = new URL(source.url);
+          if (url.protocol !== "https:" || !["www.irs.gov", "eur-lex.europa.eu", "www.cnb.cz"].includes(url.hostname)) {
+            errors.push(`investorContext.${key}: use a direct primary IRS/EUR-Lex/CNB source.`);
+          }
+          if (!source.note?.trim()) errors.push(`investorContext.${key}: missing source locator/scope note.`);
+        }
+      }
+    }
   } catch (err: unknown) {
     errors.push(err instanceof Error ? err.message : String(err));
   }
@@ -148,7 +170,7 @@ function run(): void {
     process.exit(1);
   }
 
-  console.log(`✓ Dataset valid: 3 ETFs verified (VOO, IVV, SPY) with full primary evidence.`);
+  console.log(`✓ Dataset structure valid: 3 ETFs and sourced investor context. This check does not verify remote source contents.`);
 }
 
 if (process.argv[1]?.endsWith("validate-data.ts") || process.argv[1]?.includes("validate-data")) {

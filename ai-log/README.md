@@ -16,6 +16,9 @@ Tato složka obsahuje záznamy o tom, jak byl projekt realizován ve spolupráci
   - `session-readiness-reaudit-2026-10-15.md`: Nezávislý re-audit a identifikace priorit B01–B06.
   - `session-request-identity-2026-10-15.md`: Oprava konfliktu při opakování request ID, 52 testů a SQL ověření s rollbackem; nasazení čeká.
   - `session-documentation-evidence-2026-10-15.md`: Oprava bodu 2: MDE, přenositelné odkazy, skutečný redigovaný export, QA důkazy a exit code reportu; 57 testů.
+  - `session-retention-2026-10-15.md`: Atomické cleanup RPC, skutečně aktivní denní Supabase Cron a ověření bez trvalého mazání kontaktů; 72 testů.
+  - `session-financial-context-2026-10-15.md`: PRIIPs/KID, W-8BEN a srážka s primárními zdroji, společnými texty a doloženým rozsahem; 78 testů.
+  - `session-dataset-ui-2026-10-15.md`: Finanční sazby a parametry UI z datasetu, změnové render testy a mobilní browser kontrola; 87 testů.
 
 ### Export skutečných zpráv a jeho omezení
 
@@ -29,5 +32,5 @@ Kompletní export všech relací Antigravity v tomto balíčku není a není př
 
 ## Pravidla a dohled nad AI
 1. **Žádné nekontrolované přijímání dat:** Finanční údaje nejsou generovány z parametrů modelu, ale přímo z oficiálních zdrojů (Vanguard, iShares, State Street Global Advisors, NYSE Arca) a ověřeny skriptem `scripts/validate-data.ts`.
-2. **Přísné testování:** Výpočty a backend jsou kontrolovány deterministickými testy (Vitest, po opravě bodu 2 celkem 57 testů). Jejich rozsah a limity rozlišuje QA matice.
+2. **Přísné testování:** Výpočty a backend jsou kontrolovány deterministickými testy (Vitest, po sjednocení finančního UI celkem 87 testů). Jejich rozsah a limity rozlišuje QA matice.
 3. **Audit kódu:** Každý generovaný soubor prochází kontrolou typů (`tsc`), statickou analýzou (`next lint`) a bezpečnostním auditem (žádné unescaped HTML, žádné vystavení serverových secretů, ochrana Origin hlavičky).

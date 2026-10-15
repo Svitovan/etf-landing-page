@@ -1,12 +1,17 @@
 import React from "react";
 import { CampaignHeadline } from "../data/campaign-copy";
 import { trackEvent } from "../lib/analytics-client";
+import type { EtfRecord } from "../types/etf";
+import { formatExpenseRatio } from "../lib/calculations";
 
 interface HeroProps {
   campaign: CampaignHeadline;
+  etfs: EtfRecord[];
 }
 
-export const Hero: React.FC<HeroProps> = ({ campaign }) => {
+export const Hero: React.FC<HeroProps> = ({ campaign, etfs }) => {
+  const highestRate = Math.max(...etfs.map(etf => etf.expenseRatio.value.rate));
+  const lowestRate = Math.min(...etfs.map(etf => etf.expenseRatio.value.rate));
   return (
     <section className="hero-section">
       <div className="container">
@@ -25,48 +30,25 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
 
           {/* Quick value upfront cards preview */}
           <div className="hero-preview-cards">
-            <div style={{ textAlign: "center", minWidth: 0 }}>
-              <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
-                VOO
+            {etfs.map((etf, index) => (
+              <div key={etf.id} style={{
+                textAlign: "center", minWidth: 0,
+                borderLeft: index > 0 ? "1px solid var(--border-light)" : undefined,
+              }}>
+                <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
+                  {etf.ticker.value}
+                </div>
+                <div className="tabular-nums" style={{
+                  fontSize: "1.1rem", fontWeight: 700,
+                  color: highestRate > lowestRate && etf.expenseRatio.value.rate === highestRate ? "var(--color-warning)" : "var(--accent)",
+                }}>
+                  {formatExpenseRatio(etf.expenseRatio.value)}
+                </div>
+                <div title={etf.issuer.value} style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {etf.issuer.value}
+                </div>
               </div>
-              <div className="tabular-nums" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent)" }}>
-                0,03 %
-              </div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                Vanguard
-              </div>
-            </div>
-
-            <div
-              style={{
-                textAlign: "center",
-                minWidth: 0,
-                borderLeft: "1px solid var(--border-light)",
-                borderRight: "1px solid var(--border-light)",
-              }}
-            >
-              <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
-                IVV
-              </div>
-              <div className="tabular-nums" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--accent)" }}>
-                0,03 %
-              </div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                iShares
-              </div>
-            </div>
-
-            <div style={{ textAlign: "center", minWidth: 0 }}>
-              <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
-                SPY
-              </div>
-              <div className="tabular-nums" style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-warning)" }}>
-                0,0945 %
-              </div>
-              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                State Street
-              </div>
-            </div>
+            ))}
           </div>
 
           <div className="hero-ctas">

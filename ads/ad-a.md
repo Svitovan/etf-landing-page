@@ -9,7 +9,7 @@
 ## 2. Textace inzerátu
 
 - **Primární text:**  
-  *„Všechny tři fondy drží stejných 500 největších amerických firem. Přesto u jednoho z nich zaplatíte na poplatcích fondu třikrát více než u ostatních dvou. Podívejte se na srovnání VOO, IVV a SPY a stáhněte si 5bodový kontrolní seznam před nákupem u českého brokera.“*
+  *„VOO, IVV a SPY sledují stejný index S&P 500, ale liší se nákladovostí a právní strukturou. Podívejte se na jejich srovnání a otevřete si 5bodový kontrolní seznam před nákupem u brokera.“*
 
 - **Titulek (Headline):**  
   **VOO, IVV, SPY. Jaký je mezi nimi skutečný rozdíl?**

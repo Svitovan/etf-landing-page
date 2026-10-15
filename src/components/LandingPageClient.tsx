@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { EtfRecord } from "../types/etf";
+import { EtfRecord, InvestorContext } from "../types/etf";
 import { CampaignHeadline } from "../data/campaign-copy";
 import { Header } from "./Header";
 import { Hero } from "./Hero";
@@ -13,17 +13,20 @@ import { SourcesFaq } from "./SourcesFaq";
 import { Footer } from "./Footer";
 import { ConsentBanner } from "./ConsentBanner";
 import { trackEvent, getConsentStatus } from "../lib/analytics-client";
+import { DEFAULT_POSITION_CZK } from "../lib/calculations";
 
 interface LandingPageClientProps {
   etfs: EtfRecord[];
   campaign: CampaignHeadline;
+  investorContext: InvestorContext;
 }
 
 export const LandingPageClient: React.FC<LandingPageClientProps> = ({
   etfs,
   campaign,
+  investorContext,
 }) => {
-  const [positionValueCzk, setPositionValueCzk] = useState<number>(100_000);
+  const [positionValueCzk, setPositionValueCzk] = useState<number>(DEFAULT_POSITION_CZK);
   const [selectedEtfs, setSelectedEtfs] = useState<string[]>(["VOO", "IVV", "SPY"]);
 
   useEffect(() => {
@@ -42,18 +45,18 @@ export const LandingPageClient: React.FC<LandingPageClientProps> = ({
     <>
       <Header />
       <main id="main-content">
-        <Hero campaign={campaign} />
-        <EtfComparison etfs={etfs} onSelectEtfs={setSelectedEtfs} />
+        <Hero campaign={campaign} etfs={etfs} />
+        <EtfComparison etfs={etfs} investorContext={investorContext} onSelectEtfs={setSelectedEtfs} />
         <CostCalculator
           etfs={etfs}
           onCalculationChange={handleCalculationChange}
         />
-        <CzechContext />
+        <CzechContext context={investorContext} />
         <LeadMagnet
           selectedEtfs={selectedEtfs}
           positionValueCzk={positionValueCzk}
         />
-        <SourcesFaq etfs={etfs} />
+        <SourcesFaq etfs={etfs} context={investorContext} />
       </main>
       <Footer />
       <ConsentBanner />

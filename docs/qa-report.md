@@ -6,7 +6,7 @@ Aktualizováno 2026-10-15 po opravě bodu 2 z [verifikace 4465301](readiness-ver
 
 | Kontrola | Výsledek a rozsah |
 |---|---|
-| `npm test` | **57/57**, 6 souborů: 14 výpočtů, 28 backend, 7 klientská identita, 3 RPC, 3 storage handler, 2 funnel CLI |
+| `npm test` | **87/87**, 10 souborů: předchozích 78 + 9 regresí UI při změně datasetu |
 | `npm run lint` | Bez chyb a varování |
 | `npm run typecheck` | Bez chyb |
 | `npm run build` | Prošlo; Next.js 14.2.35, vygenerováno 9 stránek, shared JS 87,2 kB |
@@ -27,7 +27,7 @@ HTTP test CLI spouští samostatný proces proti lokálnímu serveru. V omezené
 
 | ID | Požadované chování | Dostupný důkaz | Stav / hranice důkazu |
 |---|---|---|---|
-| T01 | Integrita datasetu a zdrojů | `validate:data` v historické verifikaci 4465301 | Struktura prošla; úplný provenance finančních tvrzení zůstává bodem 3 auditu |
+| T01 | Integrita datasetu a zdrojů | Nynější `validate:data`, provenance testy a ověření primárních regulačních/daňových zdrojů | Prošlo v uvedeném rozsahu; snapshot sazeb ETF zůstává 2026-10-11, nebyl vydáván za dnešní nové měření |
 | T02 | Přesné kontrolní náklady | `tests/calculations.test.ts`, unit | Prošlo; 30 Kč, 94,50 Kč a rozdíl 64,50 Kč |
 | T03 | Parsování českého vstupu a rozsah | `tests/calculations.test.ts`, unit | Prošlo; neprokazuje samo o sobě mobilní ovládání |
 | T04 | Email, tickery a honeypot | Zod v `tests/backend.test.ts`, unit | Prošlo; schema test, ne browser test |
@@ -59,4 +59,18 @@ Původní test pod názvem T07 pouze předával poškozený vstup; nyní je pojm
 
 ## Co tímto krokem není uzavřeno
 
-Úplné ověření finančních zdrojů, odstranění duplikovaných finančních hodnot v JSX, Lighthouse, nové PDF, potvrzení skutečně spuštěného cleanup scheduleru, bezpečnost celé Git historie/závislostí a případné finální nasazení. Jde o zbývající práci z bodu 3 a širšího auditu, ne o důvod označit všechny automatické testy jako live evidence.
+Lighthouse, nové PDF, bezpečnost celé Git historie/závislostí a případné finální nasazení. Jde o zbývající práci z širšího auditu, ne o důvod označit všechny automatické testy jako live evidence.
+
+### Dodatečné ověření změny finančního datasetu
+
+`tests/dataset-driven-ui.test.ts` mění pouze izolovaný fixture: číselné sazby a pořadí nákladovosti, Gross/Net, emitenta, burzu, měnu a dividendy. Ponechává zastaralé displayPercent a potvrzuje, že Hero, comparison, kalkulačka, FAQ i report ukazují správné nové sazby; obě kalkulace mají nové částky a desetiletý rozdíl. Vyšší sazba je zvýrazněna u nově nejdražšího VOO. Původní finanční snapshot a kontrolní výpočty zůstávají beze změny.
+
+Lokální browser: landing na 320 a 390 px bez globálního overflow (scrollWidth 305/375); Hero grid na 320 px má viditelnou i celkovou šířku 279 px. Report na 320 px: document width 305, tabulka 412 uvnitř scroll kontejneru 215 px, nikoli přesah celého dokumentu. Kalkulačka při 250000 CZK a report s IVV: 75 / 75 / 236,25 CZK. V kontrolovaných stavech žádné console error/warn, oba GET 200. Nejde o nové produkční měření Lighthouse ani PDF kontrolu.
+
+### Dodatečné ověření regulačních a daňových zdrojů
+
+PRIIPs/KID a americká srážka/W-8BEN mají společné podmíněné formulace, primární zdroje a lokátory v datasetu. Odkazy se skutečně renderují v českém kontextu i reportu; odmítá se chybějící evidence a vydávání blogu za primární zdroj. Kontrola proběhla 2026-10-15; [rozsah a přístupové omezení EUR-Lex](data-methodology.md). Kategorická broker-specific a žebříčková tvrzení odstraněna. Nejde o individuální daňové posouzení ani nové ověření aktuálních sazeb všech fondů. Tyto změny dosud nejsou publikovány.
+
+### Dodatečné ověření retence
+
+Cleanup scheduler je nyní aktivní v Supabase: 03:15 UTC denně; skutečná neodstraňující cron sonda prošla 2026-10-15 v 10:46 UTC a odregistrovala se. SQL a service_role mazání ověřeny s rollbackem; CLI úspěch/chyba mají procesní testy. První ostrý denní běh ještě neproběhl. [Přesný provozní protokol](data-retention.md). Dřívější tvrzení o chybějícím scheduleru je tímto překonáno; související změna Privacy zatím vyžaduje publikaci.

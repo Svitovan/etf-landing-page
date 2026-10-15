@@ -21,7 +21,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "VOO, IVV, SPY: Srovnání ETF pro českého investora | ETF Přehled",
   description:
-    "Nezávislé vzdělávací srovnání nákladů tří největších ETF na S&P 500 obchodovaných na NYSE Arca. Zjistěte, co si ověřit před nákupem u českého brokera.",
+    "Nezávislé vzdělávací srovnání nákladů ETF VOO, IVV a SPY na S&P 500 obchodovaných na NYSE Arca. Zjistěte, co si ověřit před nákupem u českého brokera.",
   keywords: ["ETF srovnání", "VOO", "IVV", "SPY", "S&P 500", "český investor", "poplatky ETF"],
   robots: "index, follow",
 };

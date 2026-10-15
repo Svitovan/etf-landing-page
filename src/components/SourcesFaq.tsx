@@ -1,11 +1,14 @@
 import React from "react";
-import { EtfRecord } from "../types/etf";
+import { EtfRecord, InvestorContext } from "../types/etf";
+import { SourceLinks } from "./SourceLinks";
+import { formatExpenseRatio } from "../lib/calculations";
 
 interface SourcesFaqProps {
   etfs: EtfRecord[];
+  context: InvestorContext;
 }
 
-export const SourcesFaq: React.FC<SourcesFaqProps> = ({ etfs }) => {
+export const SourcesFaq: React.FC<SourcesFaqProps> = ({ etfs, context }) => {
   return (
     <section
       id="zdroje"
@@ -48,7 +51,7 @@ export const SourcesFaq: React.FC<SourcesFaqProps> = ({ etfs }) => {
                   Proč porovnáváte zrovna tyto tři fondy?
                 </h3>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", lineHeight: 1.5 }}>
-                  VOO, IVV a SPY jsou tři největší a nejlikvidnější fondy na světě sledující identický index (S&amp;P 500). Díky tomu můžete srovnávat skutečné rozdíly v nákladech fondu a struktuře, aniž by byl výsledek zkreslen jinou investiční strategií.
+                  VOO, IVV a SPY sledují stejný index S&amp;P 500. Srovnání se proto soustředí na nákladovost a právní strukturu; není žebříčkem velikosti, likvidity ani doporučením konkrétního fondu.
                 </p>
               </div>
 
@@ -61,10 +64,13 @@ export const SourcesFaq: React.FC<SourcesFaqProps> = ({ etfs }) => {
                 }}
               >
                 <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--text-main)", marginBottom: "0.3rem" }}>
-                  Proč má SPY vyšší nákladovost (0,0945 %) než VOO a IVV (0,03 %)?
+                  Jak se liší roční nákladovost fondů?
                 </h3>
+                <ul style={{ fontSize: "0.85rem", color: "var(--text-muted)", paddingLeft: "1.2rem", marginBottom: "0.5rem" }}>
+                  {etfs.map(etf => <li key={etf.id}>{etf.ticker.value}: {formatExpenseRatio(etf.expenseRatio.value)}</li>)}
+                </ul>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", lineHeight: 1.5 }}>
-                  SPY vznikl v roce 1993 jako Unit Investment Trust (UIT), což je starší právní forma s přísnějšími provozními omezeními. Výměnou za to má SPY největší denní objem obchodů a minimální spready, což ocení brokeři a velcí obchodníci. Pro pasivní dlouhodobé držení jsou však VOO i IVV levnější.
+                  Jde o rozdílné produkty s různou právní strukturou a zveřejněnými náklady. Nižší Expense Ratio samo o sobě neznamená nižší celkové náklady obchodu; ty závisejí také na brokerovi, měnové konverzi a spreadu. Z právní formy nelze samotné odvodit příčinu konkrétní sazby poplatku.
                 </p>
               </div>
 
@@ -80,7 +86,8 @@ export const SourcesFaq: React.FC<SourcesFaqProps> = ({ etfs }) => {
                   Co když mi můj broker americká ETF neumožní koupit?
                 </h3>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-muted)", lineHeight: 1.5 }}>
-                  Kvůli směrnici PRIIPs vyžaduje EU klíčové informace (KID) v češtině, které US fondy často nemají. V takovém případě se u brokera podívejte na evropské ekvivalenty se sídlem v Irsku (označované jako UCITS, např. SXR8 nebo VUAA).
+                  {context.priips.value} Pokud produkt není dostupný, zeptejte se na jiný produkt se stejným benchmarkem a vhodnou dokumentací; jeho náklady, rizika a daňové zacházení posuzujte samostatně.
+                  <SourceLinks evidence={context.priips.evidence} />
                 </p>
               </div>
             </div>

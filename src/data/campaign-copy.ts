@@ -10,7 +10,7 @@ export const CAMPAIGN_VARIANTS: Record<string, CampaignHeadline> = {
     badge: "Srovnání ETF na S&P 500",
     headline: "VOO, IVV, SPY: jaký je mezi nimi skutečný rozdíl?",
     subheadline:
-      "Tři největší americká ETF sledují stejný index. Podívejte se na rozdíly v nákladech, struktuře a co si před nákupem ověřit jako český investor.",
+      "Tři americká ETF sledují stejný index S&P 500. Podívejte se na rozdíly v nákladech, struktuře a co si před nákupem ověřit jako český investor.",
     heroCta: "Zobrazit srovnání fondů",
   },
   ad_b: {

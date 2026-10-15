@@ -14,5 +14,5 @@ export default function HomePage({ searchParams }: PageProps) {
   const campaign = getCampaignCopy(searchParams?.utm_content);
   const etfs = etfData.etfs as unknown as EtfRecord[];
 
-  return <LandingPageClient etfs={etfs} campaign={campaign} />;
+  return <LandingPageClient etfs={etfs} campaign={campaign} investorContext={etfData.investorContext} />;
 }

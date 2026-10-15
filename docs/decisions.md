@@ -1,5 +1,22 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-012: Jedna číselná sazba pro popisek i výpočet (2026-10-15)
+- **Rozhodnutí:** Veškeré UI procentní sazby se odvozují z `expenseRatio.value.rate` přes sdílené formátování, nikoli z ručních JSX hodnot ani z uloženého displayPercent. Typ sazby je `kind`; původní displayPercent ponechán pro kompatibilitu datasetu, ale UI jej nepoužívá.
+- **Prezentace:** Hero dostává stejná ETF props jako kalkulačka. Tabulka reportu se generuje z datových polí včetně emitenta, formy a dividend. Výsledek/varovná barva se nepřipisuje napevno tickeru SPY a text rozdílu nepředpokládá rovnost VOO a IVV.
+- **Ověření:** Test mění numeric rates a další metadata pouze v odděleném fixture, ponechává zastaralý displayPercent a ověřuje render pěti bloků, přepočet nákladů i změnu pořadí. 87 testů a lokální mobilní kontrola prošly; dataset nebyl kvůli testu upraven.
+
+## ADR-011: Sdílené a dohledatelné regulační/daňové texty (2026-10-15)
+- **Rozhodnutí:** Podmíněná obecná tvrzení o PRIIPs/KID a americké srážce/W-8BEN jsou v `investorContext` uvnitř `data/etfs.json` s primárními zdroji, datem kontroly a lokátorem. Server je předává jako typované props; nevkládá se celý dataset navíc do klientského bundle. Stránka i report zobrazují tytéž formulace a přímé zdroje.
+- **Hranice:** Smluvní limit není automatická sazba každé ETF distribuce, W-8BEN nedokládá nárok sám podpisem a nenahrazuje posouzení českých povinností. Jazyk KID závisí na čl. 7 a podmínkách ČNB, ne na univerzálním pravidle „vždy česky“. Bez prověření brokera se jeho nabídka nedeklaruje.
+- **Poctivý původ:** Finanční snapshot fondů se touto kontrolou nemění. Měsíc revize W-8BEN neproměňujeme ve vymyšlený přesný den. EUR-Lex anti-bot omezení se přiznává; obecné pořadí fondů/spreadů bez aktuálního měření se odstraňuje.
+- **Verifikace:** Validátor kontroluje kontrakt evidence, nikoli pravdivost internetu. 78 testů zahrnuje chybějící/sekundární evidence a viditelné zdrojové odkazy na landing i v reportu.
+
+## ADR-010: Retence přímo v Postgres a atomický cleanup (2026-10-15)
+- **Rozhodnutí:** Supabase pg_cron spouští denně v 03:15 UTC jednu transakční SQL funkci. Vercel ani externí HTTP plánovač nejsou potřeba. Uchování je 30 dní + prodleva do nejbližšího denního běhu; Privacy tuto mez výslovně uvádí.
+- **Chyby a oprávnění:** SECURITY INVOKER bez veřejného EXECUTE, service_role pro CLI. Chyba vede k rollbacku; Node ověřuje odpověď RPC a vrací exit 1 bez provider PII. Skutečné mazání se serializuje, rodičovské kontakty se předem zamknou.
+- **Rozsah:** Adresné odstranění kontaktu se nedotkne nesouvisejících analytických relací. Prázdná cílová adresa a neplatná retence se odmítají. Náhled neprovádí změny. Historie dvou projektových jobů se čistí samostatně.
+- **Ověření:** 72 testů, reálné SQL a service_role s rollbackem, CLI náhled a skutečná neodstraňující cron sonda. První ostrý denní běh se neoznačuje předem za úspěšný. Provozní postup a limity v `docs/data-retention.md`.
+
 ## ADR-009: Důkazy místo jednotného „prošlo“ a přenositelný AI export (2026-10-15)
 - **Kontext:** Dokumentace směšovala unit testy s produkčními kontrolami; odhad vzorku neměl MDE a AI shrnutí nebylo exportem skutečných zpráv.
 - **Rozhodnutí:** QA uvádí pro každý scénář úroveň důkazu a omezení. Selhání storage se testuje skutečným handlerem s řízenou odpovědí providera; chyba reportu také samostatným CLI procesem. Produkční outage se kvůli testu nevyvolává.

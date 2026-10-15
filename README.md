@@ -1,7 +1,7 @@
 # ETF Přehled — Konverzní landing page pro české investory (Zadání B)
 
 > Praktické řešení výběrového řízení na pozici **Junior AI Developer** (Clientelo / Matej Lörinc).  
-> Projekt srovnává tři nejvýznamnější americká ETF na index S&P 500 obchodovaná na NYSE Arca: **VOO, IVV a SPY**.
+> Projekt srovnává tři americká ETF na index S&P 500 obchodovaná na NYSE Arca: **VOO, IVV a SPY**.
 
 ---
 
@@ -82,6 +82,10 @@ npm run report:funnel
 
 ## 5. Finanční data a metodika
 
+Regulační a daňové formulace mají primární zdroje a přesné vymezení v `data/etfs.json → investorContext` (kontrola 2026-10-15). Na stránce i v reportu jsou odkazy přímo u tvrzení. Podrobná mapa: [docs/data-methodology.md](docs/data-methodology.md). Nejde o individuální daňové posouzení; finanční snapshot ETF zůstává `2026-10-11`.
+
+Procentní popisky i výpočty používají jednu číselnou sazbu z datasetu. Hero, FAQ, kalkulačka a tabulka reportu neobsahují ručně opsané sazby; změnu dat ověřují regresní render testy.
+
 - **Srovnávané fondy:**
   - **VOO** (Vanguard S&P 500 ETF) – Expense Ratio: **0,03 %** (Net)
   - **IVV** (iShares Core S&P 500 ETF) – Expense Ratio: **0,03 %** (Net)
@@ -114,6 +118,8 @@ Stejný `requestId` se stejným obsahem vrací původní výsledek bez nové sub
 ---
 
 ## 7. Analytika a odhad konverze
+
+**Retence:** Supabase spouští automatický cleanup denně v 03:15 UTC. CLI používá stejnou atomickou funkci; `npm run cleanup:data -- --dry-run` zobrazí kandidáty bez mazání. Chyba vrací exit 1. Nastavení, kontrola historie a přesný rozsah: [docs/data-retention.md](docs/data-retention.md).
 
 - **Zásada soukromí:** Žádné měřicí cookies ani události se neposílají před aktivním souhlasem v cookie liště.
 - **Odhad konverze:** Pro studený mobilní provoz z Meta Ads odhadujeme **3–7 %** konverzi ze sledovaných relací (centrální scénář 5 %).

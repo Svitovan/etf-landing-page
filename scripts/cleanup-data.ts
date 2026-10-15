@@ -5,7 +5,6 @@ export interface CleanupOptions {
   dryRun?: boolean;
   targetEmail?: string;
 }
-
 export interface CleanupResult {
   dryRun: boolean;
   leadsDeleted: number;
@@ -14,169 +13,75 @@ export interface CleanupResult {
   sessionsDeleted: number;
   rateLimitsDeleted: number;
 }
+const countKeys = ["leadsDeleted", "submissionsDeleted", "eventsDeleted", "sessionsDeleted", "rateLimitsDeleted"] as const;
 
 export async function cleanupData(options: CleanupOptions = {}): Promise<CleanupResult> {
-  const olderThanDays = options.olderThanDays ?? 30;
+  const days = options.olderThanDays ?? 30;
   const dryRun = options.dryRun ?? false;
-  const targetEmail = options.targetEmail ? options.targetEmail.trim().toLowerCase() : undefined;
-
-  const cutoffDate = new Date();
-  cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
-  const cutoffIso = cutoffDate.toISOString();
-
-  const rateLimitCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
+  const email = options.targetEmail?.trim().toLowerCase();
+  if (!Number.isInteger(days) || days < 1 || days > 365 || typeof dryRun !== "boolean" ||
+      (options.targetEmail !== undefined && (!email || !email.includes("@")))) {
+    throw new Error("INVALID_CLEANUP_OPTIONS");
+  }
   const supabase = getSupabaseServerClient();
-
   if (supabase) {
-    let leadsToDeleteIds: string[] = [];
-
-    if (targetEmail) {
-      const { data: targetLeads } = await supabase
-        .from("leads")
-        .select("id")
-        .eq("normalized_email", targetEmail);
-      leadsToDeleteIds = (targetLeads || []).map((l) => l.id);
-    } else {
-      const { data: expiredLeads } = await supabase
-        .from("leads")
-        .select("id")
-        .lt("created_at", cutoffIso);
-      leadsToDeleteIds = (expiredLeads || []).map((l) => l.id);
+    // One transaction; failures roll back every deletion. No provider row details in logs.
+    const { data, error } = await supabase.rpc("cleanup_project_data", {
+      p_older_than_days: days, p_dry_run: dryRun, p_target_email: email ?? null,
+    });
+    if (error) throw new Error("CLEANUP_DATABASE_FAILED");
+    if (!data || data.dryRun !== dryRun || countKeys.some(key =>
+      !Number.isSafeInteger(data[key]) || data[key] < 0)) {
+      throw new Error("CLEANUP_INVALID_RESPONSE");
     }
-
-    let submissionsCount = 0;
-    if (leadsToDeleteIds.length > 0) {
-      const { count } = await supabase
-        .from("lead_submissions")
-        .select("id", { count: "exact", head: true })
-        .in("lead_id", leadsToDeleteIds);
-      submissionsCount = count || 0;
-    }
-
-    const { count: eventsCount } = await supabase
-      .from("analytics_events")
-      .select("id", { count: "exact", head: true })
-      .lt("server_timestamp", cutoffIso);
-
-    const { count: sessionsCount } = await supabase
-      .from("analytics_sessions")
-      .select("id", { count: "exact", head: true })
-      .lt("created_at", cutoffIso);
-
-    const { count: rateLimitsCount } = await supabase
-      .from("rate_limit_buckets")
-      .select("bucket_key", { count: "exact", head: true })
-      .lt("expires_at", new Date().toISOString());
-
-    if (!dryRun) {
-      if (leadsToDeleteIds.length > 0) {
-        await supabase.from("lead_submissions").delete().in("lead_id", leadsToDeleteIds);
-        await supabase.from("leads").delete().in("id", leadsToDeleteIds);
-      }
-      await supabase.from("analytics_events").delete().lt("server_timestamp", cutoffIso);
-      await supabase.from("analytics_sessions").delete().lt("created_at", cutoffIso);
-      await supabase.from("rate_limit_buckets").delete().lt("expires_at", new Date().toISOString());
-    }
-
-    return {
-      dryRun,
-      leadsDeleted: leadsToDeleteIds.length,
-      submissionsDeleted: submissionsCount,
-      eventsDeleted: eventsCount || 0,
-      sessionsDeleted: sessionsCount || 0,
-      rateLimitsDeleted: rateLimitsCount || 0,
-    };
+    return data as CleanupResult;
   }
+  if (process.env.NODE_ENV === "production") throw new Error("CLEANUP_STORAGE_NOT_CONFIGURED");
 
-  // MemoryStore fallback (local / testing)
-  let leadsToDeleteIds: string[] = [];
-  if (targetEmail) {
-    leadsToDeleteIds = memoryStore.leads
-      .filter((l) => l.normalized_email === targetEmail)
-      .map((l) => l.id);
-  } else {
-    leadsToDeleteIds = memoryStore.leads
-      .filter((l) => l.created_at < cutoffIso)
-      .map((l) => l.id);
-  }
-
-  const submissionsToDelete = memoryStore.submissions.filter((s) =>
-    leadsToDeleteIds.includes(s.lead_id)
-  );
-  const eventsToDelete = memoryStore.events.filter((e) => e.server_timestamp < cutoffIso);
-  const sessionsToDelete = memoryStore.sessions.filter((s) => s.created_at < cutoffIso);
-
-  const nowMs = Date.now();
-  let rateLimitsExpired = 0;
-  for (const [, val] of memoryStore.rateLimits.entries()) {
-    if (val.expiresAt < nowMs) rateLimitsExpired++;
-  }
-
-  if (!dryRun) {
-    memoryStore.submissions = memoryStore.submissions.filter(
-      (s) => !leadsToDeleteIds.includes(s.lead_id)
-    );
-    memoryStore.leads = memoryStore.leads.filter((l) => !leadsToDeleteIds.includes(l.id));
-    memoryStore.events = memoryStore.events.filter((e) => e.server_timestamp >= cutoffIso);
-    memoryStore.sessions = memoryStore.sessions.filter((s) => s.created_at >= cutoffIso);
-    for (const [key, val] of memoryStore.rateLimits.entries()) {
-      if (val.expiresAt < nowMs) {
-        memoryStore.rateLimits.delete(key);
-      }
-    }
-  }
-
-  return {
-    dryRun,
-    leadsDeleted: leadsToDeleteIds.length,
-    submissionsDeleted: submissionsToDelete.length,
-    eventsDeleted: eventsToDelete.length,
-    sessionsDeleted: sessionsToDelete.length,
-    rateLimitsDeleted: rateLimitsExpired,
+  const cutoff = new Date(Date.now() - days * 86400000).toISOString();
+  const ids = new Set(memoryStore.leads.filter(l => email
+    ? l.normalized_email === email : l.created_at < cutoff).map(l => l.id));
+  const removeSubmission = (s: typeof memoryStore.submissions[number]) =>
+    ids.has(s.lead_id) || (!email && s.created_at < cutoff);
+  const sessionIds = new Set(email ? [] : memoryStore.sessions.filter(s => s.created_at < cutoff).map(s => s.id));
+  const result: CleanupResult = {
+    dryRun, leadsDeleted: ids.size,
+    submissionsDeleted: memoryStore.submissions.filter(removeSubmission).length,
+    eventsDeleted: email ? 0 : memoryStore.events.filter(e => e.server_timestamp < cutoff).length,
+    sessionsDeleted: sessionIds.size,
+    rateLimitsDeleted: email ? 0 : [...memoryStore.rateLimits.values()].filter(v => v.expiresAt < Date.now()).length,
   };
-}
-
-function maskEmail(email: string): string {
-  const [local, domain] = email.split("@");
-  if (!domain) return "***";
-  const maskedLocal = local.length > 2 ? `${local[0]}***${local[local.length - 1]}` : `${local[0]}***`;
-  return `${maskedLocal}@${domain}`;
+  if (!dryRun) {
+    memoryStore.submissions = memoryStore.submissions.filter(s => !removeSubmission(s));
+    memoryStore.leads = memoryStore.leads.filter(l => !ids.has(l.id));
+    if (!email) {
+      memoryStore.events = memoryStore.events.filter(e => e.server_timestamp >= cutoff)
+        .map(e => sessionIds.has(e.session_id || "") ? { ...e, session_id: null } : e);
+      memoryStore.sessions = memoryStore.sessions.filter(s => !sessionIds.has(s.id));
+      for (const [key, value] of memoryStore.rateLimits) if (value.expiresAt < Date.now()) memoryStore.rateLimits.delete(key);
+    }
+  }
+  return result;
 }
 
 async function main() {
   const args = process.argv.slice(2);
-  const isDryRun = args.includes("--dry-run");
-  const olderThanArg = args.find((a) => a.startsWith("--days="));
-  const olderThanDays = olderThanArg ? parseInt(olderThanArg.split("=")[1], 10) : 30;
-  const emailArg = args.find((a) => a.startsWith("--email="));
-  const targetEmail = emailArg ? emailArg.split("=")[1] : undefined;
-
-  console.log(`Starting data cleanup...`);
-  console.log(`Mode: ${isDryRun ? "DRY RUN (no changes will be applied)" : "LIVE EXECUTION"}`);
-  console.log(`Retention threshold: ${olderThanDays} days`);
-  if (targetEmail) {
-    console.log(`Targeting specific email: ${maskEmail(targetEmail)}`);
+  if (args.some(a => a !== "--dry-run" && !a.startsWith("--days=") && !a.startsWith("--email="))) {
+    throw new Error("INVALID_CLEANUP_OPTIONS");
   }
-
+  const days = args.find(a => a.startsWith("--days="));
+  const email = args.find(a => a.startsWith("--email="));
   const result = await cleanupData({
-    dryRun: isDryRun,
-    olderThanDays,
-    targetEmail,
+    dryRun: args.includes("--dry-run"),
+    olderThanDays: days === undefined ? 30 : Number(days.slice(7)),
+    targetEmail: email === undefined ? undefined : email.slice(8),
   });
-
-  console.log("\nCleanup summary:");
-  console.log(`- Leads deleted: ${result.leadsDeleted}`);
-  console.log(`- Submissions deleted: ${result.submissionsDeleted}`);
-  console.log(`- Analytics events deleted: ${result.eventsDeleted}`);
-  console.log(`- Analytics sessions deleted: ${result.sessionsDeleted}`);
-  console.log(`- Expired rate limit buckets: ${result.rateLimitsDeleted}`);
-  console.log(`\n✓ Cleanup finished successfully.`);
+  console.log(result.dryRun ? "Cleanup preview (candidates only; nothing deleted):" : "Cleanup committed:");
+  console.log(JSON.stringify(result));
 }
-
-if (require.main === module) {
-  main().catch((err) => {
-    console.error("Cleanup error:", err);
-    process.exit(1);
+if (/(^|[\\/])cleanup-data\.ts$/.test(process.argv[1] || "")) {
+  main().catch(() => {
+    console.error("Cleanup failed. No successful cleanup result is available.");
+    process.exitCode = 1;
   });
 }

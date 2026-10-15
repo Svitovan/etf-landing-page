@@ -1,6 +1,8 @@
 import React from "react";
+import type { InvestorContext } from "../types/etf";
+import { SourceLinks } from "./SourceLinks";
 
-export const CzechContext: React.FC = () => {
+export const CzechContext: React.FC<{ context: InvestorContext }> = ({ context }) => {
   return (
     <section
       style={{
@@ -29,7 +31,7 @@ export const CzechContext: React.FC = () => {
               Co si ověřit před nákupem u českého brokera?
             </h2>
             <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>
-              Nákup amerických ETF z České republiky má svá specifika. Zde jsou tři nejdůležitější pravidla:
+              Před nákupem si ověřte dostupnost produktu, měnové náklady a daňové podmínky:
             </p>
           </div>
 
@@ -46,7 +48,8 @@ export const CzechContext: React.FC = () => {
                 1. Nařízení PRIIPs a dokument KID
               </h3>
               <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.55 }}>
-                Evropská legislativa vyžaduje, aby fond měl pro retailového investora klíčový informační dokument (KID) v národním jazyce. Americké ETF (VOO, IVV, SPY) podléhají regulaci SEC a KID často nemají. Váš broker (XTB, Portu, Fio, IBKR) vám proto může nákup přímo omezit nebo nabídnout evropskou alternativu UCITS.
+                {context.priips.value}
+                <SourceLinks evidence={context.priips.evidence} />
               </p>
             </div>
 
@@ -78,7 +81,14 @@ export const CzechContext: React.FC = () => {
                 3. Daně a dividendy (Formulář W-8BEN)
               </h3>
               <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.55 }}>
-                Jelikož jde o fondy se sídlem v USA s kvartální výplatou dividend, u brokera je obvyklé podepsat formulář W-8BEN. Ten českým daňovým rezidentům umožňuje uplatnit 15% sazbu srážkové daně dle česko-americké smlouvy o zamezení dvojího zdanění namísto standardní 30% sazby.
+                {context.dividendTreaty.value}
+              </p>
+              <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.55, marginTop: "0.5rem" }}>
+                {context.w8ben.value}
+              </p>
+              <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.55, marginTop: "0.5rem" }}>
+                {context.withholding.value}
+                <SourceLinks evidence={[...context.dividendTreaty.evidence, ...context.w8ben.evidence, ...context.withholding.evidence]} />
               </p>
             </div>
           </div>

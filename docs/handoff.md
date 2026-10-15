@@ -1,5 +1,33 @@
 # Handoff Report
 
+## Dataset-driven financial UI — 2026-10-15 (item 3)
+
+- Hero, comparison cards, calculator, FAQ and report now format percentages from the same numeric `expenseRatio.value.rate` used in calculations. Gross/Net comes from `kind`; the legacy `displayPercent` field is no longer read by the UI.
+- Hero gets ETF props from the existing server dataset. Report table rows read issuer, exchange, legal form, currency, domicile and distributions from each record; source links use dataset evidence. Selection is deduplicated and checked against dataset tickers.
+- Replaced copied VOO/IVV/SPY calculator blocks with a dataset map. Warning color follows the current highest cost/rate, not a hardcoded SPY identity. Difference text no longer assumes VOO/IVV remain tied or SPY remains highest. The original annual and constant-position ten-year illustrations remain present.
+- Regression fixture deliberately changes all rates, ranking, kind and fund metadata while keeping stale displayPercent values; all five UI surfaces update, costs/differences change, and the expensive warning moves to VOO. The fixture exists only in tests; source ETF values/version are unchanged.
+- **Verified:** 87/87 tests, lint, typecheck, production build and structural data validation. Local browser at 320/390 px: no document overflow; Hero fits; report's table scrolls inside its container. At 250000 CZK, calculator and report show 75 / 75 / 236.25 CZK; selected IVV remains highlighted; no observed console warnings/errors. Local GET / and /report returned 200. Browser tab closed, viewport reset and local server stopped.
+- No production API submission, DB mutation, commit/push or deploy in this step. Earlier uncommitted work preserved. Current visual PDF and production Lighthouse remain pending.
+
+## Financial context sources — 2026-10-15 (item 2 of latest readiness list)
+
+- Added `data/etfs.json → investorContext`: five sourced statements for PRIIPs delivery/language, KID length, the conditional US–CZ dividend treaty limit, W-8BEN and the general NRA withholding regime. Each includes primary evidence, checkedAt and a locator/scope note. IRS/ČNB pages and treaty were read directly; EUR-Lex blocked direct access, so its indexed official text was checked and that limitation recorded.
+- Server passes the same context to comparison, Czech context and FAQ; report uses it directly. Visible source links accompany legal/tax statements and remain outside the hidden print footer. Removed universal Czech-only KID/absent-KID claims, automatic 15% for every distribution, rankings/lowest spreads, broker-specific availability examples and a blanket five-year investment horizon.
+- Fund financial snapshot/version `2026-10-11` and expense ratios are unchanged; the regulatory context has its own review timestamp. No broker availability or current AUM ranking was asserted as verified.
+- Validator now checks provenance structure, primary authority hosts and locator notes; its output no longer claims remote legal/financial verification. Negative evidence tests and landing/report rendering tests added.
+- Verified 78/78 tests, data validation, lint, typecheck and production build. React best-practices review: shared typed props from server, no new dependency/hooks/network request, unique source keys and wrapping links. Visual PDF/Lighthouse remain separate pending work.
+- Source map and limitations: [data-methodology.md](data-methodology.md). No commit/push, deploy, DB operation or message was performed in this financial-context step. Prior uncommitted retention work preserved.
+
+## Automated retention — 2026-10-15
+
+- Applied `20261015104121_scheduled_atomic_retention.sql` to live Supabase: atomic `cleanup_project_data`, service_role-only invoker access, daily cleanup at 03:15 UTC and scoped job-history cleanup at 03:30 UTC.
+- Replaced the CLI's unchecked sequential deletes with one checked RPC. Storage/response errors now fail with exit 1; no production memory fallback. Preview is clearly labelled; targeted deletion cannot wipe unrelated analytics. Retention input is validated.
+- Verified real SQL fixtures and rollback, service_role write permission with rollback, real CLI dry-run and an actual scheduler preview run (`succeeded`, 10:46 UTC). The probe self-unscheduled; only the two daily jobs remain. First regular deletion run is still pending (2026-10-16 03:15 UTC).
+- 72/72 tests, lint, typecheck and build passed. No permanent contact deletion was performed during verification. Security advisor: only the existing five expected INFO notices for closed RLS tables.
+- Automatic review rejected temporarily making the destructive job run every minute. That change was not applied; a read-only preview probe with self-removal verified scheduling instead.
+- Local CLI, Privacy clarification and docs require commit/push for checkout/public-site updates; the database scheduler is already active. No Git commit/push or Vercel deployment performed here. Remaining unrelated audit items remain open.
+- Operations and exact evidence: [data-retention.md](data-retention.md).
+
 ## Documentation evidence fix — 2026-10-15 (item 2)
 
 - Base checkout is commit `aceae4b` (the user committed the prior request-identity patch). This step does not infer its production deployment status.

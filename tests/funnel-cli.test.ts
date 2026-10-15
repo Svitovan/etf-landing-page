@@ -3,22 +3,27 @@ import { spawn } from "node:child_process";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-describe("Funnel CLI exit status with a local HTTP provider", () => {
-  it.each([false, true])("exits correctly when query failure is %s", async (fail) => {
+describe("Report and cleanup CLI exit status with a local HTTP provider", () => {
+  it.each([
+    { script: "funnel-report", fail: false }, { script: "funnel-report", fail: true },
+    { script: "cleanup-data", fail: false }, { script: "cleanup-data", fail: true },
+  ])("$script exits correctly when provider failure is $fail", async ({ script, fail }) => {
     let requests = 0;
     const server = createServer((_request, response) => {
       requests++;
       response.writeHead(fail ? 503 : 200, { "content-type": "application/json" });
       response.end(JSON.stringify(fail
         ? { code: "XX000", message: "private-row@example.com" }
-        : []));
+        : script === "cleanup-data"
+          ? { dryRun: false, leadsDeleted: 0, submissionsDeleted: 0, eventsDeleted: 0, sessionsDeleted: 0, rateLimitsDeleted: 0 }
+          : []));
     });
     await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
     try {
       const address = server.address();
       if (!address || typeof address === "string") throw new Error("Missing test port");
       const result = await new Promise<{ code: number | null; output: string }>((resolve, reject) => {
-        const child = spawn(process.execPath, ["--import", "tsx", path.resolve("scripts/funnel-report.ts")], {
+        const child = spawn(process.execPath, ["--import", "tsx", path.resolve(`scripts/${script}.ts`)], {
           cwd: process.cwd(),
           env: {
             ...process.env,
@@ -38,12 +43,13 @@ describe("Funnel CLI exit status with a local HTTP provider", () => {
       expect(requests).toBeGreaterThan(0);
       expect(result.output).not.toContain("private-row@example.com");
       if (fail) {
-        expect(result.output).toContain("Funnel report failed");
+        expect(result.output).toContain(script === "cleanup-data" ? "Cleanup failed" : "Funnel report failed");
         expect(result.output).not.toContain("Observed CVR");
+        expect(result.output).not.toContain("Cleanup committed");
       } else {
-        expect(requests).toBe(4);
-        expect(result.output).toContain("Observed CVR");
-        expect(result.output).toContain("0.0 %");
+        expect(requests).toBe(script === "cleanup-data" ? 1 : 4);
+        expect(result.output).toContain(script === "cleanup-data" ? "Cleanup committed" : "Observed CVR");
+        if (script === "funnel-report") expect(result.output).toContain("0.0 %");
       }
     } finally {
       await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));

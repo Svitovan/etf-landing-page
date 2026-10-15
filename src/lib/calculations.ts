@@ -1,4 +1,4 @@
-import { EtfRecord, CostCalculationResult } from "../types/etf";
+import { EtfRecord, EtfExpenseRatio, CostCalculationResult } from "../types/etf";
 
 export const MIN_POSITION_CZK = 1_000;
 export const MAX_POSITION_CZK = 10_000_000;
@@ -159,4 +159,9 @@ export function formatPercent(rate: number): string {
     maximumFractionDigits: 4,
   });
   return formatter.format(rate);
+}
+
+/** Use the numeric rate for both calculations and every displayed percentage. */
+export function formatExpenseRatio(expense: EtfExpenseRatio): string {
+  return `${formatPercent(expense.rate)} (${expense.kind === "net" ? "Net" : "Gross"})`;
 }

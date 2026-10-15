@@ -7,6 +7,7 @@ import {
   parseCzkInput,
   formatCzk,
   DEFAULT_POSITION_CZK,
+  formatExpenseRatio,
 } from "../lib/calculations";
 import { trackEvent } from "../lib/analytics-client";
 
@@ -21,7 +22,7 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({
   etfs,
   onCalculationChange,
 }) => {
-  const [inputValue, setInputValue] = useState<string>("100 000");
+  const [inputValue, setInputValue] = useState<string>(() => new Intl.NumberFormat("cs-CZ").format(DEFAULT_POSITION_CZK));
   const [positionCzk, setPositionCzk] = useState<number>(DEFAULT_POSITION_CZK);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -210,108 +211,38 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                {/* VOO */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0.5rem 0.75rem",
-                    backgroundColor: "var(--bg-surface)",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid var(--border-light)",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ fontWeight: 700, color: "var(--text-main)", fontSize: "0.95rem" }}>
-                      VOO
-                    </span>
-                    <span style={{ fontSize: "0.78rem", color: "var(--text-light)" }}>
-                      (0,03 %)
-                    </span>
-                  </div>
-                  <div
-                    className="tabular-nums"
-                    style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--accent)" }}
-                  >
-                    {formatCzk(comparison.costs["VOO"]?.annualCostCzk ?? 0, true)} / rok
-                  </div>
-                </div>
-
-                {/* IVV */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0.5rem 0.75rem",
-                    backgroundColor: "var(--bg-surface)",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid var(--border-light)",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ fontWeight: 700, color: "var(--text-main)", fontSize: "0.95rem" }}>
-                      IVV
-                    </span>
-                    <span style={{ fontSize: "0.78rem", color: "var(--text-light)" }}>
-                      (0,03 %)
-                    </span>
-                  </div>
-                  <div
-                    className="tabular-nums"
-                    style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--accent)" }}
-                  >
-                    {formatCzk(comparison.costs["IVV"]?.annualCostCzk ?? 0, true)} / rok
-                  </div>
-                </div>
-
-                {/* SPY */}
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    padding: "0.5rem 0.75rem",
-                    backgroundColor: "var(--bg-surface)",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid var(--border-light)",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <span style={{ fontWeight: 700, color: "var(--text-main)", fontSize: "0.95rem" }}>
-                      SPY
-                    </span>
-                    <span style={{ fontSize: "0.78rem", color: "var(--text-light)" }}>
-                      (0,0945 %)
-                    </span>
-                  </div>
-                  <div
-                    className="tabular-nums"
-                    style={{ fontWeight: 700, fontSize: "1.05rem", color: "var(--color-warning)" }}
-                  >
-                    {formatCzk(comparison.costs["SPY"]?.annualCostCzk ?? 0, true)} / rok
-                  </div>
-                </div>
+                {etfs.map(etf => {
+                  const ticker = etf.ticker.value;
+                  const isHighest = comparison.maxDifferenceCzk > 0 && ticker === comparison.mostExpensiveTicker;
+                  return (
+                    <div key={etf.id} style={{
+                      display: "flex", justifyContent: "space-between", alignItems: "center", gap: "0.5rem",
+                      padding: "0.5rem 0.75rem", backgroundColor: "var(--bg-surface)",
+                      borderRadius: "var(--radius-sm)", border: "1px solid var(--border-light)",
+                    }}>
+                      <div style={{ minWidth: 0 }}>
+                        <span style={{ fontWeight: 700, color: "var(--text-main)", fontSize: "0.95rem" }}>{ticker}</span>{" "}
+                        <span style={{ fontSize: "0.78rem", color: "var(--text-light)" }}>
+                          {formatExpenseRatio(etf.expenseRatio.value)}
+                        </span>
+                      </div>
+                      <div className="tabular-nums" style={{
+                        fontWeight: 700, fontSize: "1.05rem", flexShrink: 0,
+                        color: isHighest ? "var(--color-warning)" : "var(--accent)",
+                      }}>
+                        {formatCzk(comparison.costs[ticker].annualCostCzk, true)} / rok
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-
-              {/* Difference highlight */}
-              <div
-                style={{
-                  marginTop: "0.85rem",
-                  padding: "0.75rem",
-                  backgroundColor: "var(--bg-surface)",
-                  borderRadius: "var(--radius-sm)",
-                  borderLeft: "4px solid var(--accent)",
-                  fontSize: "0.85rem",
-                  color: "var(--text-main)",
-                  lineHeight: 1.45,
-                }}
-              >
-                Rozdíl mezi VOO/IVV a SPY činí přibližně{" "}
-                <strong style={{ color: "var(--accent)" }}>
-                  {formatCzk(comparison.maxDifferenceCzk, true)} ročně
-                </strong>{" "}
+              <div style={{
+                marginTop: "0.85rem", padding: "0.75rem", backgroundColor: "var(--bg-surface)",
+                borderRadius: "var(--radius-sm)", borderLeft: "4px solid var(--accent)",
+                fontSize: "0.85rem", color: "var(--text-main)", lineHeight: 1.45,
+              }}>
+                Rozdíl mezi nejvyšším a nejnižším modelovým nákladem činí přibližně{" "}
+                <strong style={{ color: "var(--accent)" }}>{formatCzk(comparison.maxDifferenceCzk, true)} ročně</strong>{" "}
                 při zvolené investici {formatCzk(positionCzk)}. Za 10 let činí orientační rozdíl{" "}
                 <strong>{formatCzk(comparison.maxDifferenceCzk * 10, true)}</strong> (při neměnné hodnotě pozice).
               </div>

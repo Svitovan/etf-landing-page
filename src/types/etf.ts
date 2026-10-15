@@ -40,6 +40,16 @@ export interface EtfDataset {
   version: string;
   updatedAt: string;
   etfs: EtfRecord[];
+  investorContext: InvestorContext;
+}
+
+export interface InvestorContext {
+  reviewedAt: string;
+  priips: VerifiedValue<string>;
+  kidDefinition: VerifiedValue<string>;
+  dividendTreaty: VerifiedValue<string>;
+  w8ben: VerifiedValue<string>;
+  withholding: VerifiedValue<string>;
 }
 
 export interface CostCalculationResult {
