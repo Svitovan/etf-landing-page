@@ -53,6 +53,23 @@ describe("lead submission analytics coordination", () => {
     expect(vi.getTimerCount()).toBe(0);
   });
 
+  it("does not replace a session when an older request returns a late 403", async () => {
+    let lateResponse!: (response: unknown) => void;
+    const fetchMock = vi.fn()
+      .mockImplementationOnce(() => new Promise(resolve => { lateResponse = resolve; }))
+      .mockResolvedValueOnce({ status: 403 })
+      .mockResolvedValueOnce({ ok: true })
+      .mockResolvedValue({ status: 200 });
+    vi.stubGlobal("fetch", fetchMock);
+    const client = await import("../src/lib/analytics-client");
+    const olderEvent = client.trackEvent("comparison_viewed");
+    await client.trackLeadSubmissionAttempt("test-request");
+    lateResponse({ status: 403 });
+    await olderEvent;
+    expect(fetchMock.mock.calls.filter(call => call[0] === "/api/analytics-session")).toHaveLength(1);
+    expect(fetchMock).toHaveBeenCalledTimes(5);
+  });
+
   it("bounds analytics waiting and tolerates a failed request", async () => {
     vi.stubGlobal("fetch", vi.fn().mockImplementationOnce(() => new Promise(() => {}))
       .mockRejectedValueOnce(new Error("offline")));

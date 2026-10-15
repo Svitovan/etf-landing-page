@@ -38,6 +38,7 @@ export function getSanitizedUtm(): { utmContent: string | null } {
 }
 
 let initSessionPromise: Promise<boolean> | null = null;
+let sessionGeneration = 0;
 
 // Let consent initialization/recovery set its cookie before the lead POST.
 // A slow or unavailable analytics service must not prevent contact delivery.
@@ -74,6 +75,7 @@ export async function initAnalyticsSession(): Promise<boolean> {
           utmContent,
         }),
       });
+      if (res.ok) sessionGeneration += 1;
       return res.ok;
     } catch {
       return false;
@@ -125,11 +127,16 @@ export async function trackEvent(
   };
 
   try {
+    const sentGeneration = sessionGeneration;
     const res = await sendEvent();
 
     // A05 / B02: If session expired (403), re-initialize session atomically and retry once
     if (res.status === 403) {
-      const reinitialized = await initAnalyticsSession();
+      // A late 403 may belong to a request sent before another call set the
+      // cookie. Reuse that completed initialization instead of replacing it.
+      const reinitialized = initSessionPromise
+        ? await initSessionPromise
+        : sessionGeneration !== sentGeneration || await initAnalyticsSession();
       if (reinitialized) {
         await sendEvent();
       }

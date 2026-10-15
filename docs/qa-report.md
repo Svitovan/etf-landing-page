@@ -6,7 +6,7 @@ Aktualizováno 2026-10-15. Nejnovější production a lokální důkazy: [finál
 
 | Kontrola | Výsledek a rozsah |
 |---|---|
-| `npm test` | **91/91**, 11 souborů: 87 předchozích + 4 regrese koordinace session při odeslání |
+| `npm test` | **92/92**, 11 souborů: 87 předchozích + 5 regresí koordinace session při odeslání včetně pozdního 403 |
 | `npm run lint` | Bez chyb a varování |
 | `npm run typecheck` | Bez chyb |
 | `npm run build` | Prošlo; Next.js 14.2.35, vygenerováno 10 stránek včetně app icon, shared JS 87,2 kB |
