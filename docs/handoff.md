@@ -1,5 +1,12 @@
 # Handoff Report
 
+## Security audit — 2026-10-15 (item 5, verification in progress)
+
+- Full available Git history (21 commits, non-shallow after fetch) scanned with SHA256-verified Gitleaks 8.30.1. One reviewed invalid commented example only; exact historical fingerprint ignored, placeholder replaced. Tracked/unignored tree scan clean; exact local-secret scan of 293 Git blobs and client assets clean. No real key exposed by these checks; no rewrite/rotation performed.
+- Upgraded Next to 15.5.28, matching lint config, Vitest 4.1.11; pinned PostCSS override 8.5.30 and Node 24.x. Migrated async searchParams and rendering tests. Production audit now zero.
+- Full npm audit still reports five high dev-only nodes from one unpatched braces advisory. Explicit gate allows only that exact reviewed chain, only dev, until 2026-11-15; new issues, prod exposure, unavailable audit or expiry fail. This is a remaining risk, not a zero-findings all-package audit.
+- Actual npm ci clean install passed; final 101/101 tests, lint, typecheck and Next 15.5.28 build passed. Local browser confirmed ad_b, report IVV/250000, navigation, interactive costs and no observed warn/error. GitHub workflow parsed; real CI/publication pending push. Scope, commands and evidence: [security audit](security-audit-2026-10-15.ru.md).
+
 ## Final QA — 2026-10-15 (item 4 complete)
 
 - **Final production recheck passed:** code SHA `bf9c20774ea4e22d2685ac303cb6f5a33aae4a49`, Vercel READY. Mobile Lighthouse **91/100/100/100** at 13:40:47 UTC; lab LCP 3.2 s is not a field CWV pass. 92/92 tests, lint and production build/typecheck passed.

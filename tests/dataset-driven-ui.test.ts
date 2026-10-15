@@ -34,9 +34,9 @@ describe("UI follows a changed dataset rather than copied financial values", () 
     { name: "calculator", render: () => React.createElement(CostCalculator, { etfs }) },
     { name: "comparison", render: () => React.createElement(EtfComparison, { etfs, investorContext: dataset.investorContext }) },
     { name: "FAQ", render: () => React.createElement(SourcesFaq, { etfs, context: dataset.investorContext }) },
-    { name: "report", render: () => ReportPage({ searchParams: { amount: "100000", etfs: "VOO" } }) },
-  ])("updates all percentage labels in $name", ({ render }) => {
-    const visible = text(renderToStaticMarkup(render()));
+    { name: "report", render: () => ReportPage({ searchParams: Promise.resolve({ amount: "100000", etfs: "VOO" }) }) },
+  ])("updates all percentage labels in $name", async ({ render }) => {
+    const visible = text(renderToStaticMarkup(await render()));
     expect(visible).toContain("0,21 %");
     expect(visible).toContain("0,17 %");
     expect(visible).toContain("0,04 %");
@@ -45,14 +45,14 @@ describe("UI follows a changed dataset rather than copied financial values", () 
   });
   it.each([
     { name: "calculator", render: () => React.createElement(CostCalculator, { etfs }) },
-    { name: "report", render: () => ReportPage({ searchParams: { amount: "100000", etfs: "VOO" } }) },
-  ])("updates annual costs and the ten-year difference in $name", ({ render }) => {
-    const visible = text(renderToStaticMarkup(render()));
+    { name: "report", render: () => ReportPage({ searchParams: Promise.resolve({ amount: "100000", etfs: "VOO" }) }) },
+  ])("updates annual costs and the ten-year difference in $name", async ({ render }) => {
+    const visible = text(renderToStaticMarkup(await render()));
     for (const expected of ["210,00 Kč", "170,00 Kč", "40,00 Kč", "1 700,00 Kč"]) expect(visible).toContain(expected);
     expect(visible).not.toContain("VOO/IVV a SPY");
   });
-  it("report reads issuer, exchange, currency, distributions and kind from its dataset", () => {
-    const visible = text(renderToStaticMarkup(ReportPage({ searchParams: { etfs: "VOO,VOO,VOO" } })));
+  it("report reads issuer, exchange, currency, distributions and kind from its dataset", async () => {
+    const visible = text(renderToStaticMarkup(await ReportPage({ searchParams: Promise.resolve({ etfs: "VOO,VOO,VOO" }) })));
     for (const expected of ["Fixture issuer", "Fixture exchange", "EUR / USA", "Fixture distribution", "0,21 % (Gross)", "Váš vybraný fond:"]) {
       expect(visible).toContain(expected);
     }

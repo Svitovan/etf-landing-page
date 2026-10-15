@@ -4,6 +4,8 @@ Aktualizováno 2026-10-15. Nejnovější production a lokální důkazy: [finál
 
 ## Aktuální automatické kontroly
 
+**Novější security krok:** Next 15.5.28, Vitest 4.1.11, Node 24.x; skutečný clean install, **101/101 testů (14 souborů)**, lint/typecheck/build prošly. Production npm audit 0; úplný audit má výslovně popsanou neopravenou dev-only braces advisory. [Audit bodu 5](security-audit-2026-10-15.ru.md) má aktuální rozsah a stav publikace. Starší počty/metriky níže patří k předchozímu QA commitu, nikoli novému frameworku.
+
 | Kontrola | Výsledek a rozsah |
 |---|---|
 | `npm test` | **92/92**, 11 souborů: 87 předchozích + 5 regresí koordinace session při odeslání včetně pozdního 403 |

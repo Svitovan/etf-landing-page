@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,9 +12,9 @@ export default function PrivacyPage() {
     <div style={{ backgroundColor: "var(--bg-page)", minHeight: "100vh", padding: "2.5rem 0" }}>
       <div className="container" style={{ maxWidth: "680px" }}>
         <div style={{ marginBottom: "1.5rem" }}>
-          <a href="/" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem" }}>
+          <Link href="/" style={{ color: "var(--accent)", textDecoration: "none", fontWeight: 600, fontSize: "0.9rem" }}>
             &larr; Zpět na hlavní stránku
-          </a>
+          </Link>
         </div>
 
         <article

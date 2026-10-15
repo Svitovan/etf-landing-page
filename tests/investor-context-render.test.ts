@@ -8,9 +8,9 @@ import ReportPage from "../src/app/report/page";
 describe("Visible source attribution in landing context and report", () => {
   it.each([
     { name: "landing context", render: () => React.createElement(CzechContext, { context: dataset.investorContext }) },
-    { name: "report", render: () => ReportPage({ searchParams: { amount: "100000", etfs: "VOO" } }) },
-  ])("renders conditional tax wording and primary-source links in $name", ({ render }) => {
-    const html = renderToStaticMarkup(render());
+    { name: "report", render: () => ReportPage({ searchParams: Promise.resolve({ amount: "100000", etfs: "VOO" }) }) },
+  ])("renders conditional tax wording and primary-source links in $name", async ({ render }) => {
+    const html = renderToStaticMarkup(await render());
     expect(html).toContain("Nejde o automatickou sazbu");
     for (const claim of [dataset.investorContext.priips, dataset.investorContext.dividendTreaty,
       dataset.investorContext.w8ben, dataset.investorContext.withholding]) {

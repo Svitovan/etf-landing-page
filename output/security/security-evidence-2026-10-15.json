@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-15",
+  "baselineCommit": "9dda85f",
+  "gitleaks": {
+    "version": "8.30.1",
+    "commitsScanned": 21,
+    "rawFindings": 1,
+    "reviewedFalsePositives": 1,
+    "unhandledHistoryFindings": 0,
+    "currentTreeFindings": 0,
+    "scope": "all locally available refs after fetch; non-shallow",
+    "windowsReleaseSha256": "d29144deff3a68aa93ced33dddf84b7fdc26070add4aa0f4513094c8332afc4e"
+  },
+  "exactSecretScan": {
+    "configuredNonExampleSecrets": 1,
+    "gitBlobs": 293,
+    "clientFiles": 36,
+    "findings": 0
+  },
+  "npm": {
+    "before": {
+      "info": 0,
+      "low": 0,
+      "moderate": 3,
+      "high": 5,
+      "critical": 3,
+      "total": 11
+    },
+    "after": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 5,
+      "critical": 0,
+      "total": 5
+    },
+    "productionFindings": 0,
+    "reviewedDevelopmentAdvisory": "GHSA-vfj7-8cjw-p6xm",
+    "reviewBefore": "2026-11-15"
+  },
+  "checks": {
+    "tests": 101,
+    "testFiles": 14,
+    "lint": "pass",
+    "typecheck": "pass",
+    "build": "pass",
+    "cleanInstall": "pass"
+  },
+  "limitations": [
+    "No guarantee for unknown/encoded secrets beyond the described checks",
+    "Five high development-only nodes remain from one unpatched braces advisory",
+    "No full application penetration test"
+  ]
+}

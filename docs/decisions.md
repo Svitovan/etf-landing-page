@@ -1,5 +1,10 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-014: Podporované závislosti a přesně omezený bezpečnostní review (2026-10-15)
+- **Rozhodnutí:** Next 15.5.28 jako nejmenší podporovaná opravená větev místo plošného upgrade na 16; zachován React 18 podporovaný peer kontraktem balíčku. Async searchParams, Next Link a render testy přizpůsobeny; bez změny finančních dat/API. Vitest 4.1.11, Node 24.x a přesný PostCSS 8.5.30 override.
+- **Mez:** Production npm audit čistý; úplný audit má jeden neopravený braces advisory v pěti dev uzlech. CI toleruje jen přesnou dev-only advisory/řetězec do 2026-11-15; nové problémy a audit chyby blokuje. Pravidla lintingu se nevypínají kvůli dosažení nuly.
+- **Secrets:** Gitleaks full history + current tree a lokální exact/base64 kontrola Git blobs/client assets. Pouze jeden konkrétní historický falešný příklad má fingerprint výjimku; žádná globální allowlist. Podrobnosti: [audit](security-audit-2026-10-15.ru.md).
+
 ## ADR-013: Tisk dokumentu a omezená koordinace analytiky (2026-10-15)
 - **Rozhodnutí:** Print CSS rozlišuje navigační header/footer a vlastní záhlaví/zdroje reportu. Výstup je A4 se zachováním všech informací a nezalamovanými krátkými bloky.
 - **Souhlas a formulář:** Před lead POST čeká klient nejvýše dvě sekundy na zaznamenání pokusu, včetně případného vytvoření session cookie. Bez souhlasu nic neměří; timeout či chyba analytiky nebrání uložení kontaktu. Při timeoutu není asociace garantována.

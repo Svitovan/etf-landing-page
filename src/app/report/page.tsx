@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 import etfData from "../../../data/etfs.json";
 import { EtfRecord } from "../../types/etf";
@@ -21,10 +22,10 @@ export const metadata: Metadata = {
 };
 
 interface ReportPageProps {
-  searchParams?: {
-    amount?: string;
-    etfs?: string;
-  };
+  searchParams?: Promise<{
+    amount?: string | string[];
+    etfs?: string | string[];
+  }>;
 }
 
 const reportRows: { label: string; value: (etf: EtfRecord) => string; expense?: boolean }[] = [
@@ -36,17 +37,18 @@ const reportRows: { label: string; value: (etf: EtfRecord) => string; expense?: 
   { label: "Dividendy", value: etf => etf.distributionPolicy?.value ?? "Neuvedeno" },
 ];
 
-export default function ReportPage({ searchParams }: ReportPageProps) {
+export default async function ReportPage({ searchParams }: ReportPageProps) {
+  const query = await searchParams;
   const context = etfData.investorContext;
   const allEtfs = etfData.etfs as unknown as EtfRecord[];
 
   // Safe parsing of amount and selected ETFs parameters
-  const rawAmount = searchParams?.amount || String(DEFAULT_POSITION_CZK);
+  const rawAmount = typeof query?.amount === "string" ? query.amount : String(DEFAULT_POSITION_CZK);
   const parsed = parseCzkInput(rawAmount);
   const positionValueCzk = parsed.value !== null ? parsed.value : DEFAULT_POSITION_CZK;
 
   // Safe allowlist filtering of requested tickers (B04)
-  const rawEtfs = searchParams?.etfs || "";
+  const rawEtfs = typeof query?.etfs === "string" ? query.etfs : "";
   const availableTickers = new Set(allEtfs.map(etf => etf.ticker.value));
   const parsedTickers = [...new Set(rawEtfs
     .split(",")
@@ -85,7 +87,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
             border: "1px solid var(--border-light)",
           }}
         >
-          <a
+          <Link
             href="/"
             style={{
               textDecoration: "none",
@@ -98,7 +100,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
             }}
           >
             &larr; Zpět na hlavní stránku
-          </a>
+          </Link>
 
           <PrintButton />
         </div>

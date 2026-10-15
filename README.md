@@ -8,8 +8,8 @@
 ## 1. Rychlé ověření za 2 minuty
 
 ```bash
-# 1. Instalace závislostí
-npm install
+# 1. Instalace závislostí (Node 24.x)
+npm ci
 
 # 2. Ověření platnosti datasetu a finančních zdrojů
 npm run validate:data
@@ -27,6 +27,8 @@ npm run report:funnel
 
 - **Živá produkční verze:** [https://etf-landing-page-phi.vercel.app/?utm_content=ad_a](https://etf-landing-page-phi.vercel.app/?utm_content=ad_a)
 - **Lokální verze:** [http://localhost:3000/?utm_content=ad_a](http://localhost:3000/?utm_content=ad_a)
+
+Bezpečnostní ověření: `npm run audit:production`, `npm run audit:dependencies`, po buildu také `npm run check:secret-exposure` (poslední kontrola potřebuje lokální `.env`, hodnoty nevypisuje). [Protokol bodu 5](docs/security-audit-2026-10-15.ru.md) rozlišuje čistý production audit a jeden neopravený dev-only braces advisory v pěti závislých uzlech. Výjimka review platí jen do 2026-11-15, nové problémy blokují CI. Historické QA výsledky na Next 14 se nevydávají za měření nové verze Next 15.
 
 ---
 
