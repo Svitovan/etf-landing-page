@@ -30,6 +30,8 @@ npm run report:funnel
 
 Bezpečnostní ověření: `npm run audit:production`, `npm run audit:dependencies`, po buildu také `npm run check:secret-exposure` (poslední kontrola potřebuje lokální `.env`, hodnoty nevypisuje). [Protokol bodu 5](docs/security-audit-2026-10-15.ru.md) rozlišuje čistý production audit a jeden neopravený dev-only braces advisory v pěti závislých uzlech. Výjimka review platí jen do 2026-11-15, nové problémy blokují CI. Historické QA výsledky na Next 14 se nevydávají za měření nové verze Next 15.
 
+Report konverzí standardně vylučuje testové odeslání i celé související session z čitatele/jmenovatele, kroků a UTM. Server rozpozná rezervované testovací email domény; další QA označí administrátor předem přes `npm run analytics:mark-test -- --session-id=SESSION_ID --apply` (bez `--apply` pouze preview). Původní demonstrace jsou po potvrzení uživatele označeny, nikoli smazány. Bez skutečných pozorovaných netestových relací je CVR **N/A**. [Pravidla a živé důkazy](docs/test-traffic.ru.md).
+
 ---
 
 ## 2. Co bylo vytvořeno

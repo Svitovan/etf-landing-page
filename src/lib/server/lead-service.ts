@@ -7,6 +7,7 @@ import {
 import { LeadSubmissionPayload } from "../validation";
 import { canonicalizeLeadRequest, leadRequestFingerprint } from "../lead-request";
 import { LeadRequestConflictError } from "./lead-errors";
+import { isDemoEmail, markMemoryTestSessions } from "./test-traffic";
 
 export interface LeadSaveResult {
   success: boolean;
@@ -118,6 +119,7 @@ export async function saveLeadSubmission(
 
   // 3. Create submission
   const submission: LeadSubmissionRow = {
+    is_test: isDemoEmail(normalizedEmail) || memoryStore.sessions.some(s => s.id === analyticsSessionId && s.is_test),
     id: crypto.randomUUID(),
     request_id: payload.requestId,
     lead_id: lead.id,
@@ -129,6 +131,7 @@ export async function saveLeadSubmission(
     created_at: new Date().toISOString(),
   };
   memoryStore.submissions.push(submission);
+  if (submission.is_test) markMemoryTestSessions(payload.requestId, analyticsSessionId);
 
   return {
     success: true,

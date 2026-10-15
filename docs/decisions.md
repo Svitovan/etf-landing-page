@@ -1,5 +1,10 @@
 # Záznam architektonických a produktových rozhodnutí (ADR)
 
+## ADR-015: Testovací kohorta mimo reklamní konverze (2026-10-15)
+- **Rozhodnutí:** Serverové `is_test` na submission/session, automaticky jen pro rezervované email domény nebo předem označenou session; ostatní QA přes service_role-only preview/apply RPC. Žádná veřejná klientská přepínací property, žádné heuristiky typu qa-prefix osobní pošty, žádné mazání kontaktů.
+- **Statistika:** Celá test session vyloučena z obou částí CVR, kroků i UTM. Request ID spojuje staré split/late attempts. Kontakty jsou distinct z ponechaných odeslání; bez pozorovaných netestových relací je CVR N/A. UTM nevydáváme za důkaz placeného provozu.
+- **Baseline:** Uživatel potvrdil, že veškeré dosavadní návštěvy byly testy; jednorázová administrativní klasifikace má přesný cutoff a není součástí obecné migrace. Důkazy a limity: [test traffic](test-traffic.ru.md).
+
 ## ADR-014: Podporované závislosti a přesně omezený bezpečnostní review (2026-10-15)
 - **Rozhodnutí:** Next 15.5.28 jako nejmenší podporovaná opravená větev místo plošného upgrade na 16; zachován React 18 podporovaný peer kontraktem balíčku. Async searchParams, Next Link a render testy přizpůsobeny; bez změny finančních dat/API. Vitest 4.1.11, Node 24.x a přesný PostCSS 8.5.30 override.
 - **Mez:** Production npm audit čistý; úplný audit má jeden neopravený braces advisory v pěti dev uzlech. CI toleruje jen přesnou dev-only advisory/řetězec do 2026-11-15; nové problémy a audit chyby blokuje. Pravidla lintingu se nevypínají kvůli dosažení nuly.

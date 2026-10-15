@@ -1,6 +1,10 @@
 import { memoryStore, getSupabaseServerClient } from "../src/lib/server/db";
 
+type Session = { id: string; utm_content: string | null; is_test?: boolean };
+type Event = { session_id: string | null; event_name: string; properties?: Record<string, unknown> };
+type Submission = { request_id: string; lead_id: string; analytics_session_id: string | null; is_test?: boolean };
 export interface FunnelStats {
+  scope: "non_test_only";
   observedSessions: number;
   calculatorUsed: number;
   formStarted: number;
@@ -8,193 +12,86 @@ export interface FunnelStats {
   uniqueLeads: number;
   reportsOpened: number;
   observedCvrPercent: string;
+  excludedTestSessions: number;
+  excludedTestSubmissions: number;
   utmBreakdown: Record<string, { sessions: number; submissions: number }>;
 }
 
-export async function generateFunnelReport(): Promise<FunnelStats> {
-  const supabase = getSupabaseServerClient();
-
-  if (supabase) {
-    const { data: sessions, error: sessionsErr } = await supabase
-      .from("analytics_sessions")
-      .select("id, utm_content");
-    if (sessionsErr) {
-      throw new Error(`Failed to query analytics_sessions: ${sessionsErr.message}`);
-    }
-
-    const { data: events, error: eventsErr } = await supabase
-      .from("analytics_events")
-      .select("session_id, event_name");
-    if (eventsErr) {
-      throw new Error(`Failed to query analytics_events: ${eventsErr.message}`);
-    }
-
-    const { data: submissions, error: submissionsErr } = await supabase
-      .from("lead_submissions")
-      .select("id, request_id, lead_id, analytics_session_id");
-    if (submissionsErr) {
-      throw new Error(`Failed to query lead_submissions: ${submissionsErr.message}`);
-    }
-
-    const { data: leads, error: leadsErr } = await supabase
-      .from("leads")
-      .select("id");
-    if (leadsErr) {
-      throw new Error(`Failed to query leads: ${leadsErr.message}`);
-    }
-
-    const sessionList = sessions || [];
-    const eventList = events || [];
-    const submissionList = submissions || [];
-    const leadList = leads || [];
-
-    // B02: The denominator of conversion funnel MUST be distinct consented sessions with landing_observed!
-    const landingObservedSessionIds = new Set(
-      eventList
-        .filter((e) => e.event_name === "landing_observed" && e.session_id)
-        .map((e) => e.session_id as string)
-    );
-
-    const calcSessionIds = new Set(
-      eventList.filter((e) => e.event_name === "calculator_used").map((e) => e.session_id)
-    );
-    const formStartedSessionIds = new Set(
-      eventList.filter((e) => e.event_name === "form_started").map((e) => e.session_id)
-    );
-    const reportSessionIds = new Set(
-      eventList.filter((e) => e.event_name === "report_opened").map((e) => e.session_id)
-    );
-
-    const convertedObservedSessions = new Set(
-      submissionList
-        .filter((s) => s.analytics_session_id && landingObservedSessionIds.has(s.analytics_session_id))
-        .map((s) => s.analytics_session_id)
-    );
-
-    const utmBreakdown: Record<string, { sessions: number; submissions: number }> = {
-      ad_a: { sessions: 0, submissions: 0 },
-      ad_b: { sessions: 0, submissions: 0 },
-      direct_other: { sessions: 0, submissions: 0 },
-    };
-
-    for (const sess of sessionList) {
-      if (!landingObservedSessionIds.has(sess.id)) {
-        continue;
-      }
-      const key = sess.utm_content === "ad_a" || sess.utm_content === "ad_b"
-        ? sess.utm_content
-        : "direct_other";
-      utmBreakdown[key].sessions += 1;
-      if (convertedObservedSessions.has(sess.id)) {
-        utmBreakdown[key].submissions += 1;
-      }
-    }
-
-    const cvr =
-      landingObservedSessionIds.size > 0
-        ? ((convertedObservedSessions.size / landingObservedSessionIds.size) * 100).toFixed(1)
-        : "0.0";
-
-    return {
-      observedSessions: landingObservedSessionIds.size,
-      calculatorUsed: calcSessionIds.size,
-      formStarted: formStartedSessionIds.size,
-      totalSubmissions: submissionList.length,
-      uniqueLeads: leadList.length,
-      reportsOpened: reportSessionIds.size,
-      observedCvrPercent: `${cvr} %`,
-      utmBreakdown,
-    };
-  }
-
-  // Memory store fallback
-  const sessionList = memoryStore.sessions;
-  const eventList = memoryStore.events;
-  const submissionList = memoryStore.submissions;
-  const leadList = memoryStore.leads;
-
-  const landingObservedSessionIds = new Set(
-    eventList
-      .filter((e) => e.event_name === "landing_observed" && e.session_id)
-      .map((e) => e.session_id as string)
-  );
-  const calcSessionIds = new Set(
-    eventList.filter((e) => e.event_name === "calculator_used").map((e) => e.session_id)
-  );
-  const formStartedSessionIds = new Set(
-    eventList.filter((e) => e.event_name === "form_started").map((e) => e.session_id)
-  );
-  const reportSessionIds = new Set(
-    eventList.filter((e) => e.event_name === "report_opened").map((e) => e.session_id)
-  );
-
-  const convertedObservedSessions = new Set(
-    submissionList
-      .filter((s) => s.analytics_session_id && landingObservedSessionIds.has(s.analytics_session_id))
-      .map((s) => s.analytics_session_id)
-  );
-
-  const utmBreakdown: Record<string, { sessions: number; submissions: number }> = {
-    ad_a: { sessions: 0, submissions: 0 },
-    ad_b: { sessions: 0, submissions: 0 },
-    direct_other: { sessions: 0, submissions: 0 },
+export function aggregateFunnel(sessions: Session[], events: Event[], submissions: Submission[]): FunnelStats {
+  const testRequests = new Set(submissions.filter(s => s.is_test).map(s => s.request_id));
+  const excluded = new Set<string>(sessions.filter(s => s.is_test).map(s => s.id));
+  for (const sub of submissions) if (sub.is_test && sub.analytics_session_id) excluded.add(sub.analytics_session_id);
+  // Covers historical split sessions and attempts delivered after the submission.
+  for (const event of events) if (event.session_id && event.event_name === "form_submit_attempted"
+    && typeof event.properties?.requestId === "string" && testRequests.has(event.properties.requestId)) excluded.add(event.session_id);
+  const eligibleSessionIds = new Set(sessions.filter(s => !excluded.has(s.id)).map(s => s.id));
+  const eligibleEvents = events.filter(e => e.session_id && eligibleSessionIds.has(e.session_id));
+  const landing = new Set(eligibleEvents.filter(e => e.event_name === "landing_observed").map(e => e.session_id!));
+  const eligibleSubmissions = submissions.filter(s => !s.is_test && (!s.analytics_session_id || !excluded.has(s.analytics_session_id)));
+  const converted = new Set(eligibleSubmissions.filter(s => s.analytics_session_id && landing.has(s.analytics_session_id)).map(s => s.analytics_session_id));
+  const countEvent = (name: string) => new Set(eligibleEvents.filter(e => e.event_name === name && landing.has(e.session_id!)).map(e => e.session_id)).size;
+  const utmBreakdown: FunnelStats["utmBreakdown"] = {
+    ad_a: { sessions: 0, submissions: 0 }, ad_b: { sessions: 0, submissions: 0 }, direct_other: { sessions: 0, submissions: 0 },
   };
-
-  for (const sess of sessionList) {
-    if (!landingObservedSessionIds.has(sess.id)) {
-      continue;
-    }
-    const key = sess.utm_content === "ad_a" || sess.utm_content === "ad_b"
-      ? sess.utm_content
-      : "direct_other";
+  for (const session of sessions) {
+    if (!landing.has(session.id)) continue;
+    const key = session.utm_content === "ad_a" || session.utm_content === "ad_b" ? session.utm_content : "direct_other";
     utmBreakdown[key].sessions += 1;
-    if (convertedObservedSessions.has(sess.id)) {
-      utmBreakdown[key].submissions += 1;
-    }
+    if (converted.has(session.id)) utmBreakdown[key].submissions += 1;
   }
-
-  const cvr =
-    landingObservedSessionIds.size > 0
-      ? ((convertedObservedSessions.size / landingObservedSessionIds.size) * 100).toFixed(1)
-      : "0.0";
-
   return {
-    observedSessions: landingObservedSessionIds.size,
-    calculatorUsed: calcSessionIds.size,
-    formStarted: formStartedSessionIds.size,
-    totalSubmissions: submissionList.length,
-    uniqueLeads: leadList.length,
-    reportsOpened: reportSessionIds.size,
-    observedCvrPercent: `${cvr} %`,
+    scope: "non_test_only", observedSessions: landing.size,
+    calculatorUsed: countEvent("calculator_used"), formStarted: countEvent("form_started"),
+    totalSubmissions: eligibleSubmissions.length, uniqueLeads: new Set(eligibleSubmissions.map(s => s.lead_id)).size,
+    reportsOpened: countEvent("report_opened"),
+    observedCvrPercent: landing.size ? `${(converted.size / landing.size * 100).toFixed(1)} %` : "N/A (žádné pozorované netestovací relace)",
+    excludedTestSessions: sessions.filter(s => excluded.has(s.id)).length,
+    excludedTestSubmissions: submissions.length - eligibleSubmissions.length,
     utmBreakdown,
   };
 }
 
-async function run() {
-  console.log("=== ETF PŘEHLED - REPORT KONVERZNÍ VOŘONKY ===");
-  console.log(`Vygenerováno: ${new Date().toISOString()}`);
-  console.log("Poznámka: Bez jakýchkoliv osobních údajů (žádné e-maily ani IP adresy).\n");
-
-  const stats = await generateFunnelReport();
-
-  console.log(`1. Sledované relace se souhlasem (landing_observed):  ${stats.observedSessions}`);
-  console.log(`2. Použití kalkulačky (calculator_used):             ${stats.calculatorUsed}`);
-  console.log(`3. Zahájení vyplňování formuláře (form_started):      ${stats.formStarted}`);
-  console.log(`4. Celkový počet odeslání formuláře (submissions):    ${stats.totalSubmissions}`);
-  console.log(`5. Počet unikátních kontaktů (leads):                 ${stats.uniqueLeads}`);
-  console.log(`6. Otevření reportu (report_opened):                  ${stats.reportsOpened}`);
-  console.log(`----------------------------------------------------`);
-  console.log(`Konverze pozorované skupiny (Observed CVR):          ${stats.observedCvrPercent}\n`);
-
-  console.log("Rozpad podle reklamních variant (UTM):");
-  for (const [k, v] of Object.entries(stats.utmBreakdown)) {
-    console.log(` - ${k}: ${v.sessions} relací, ${v.submissions} konverzí`);
+export async function generateFunnelReport(): Promise<FunnelStats> {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) {
+    if (process.env.NODE_ENV === "production") throw new Error("REPORT_STORAGE_NOT_CONFIGURED");
+    return aggregateFunnel(memoryStore.sessions, memoryStore.events, memoryStore.submissions);
   }
+  // Stable pagination; never silently truncate at the REST API's default limit.
+  async function readAll<T>(table: string, columns: string): Promise<T[]> {
+    const rows: T[] = [];
+    for (let offset = 0; ; offset += 1000) {
+      const { data, error } = await supabase!.from(table).select(columns).order("id").range(offset, offset + 999);
+      if (error || !Array.isArray(data)) throw new Error("REPORT_DATABASE_READ_FAILED");
+      rows.push(...data as T[]);
+      if (data.length < 1000) return rows;
+    }
+  }
+  const [sessions, events, submissions] = await Promise.all([
+    readAll<Session>("analytics_sessions", "id,utm_content,is_test"),
+    readAll<Event>("analytics_events", "session_id,event_name,properties"),
+    readAll<Submission>("lead_submissions", "request_id,lead_id,analytics_session_id,is_test"),
+  ]);
+  return aggregateFunnel(sessions, events, submissions);
 }
 
+async function run() {
+  const stats = await generateFunnelReport();
+  console.log("=== ETF PŘEHLED - NETESTOVACÍ KONVERZNÍ TRYCHTÝŘ ===");
+  console.log(`Vygenerováno: ${new Date().toISOString()}`);
+  console.log("Pouze neoznačený netestovací provoz; UTM není důkaz placené reklamy. Bez osobních údajů.");
+  console.log(`Vyloučeno testovacích relací: ${stats.excludedTestSessions}; odeslání: ${stats.excludedTestSubmissions}`);
+  console.log(`1. Sledované relace se souhlasem (landing_observed): ${stats.observedSessions}`);
+  console.log(`2. Použití kalkulačky: ${stats.calculatorUsed}`);
+  console.log(`3. Zahájení formuláře: ${stats.formStarted}`);
+  console.log(`4. Netestovací odeslání (včetně bez analytiky): ${stats.totalSubmissions}`);
+  console.log(`5. Unikátní kontakty netestovacích odeslání: ${stats.uniqueLeads}`);
+  console.log(`6. Otevření reportu: ${stats.reportsOpened}`);
+  console.log(`Konverze pozorované skupiny (Observed CVR): ${stats.observedCvrPercent}`);
+  for (const [key, row] of Object.entries(stats.utmBreakdown)) console.log(` - ${key}: ${row.sessions} relací, ${row.submissions} konverzí`);
+}
 if (/(^|[\\/])funnel-report\.ts$/.test(process.argv[1] || "")) {
   run().catch(() => {
-    // Provider errors can contain private row values. Do not print their details.
     console.error("Funnel report failed: data could not be read. No statistics were produced.");
     process.exitCode = 1;
   });

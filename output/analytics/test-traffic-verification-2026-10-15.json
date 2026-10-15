@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-15T14:16:47.713Z",
+  "requestId": "e9effe56-3edb-4d96-8012-435cab1132ac",
+  "serverMarkedSubmission": true,
+  "serverMarkedSession": true,
+  "reportStatus": 200,
+  "before": {
+    "scope": "non_test_only",
+    "observedSessions": 0,
+    "calculatorUsed": 0,
+    "formStarted": 0,
+    "totalSubmissions": 0,
+    "uniqueLeads": 0,
+    "reportsOpened": 0,
+    "observedCvrPercent": "N/A (žádné pozorované netestovací relace)",
+    "excludedTestSessions": 23,
+    "excludedTestSubmissions": 9,
+    "utmBreakdown": {
+      "ad_a": {
+        "sessions": 0,
+        "submissions": 0
+      },
+      "ad_b": {
+        "sessions": 0,
+        "submissions": 0
+      },
+      "direct_other": {
+        "sessions": 0,
+        "submissions": 0
+      }
+    }
+  },
+  "after": {
+    "scope": "non_test_only",
+    "observedSessions": 0,
+    "calculatorUsed": 0,
+    "formStarted": 0,
+    "totalSubmissions": 0,
+    "uniqueLeads": 0,
+    "reportsOpened": 0,
+    "observedCvrPercent": "N/A (žádné pozorované netestovací relace)",
+    "excludedTestSessions": 24,
+    "excludedTestSubmissions": 10,
+    "utmBreakdown": {
+      "ad_a": {
+        "sessions": 0,
+        "submissions": 0
+      },
+      "ad_b": {
+        "sessions": 0,
+        "submissions": 0
+      },
+      "direct_other": {
+        "sessions": 0,
+        "submissions": 0
+      }
+    }
+  }
+}

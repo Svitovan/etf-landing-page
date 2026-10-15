@@ -8,6 +8,7 @@ export interface LeadRow {
 }
 
 export interface LeadSubmissionRow {
+  is_test?: boolean;
   id: string;
   request_id: string;
   lead_id: string;
@@ -20,6 +21,7 @@ export interface LeadSubmissionRow {
 }
 
 export interface AnalyticsSessionRow {
+  is_test?: boolean;
   id: string;
   consent_version: string;
   utm_content: string | null;

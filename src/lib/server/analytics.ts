@@ -6,6 +6,7 @@ import {
   AnalyticsEventRow,
 } from "./db";
 import { AnalyticsEventPayload } from "../validation";
+import { markMemoryTestSessions } from "./test-traffic";
 
 const SESSION_DURATION_MS = 30 * 60 * 1000; // 30 minutes
 
@@ -107,5 +108,8 @@ export async function recordAnalyticsEvent(
     server_timestamp: new Date().toISOString(),
   };
   memoryStore.events.push(eventRow);
+  if (payload.eventName === "form_submit_attempted" && memoryStore.submissions.some(s =>
+    s.is_test && s.request_id === payload.properties?.requestId
+  )) markMemoryTestSessions(String(payload.properties?.requestId), sessionId);
   return true;
 }

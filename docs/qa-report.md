@@ -4,6 +4,8 @@ Aktualizováno 2026-10-15. Nejnovější production a lokální důkazy: [finál
 
 ## Aktuální automatické kontroly
 
+**Nejnovější analytics krok:** **118/118 testů (17 souborů)**, lint/typecheck/build prošly; SQL pod service_role s rollbackem a reálný production demo → DB test flag → report 200 → nezměněná netestová statistika ověřeny. [Testovací kohorta](test-traffic.ru.md). Po explicitním potvrzení uživatele označen celý předchozí baseline; aktuálně 10 test submissions/24 test sessions, reálná konverze se neprezentuje (N/A).
+
 **Novější security krok:** Next 15.5.28, Vitest 4.1.11, Node 24.x; skutečný clean install, **101/101 testů (14 souborů)**, lint/typecheck/build prošly. Production npm audit 0; úplný audit má výslovně popsanou neopravenou dev-only braces advisory. [Audit bodu 5](security-audit-2026-10-15.ru.md) má aktuální rozsah a stav publikace. Starší počty/metriky níže patří k předchozímu QA commitu, nikoli novému frameworku.
 
 Security kód `99cebb1` je nyní publikovaný a ověřený READY; GitHub CI success. Nový production mobile Lighthouse **90/100/100/100**; production security/browser smoke prošel v doloženém rozsahu. Celý form/DB/PDF scénář bodu 4 se tímto nevydává za opakovaný na Next 15; jeho historický protokol zůstává zachován.

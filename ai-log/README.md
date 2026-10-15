@@ -21,6 +21,7 @@ Tato složka obsahuje záznamy o tom, jak byl projekt realizován ve spolupráci
   - `session-dataset-ui-2026-10-15.md`: Finanční sazby a parametry UI z datasetu, změnové render testy a mobilní browser kontrola; 87 testů.
   - `session-final-qa-2026-10-15.md`: Production Lighthouse 91/100/100/100, skutečný lead/409, oprava tisku a obou session race; 92 testů a zkontrolované production PDF.
   - `session-security-2026-10-15.md`: Bod 5, celá dostupná Git historie a secrets, opravené production závislosti a výslovně omezený dev-only braces review.
+  - `session-test-traffic-2026-10-15.md`: Testovací submission/session odděleny od CVR; uživatelem potvrzený baseline, skutečná automaticky vyloučená production demonstrace a 118 testů.
 
 ### Export skutečných zpráv a jeho omezení
 

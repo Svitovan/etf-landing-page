@@ -1,0 +1,7 @@
+# Exclude demonstrations from conversion statistics — 2026-10-15
+
+User requested implementation after status review showed the report included all submissions. Added server flags, reserved-domain SQL triggers, propagation through linked sessions/early/late request attempts, private preview/apply classification RPC/CLI, and matching memory behavior. Unified funnel aggregation excludes test submissions and entire sessions from denominator/numerator/steps/UTM; distinct eligible leads and N/A for no observed non-test traffic. Added stable pagination and no PII output.
+
+Read-only baseline identified 9 submissions: 7 reserved-domain examples, 2 in the screenshot-demo session. Migration applied; SQL fixtures under service_role passed and rolled back. Admin CLI preview/apply for known screenshot cohort verified. Asked about old visits without submissions; human explicitly answered all visits were tests. Only after that answer marked the entire existing baseline through 2026-10-15 14:14:57.874269 UTC (9 submissions/23 sessions), retaining all records.
+
+Actual production HTTP demo generated one more reserved-domain submission/session and opened report 200; both rows automatically test=true. Non-test report unchanged at 0 observed sessions/0 submissions/CVR N/A, excluded counters became 10/24. Evidence contains only synthetic request ID and aggregates, no email/cookie/secrets. 118 tests, lint/typecheck/build passed; no new security advisor warnings (five expected INFO for closed RLS tables). New code publication and CI tracked in handoff/test-traffic protocol.

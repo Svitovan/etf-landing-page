@@ -14,6 +14,7 @@
     "validate:data": "tsx scripts/validate-data.ts",
     "check:supabase": "tsx --env-file=.env scripts/check-supabase.ts",
     "report:funnel": "tsx --env-file=.env scripts/funnel-report.ts",
+    "analytics:mark-test": "tsx --env-file=.env scripts/mark-test-traffic.ts",
     "cleanup:data": "tsx --env-file=.env scripts/cleanup-data.ts",
     "audit:production": "npm audit --omit=dev --audit-level=low",
     "audit:dependencies": "node scripts/audit-dependencies.mjs",

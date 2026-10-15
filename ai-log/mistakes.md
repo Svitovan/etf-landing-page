@@ -4,6 +4,7 @@ Tento dokument eviduje výhradně **reálně vzniklé a odhalené omyly a nepře
 
 | Datum / Fáze | Původní návrh / předpoklad AI | Způsob kontroly | Zjištěný problém | Náprava | Důkaz / Poznámka |
 |---|---|---|---|---|---|
+| 2026-10-15 (Codex / test traffic) | Předchozí funnel bez klasifikace počítal demonstrace jako běžné konverze; prázdná skupina měla procentní nulu | Kontrola zdroje a skutečné DB/CLI před změnou | Poznámka v dokumentaci data z výpočtu neodstranila | Serverové příznaky, obě části zlomku a UTM bez testů, N/A bez pozorovaných netestových session | Reálný demo průchod ponechal netestovou statistiku beze změny; `docs/test-traffic.ru.md` |
 | 2026-10-15 (Codex / security migration) | Předpoklad, že Vitest 4 převede JSX stejně jako starší esbuild implicitně | Render suites nedokázaly parsovat TSX | OXC respektoval Next jsx=preserve | Explicitní classic JSX transform ve Vitest config | Render regrese opět prošly |
 | 2026-10-15 (Codex / QA scope) | Nový test runner našel také kopii testů v ignorované security QA složce | Nečekaný počet 186 testů místo skutečných vlastních testů | Dočasná kopie zdvojovala důkaz | include omezen na tests/**/*.test.ts; tmp/output vyloučeny i z TS | Nadsazený počet není používán jako finální výsledek |
 | 2026-10-15 (Codex / audit test) | Windows env objekt měl dvě varianty registru npm_execpath | Test místo mock provideru spustil skutečný npm | Windows předal starší hodnotu stejnojmenné env | Před vložením fixture provideru odstraněny všechny varianty registru | Čtyři gate scénáře prošly bez sítě |

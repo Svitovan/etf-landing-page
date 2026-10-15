@@ -47,9 +47,9 @@ describe("Report and cleanup CLI exit status with a local HTTP provider", () => 
         expect(result.output).not.toContain("Observed CVR");
         expect(result.output).not.toContain("Cleanup committed");
       } else {
-        expect(requests).toBe(script === "cleanup-data" ? 1 : 4);
+        expect(requests).toBe(script === "cleanup-data" ? 1 : 3);
         expect(result.output).toContain(script === "cleanup-data" ? "Cleanup committed" : "Observed CVR");
-        if (script === "funnel-report") expect(result.output).toContain("0.0 %");
+        if (script === "funnel-report") expect(result.output).toContain("N/A");
       }
     } finally {
       await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
