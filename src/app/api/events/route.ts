@@ -1,9 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AnalyticsEventSchema } from "../../../lib/validation";
 import { recordAnalyticsEvent } from "../../../lib/server/analytics";
+import { isAllowedOrigin } from "../../../lib/server/security";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json(
+        { success: false, error: "Neplatný původ požadavku." },
+        { status: 403 }
+      );
+    }
+
+    const contentType = req.headers.get("content-type");
+    if (!contentType || !contentType.toLowerCase().includes("application/json")) {
+      return NextResponse.json(
+        { success: false, error: "Neplatný formát požadavku (očekáván application/json)." },
+        { status: 415 }
+      );
+    }
+
     const sessionId = req.cookies.get("etf_session")?.value;
     if (!sessionId) {
       // No active consented session cookie - silently ignore without error

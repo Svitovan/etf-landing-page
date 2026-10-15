@@ -15,28 +15,46 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
   const supabase = getSupabaseServerClient();
 
   if (supabase) {
-    const { data: sessions } = await supabase
+    const { data: sessions, error: sessionsErr } = await supabase
       .from("analytics_sessions")
       .select("id, utm_content");
+    if (sessionsErr) {
+      throw new Error(`Failed to query analytics_sessions: ${sessionsErr.message}`);
+    }
 
-    const { data: events } = await supabase
+    const { data: events, error: eventsErr } = await supabase
       .from("analytics_events")
       .select("session_id, event_name");
+    if (eventsErr) {
+      throw new Error(`Failed to query analytics_events: ${eventsErr.message}`);
+    }
 
-    const { data: submissions } = await supabase
+    const { data: submissions, error: submissionsErr } = await supabase
       .from("lead_submissions")
       .select("id, request_id, lead_id, analytics_session_id");
+    if (submissionsErr) {
+      throw new Error(`Failed to query lead_submissions: ${submissionsErr.message}`);
+    }
 
-    const { data: leads } = await supabase
+    const { data: leads, error: leadsErr } = await supabase
       .from("leads")
       .select("id");
+    if (leadsErr) {
+      throw new Error(`Failed to query leads: ${leadsErr.message}`);
+    }
 
     const sessionList = sessions || [];
     const eventList = events || [];
     const submissionList = submissions || [];
     const leadList = leads || [];
 
-    const observedSessionIds = new Set(sessionList.map((s) => s.id));
+    // B02: The denominator of conversion funnel MUST be distinct consented sessions with landing_observed!
+    const landingObservedSessionIds = new Set(
+      eventList
+        .filter((e) => e.event_name === "landing_observed" && e.session_id)
+        .map((e) => e.session_id as string)
+    );
+
     const calcSessionIds = new Set(
       eventList.filter((e) => e.event_name === "calculator_used").map((e) => e.session_id)
     );
@@ -49,7 +67,7 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
 
     const convertedObservedSessions = new Set(
       submissionList
-        .filter((s) => s.analytics_session_id && observedSessionIds.has(s.analytics_session_id))
+        .filter((s) => s.analytics_session_id && landingObservedSessionIds.has(s.analytics_session_id))
         .map((s) => s.analytics_session_id)
     );
 
@@ -60,6 +78,9 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
     };
 
     for (const sess of sessionList) {
+      if (!landingObservedSessionIds.has(sess.id)) {
+        continue;
+      }
       const key = sess.utm_content === "ad_a" || sess.utm_content === "ad_b"
         ? sess.utm_content
         : "direct_other";
@@ -70,12 +91,12 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
     }
 
     const cvr =
-      observedSessionIds.size > 0
-        ? ((convertedObservedSessions.size / observedSessionIds.size) * 100).toFixed(1)
+      landingObservedSessionIds.size > 0
+        ? ((convertedObservedSessions.size / landingObservedSessionIds.size) * 100).toFixed(1)
         : "0.0";
 
     return {
-      observedSessions: observedSessionIds.size,
+      observedSessions: landingObservedSessionIds.size,
       calculatorUsed: calcSessionIds.size,
       formStarted: formStartedSessionIds.size,
       totalSubmissions: submissionList.length,
@@ -92,7 +113,11 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
   const submissionList = memoryStore.submissions;
   const leadList = memoryStore.leads;
 
-  const observedSessionIds = new Set(sessionList.map((s) => s.id));
+  const landingObservedSessionIds = new Set(
+    eventList
+      .filter((e) => e.event_name === "landing_observed" && e.session_id)
+      .map((e) => e.session_id as string)
+  );
   const calcSessionIds = new Set(
     eventList.filter((e) => e.event_name === "calculator_used").map((e) => e.session_id)
   );
@@ -105,7 +130,7 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
 
   const convertedObservedSessions = new Set(
     submissionList
-      .filter((s) => s.analytics_session_id && observedSessionIds.has(s.analytics_session_id))
+      .filter((s) => s.analytics_session_id && landingObservedSessionIds.has(s.analytics_session_id))
       .map((s) => s.analytics_session_id)
   );
 
@@ -116,6 +141,9 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
   };
 
   for (const sess of sessionList) {
+    if (!landingObservedSessionIds.has(sess.id)) {
+      continue;
+    }
     const key = sess.utm_content === "ad_a" || sess.utm_content === "ad_b"
       ? sess.utm_content
       : "direct_other";
@@ -126,12 +154,12 @@ export async function generateFunnelReport(): Promise<FunnelStats> {
   }
 
   const cvr =
-    observedSessionIds.size > 0
-      ? ((convertedObservedSessions.size / observedSessionIds.size) * 100).toFixed(1)
+    landingObservedSessionIds.size > 0
+      ? ((convertedObservedSessions.size / landingObservedSessionIds.size) * 100).toFixed(1)
       : "0.0";
 
   return {
-    observedSessions: observedSessionIds.size,
+    observedSessions: landingObservedSessionIds.size,
     calculatorUsed: calcSessionIds.size,
     formStarted: formStartedSessionIds.size,
     totalSubmissions: submissionList.length,

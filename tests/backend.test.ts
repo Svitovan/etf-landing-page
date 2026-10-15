@@ -14,6 +14,9 @@ import path from "node:path";
 import { parseCzkInput, DEFAULT_POSITION_CZK } from "../src/lib/calculations";
 import { cleanupData } from "../scripts/cleanup-data";
 import { LeadSubmissionSchema, AnalyticsEventSchema } from "../src/lib/validation";
+import { NextRequest } from "next/server";
+import { POST as eventsPost } from "../src/app/api/events/route";
+import { POST as leadsPost } from "../src/app/api/leads/route";
 
 describe("T04: Server Payload & Email Validation", () => {
   it("rejects invalid email formats", () => {
@@ -181,8 +184,12 @@ describe("Funnel Report Aggregation", () => {
   });
 
   it("computes accurate funnel metrics and CVR for observed sessions", async () => {
-    // Session 1: converts
+    // Session 1: observed and converts
     const { sessionId: s1 } = await createAnalyticsSession("2026-10-11", "ad_a");
+    await recordAnalyticsEvent(s1, {
+      eventId: "99999999-9999-4999-8999-999999999990",
+      eventName: "landing_observed",
+    });
     await recordAnalyticsEvent(s1, {
       eventId: "99999999-9999-4999-8999-999999999991",
       eventName: "calculator_used",
@@ -198,12 +205,20 @@ describe("Funnel Report Aggregation", () => {
       s1
     );
 
-    // Session 2: drops off after calculator
+    // Session 2: observed and drops off after calculator
     const { sessionId: s2 } = await createAnalyticsSession("2026-10-11", "ad_b");
     await recordAnalyticsEvent(s2, {
       eventId: "99999999-9999-4999-8999-999999999992",
+      eventName: "landing_observed",
+    });
+    await recordAnalyticsEvent(s2, {
+      eventId: "99999999-9999-4999-8999-999999999993",
       eventName: "calculator_used",
     });
+
+    // Session 3: unobserved session (no landing_observed, e.g. bot or bounced before consent)
+    const { sessionId: s3 } = await createAnalyticsSession("2026-10-11", "ad_b");
+    // No landing_observed recorded for s3
 
     const report = await generateFunnelReport();
     expect(report.observedSessions).toBe(2);
@@ -213,6 +228,7 @@ describe("Funnel Report Aggregation", () => {
     expect(report.observedCvrPercent).toBe("50.0 %");
     expect(report.utmBreakdown.ad_a.submissions).toBe(1);
     expect(report.utmBreakdown.ad_b.submissions).toBe(0);
+    expect(report.utmBreakdown.ad_b.sessions).toBe(1); // s3 excluded because not observed
   });
 });
 
@@ -235,9 +251,9 @@ describe("T16: Server Rate Limiting", () => {
 });
 
 describe("T07: Storage Error Handling & Graceful Recovery", () => {
-  it("fails gracefully without stacktrace leak when payload contains corrupt input", async () => {
-    try {
-      await saveLeadSubmission(
+  it("rejects saving lead when required email or fields are missing", async () => {
+    await expect(
+      saveLeadSubmission(
         {
           requestId: "corrupt",
           email: "",
@@ -246,10 +262,8 @@ describe("T07: Storage Error Handling & Graceful Recovery", () => {
           privacyVersion: "2026-10-11",
         },
         null
-      );
-    } catch (err: unknown) {
-      expect(err).toBeDefined();
-    }
+      )
+    ).rejects.toThrow("INVALID_PAYLOAD");
   });
 });
 
@@ -286,15 +300,49 @@ describe("T10: Pre-Consent Analytics Isolation", () => {
   });
 });
 
-describe("T14: Prevention of Browser lead_saved Spoofing", () => {
-  it("rejects lead_saved event when attempted via browser event endpoint", () => {
-    const payload = {
-      eventId: "12345678-1234-4234-8234-123456789012",
-      eventName: "lead_saved",
-    };
-    // Testing the verification logic from /api/events
-    const isForbidden = payload.eventName === "lead_saved";
-    expect(isForbidden).toBe(true);
+describe("T14: Prevention of Browser lead_saved Spoofing (HTTP Endpoint)", () => {
+  it("rejects lead_saved event with HTTP 400 when sent to /api/events endpoint", async () => {
+    const req = new NextRequest("http://localhost:3000/api/events", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        cookie: "etf_session=any-session-id",
+      },
+      body: JSON.stringify({
+        eventId: "12345678-1234-4234-8234-123456789012",
+        eventName: "lead_saved",
+      }),
+    });
+
+    const res = await eventsPost(req);
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.success).toBe(false);
+    expect(body.error).toContain("lead_saved");
+  });
+});
+
+describe("T20: Cross-Origin and Untrusted Origin Rejection (B03)", () => {
+  it("rejects POST to /api/leads with 403 when Origin header is untrusted", async () => {
+    const req = new NextRequest("http://localhost:3000/api/leads", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        origin: "https://untrusted.attacker.com",
+      },
+      body: JSON.stringify({
+        requestId: "12345678-1234-4234-8234-123456789012",
+        email: "attacker@example.com",
+        selectedEtfs: ["VOO"],
+        positionValueCzk: 100000,
+      }),
+    });
+
+    const res = await leadsPost(req);
+    expect(res.status).toBe(403);
+    const body = await res.json();
+    expect(body.success).toBe(false);
+    expect(body.error).toBe("Neplatný původ požadavku.");
   });
 });
 

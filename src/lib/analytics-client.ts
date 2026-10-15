@@ -16,11 +16,13 @@ export function getConsentStatus(): ConsentStatus {
 export function setConsentStatus(status: "granted" | "denied"): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(CONSENT_STORAGE_KEY, status);
+  window.dispatchEvent(new CustomEvent("etf_consent_changed", { detail: { status } }));
 }
 
 export function revokeConsent(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(CONSENT_STORAGE_KEY);
+  window.dispatchEvent(new CustomEvent("etf_consent_changed", { detail: { status: "denied" } }));
   // Also call backend to deactivate session cookie if present
   fetch("/api/analytics-session", { method: "DELETE" }).catch(() => {});
 }
@@ -35,23 +37,36 @@ export function getSanitizedUtm(): { utmContent: string | null } {
   return { utmContent: null };
 }
 
+let initSessionPromise: Promise<boolean> | null = null;
+
 export async function initAnalyticsSession(): Promise<boolean> {
   if (getConsentStatus() !== "granted") return false;
 
-  const { utmContent } = getSanitizedUtm();
-  try {
-    const res = await fetch("/api/analytics-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        consentVersion: "2026-10-11",
-        utmContent,
-      }),
-    });
-    return res.ok;
-  } catch {
-    return false;
+  // B02: Deduplicate concurrent in-flight session initialization
+  if (initSessionPromise) {
+    return initSessionPromise;
   }
+
+  initSessionPromise = (async () => {
+    const { utmContent } = getSanitizedUtm();
+    try {
+      const res = await fetch("/api/analytics-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consentVersion: "2026-10-11",
+          utmContent,
+        }),
+      });
+      return res.ok;
+    } catch {
+      return false;
+    } finally {
+      initSessionPromise = null;
+    }
+  })();
+
+  return initSessionPromise;
 }
 
 export async function trackEvent(
@@ -69,6 +84,11 @@ export async function trackEvent(
   // STRICT RULE: No behavioral analytics without explicit consent
   if (getConsentStatus() !== "granted") {
     return;
+  }
+
+  // B02: Wait for any pending session initialization so cookies are present
+  if (initSessionPromise) {
+    await initSessionPromise;
   }
 
   const sendEvent = async (): Promise<Response> => {
@@ -91,7 +111,7 @@ export async function trackEvent(
   try {
     const res = await sendEvent();
 
-    // A05: If session expired (403), re-initialize session and retry event delivery once
+    // A05 / B02: If session expired (403), re-initialize session atomically and retry once
     if (res.status === 403) {
       const reinitialized = await initAnalyticsSession();
       if (reinitialized) {

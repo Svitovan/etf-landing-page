@@ -8,58 +8,23 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ campaign }) => {
   return (
-    <section
-      style={{
-        paddingTop: "2.5rem",
-        paddingBottom: "2.5rem",
-        backgroundColor: "var(--bg-page)",
-      }}
-    >
+    <section className="hero-section">
       <div className="container">
-        <div style={{ maxWidth: "680px" }}>
-          <div style={{ marginBottom: "1rem" }}>
+        <div className="hero-content">
+          <div className="hero-badge-wrap">
             <span className="badge">{campaign.badge}</span>
           </div>
 
-          <h1
-            style={{
-              fontFamily: "var(--font-serif)",
-              fontSize: "clamp(1.75rem, 5vw, 2.5rem)",
-              fontWeight: 500,
-              lineHeight: 1.2,
-              color: "var(--text-main)",
-              letterSpacing: "-0.02em",
-              marginBottom: "1rem",
-            }}
-          >
+          <h1 className="hero-title">
             {campaign.headline}
           </h1>
 
-          <p
-            style={{
-              fontSize: "1.05rem",
-              lineHeight: 1.6,
-              color: "var(--text-muted)",
-              marginBottom: "1.5rem",
-            }}
-          >
+          <p className="hero-subtitle">
             {campaign.subheadline}
           </p>
 
           {/* Quick value upfront cards preview */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "0.35rem",
-              marginBottom: "1.5rem",
-              padding: "0.75rem 0.5rem",
-              backgroundColor: "var(--bg-surface)",
-              borderRadius: "var(--radius-md)",
-              border: "1px solid var(--border-light)",
-              boxShadow: "var(--shadow-sm)",
-            }}
-          >
+          <div className="hero-preview-cards">
             <div style={{ textAlign: "center", minWidth: 0 }}>
               <div style={{ fontSize: "0.8rem", color: "var(--text-light)", fontWeight: 600 }}>
                 VOO
@@ -104,43 +69,26 @@ export const Hero: React.FC<HeroProps> = ({ campaign }) => {
             </div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.6rem",
-              width: "100%",
-              maxWidth: "420px",
-            }}
-          >
+          <div className="hero-ctas">
             <a
               href="#srovnani"
-              className="btn-primary"
+              className="btn-primary hero-cta-btn"
               id="hero-cta-compare"
-              style={{ width: "100%", justifyContent: "center", textAlign: "center" }}
             >
               {campaign.heroCta}
             </a>
 
             <a
               href="#ziskat-prehled"
-              className="btn-secondary"
+              className="btn-secondary hero-cta-btn"
               id="hero-cta-checklist"
               onClick={() => trackEvent("lead_cta_clicked", { ctaLocation: "hero" })}
-              style={{ width: "100%", justifyContent: "center", textAlign: "center" }}
             >
               Získat srovnání a kontrolní seznam
             </a>
           </div>
 
-          <p
-            style={{
-              marginTop: "0.85rem",
-              fontSize: "0.78rem",
-              color: "var(--text-light)",
-              lineHeight: 1.4,
-            }}
-          >
+          <p className="hero-trust-text">
             ✓ Ověřená data z NYSE Arca &bull; Bez registrace k okamžitému zobrazení &bull; Vzdělávací přehled
           </p>
         </div>

@@ -8,6 +8,7 @@ import {
   formatCzk,
   DEFAULT_POSITION_CZK,
 } from "../lib/calculations";
+import { trackEvent } from "../lib/analytics-client";
 
 interface CostCalculatorProps {
   etfs: EtfRecord[];
@@ -346,6 +347,7 @@ export const CostCalculator: React.FC<CostCalculatorProps> = ({
                 className="btn-primary"
                 style={{ width: "100%", maxWidth: "380px", justifyContent: "center" }}
                 id="calculator-cta-to-form"
+                onClick={() => trackEvent("lead_cta_clicked", { ctaLocation: "calculator" })}
               >
                 Získat srovnání a kontrolní seznam
               </a>

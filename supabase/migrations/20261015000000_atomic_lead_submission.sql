@@ -1,6 +1,8 @@
--- Migration: Atomic Lead Submission Procedure (Task B - A02)
--- Wraps idempotency check, lead upsert and submission insert into a single database transaction.
+-- Migration: Atomic Lead Submission & Rate Limiting Procedures (Task B - A02, B01, B03)
+-- 1. Wraps idempotency check, lead upsert and submission insert into a single database transaction.
+-- 2. Provides atomic counter increment and expiration check for rate limit buckets.
 
+-- 1. Atomic submit_lead Procedure
 CREATE OR REPLACE FUNCTION public.submit_lead(
   p_request_id TEXT,
   p_email TEXT,
@@ -81,5 +83,59 @@ END;
 $$;
 
 -- Restrict execution to service_role (Route Handlers) only
-REVOKE ALL ON FUNCTION public.submit_lead FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION public.submit_lead TO service_role;
+REVOKE ALL ON FUNCTION public.submit_lead(TEXT, TEXT, TEXT, TEXT[], NUMERIC, TEXT, TEXT, TEXT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.submit_lead(TEXT, TEXT, TEXT, TEXT[], NUMERIC, TEXT, TEXT, TEXT) TO service_role;
+
+
+-- 2. Atomic check_rate_limit Procedure (B03)
+CREATE OR REPLACE FUNCTION public.check_rate_limit(
+  p_bucket_key TEXT,
+  p_max_requests INT,
+  p_window_seconds INT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_now TIMESTAMPTZ := clock_timestamp();
+  v_expires_at TIMESTAMPTZ;
+  v_count INT;
+  v_retry_after INT := 0;
+BEGIN
+  -- Insert new bucket or update existing atomically with row lock
+  INSERT INTO public.rate_limit_buckets (bucket_key, request_count, expires_at)
+  VALUES (p_bucket_key, 1, v_now + (p_window_seconds || ' seconds')::interval)
+  ON CONFLICT (bucket_key) DO UPDATE
+    SET request_count = CASE
+          WHEN rate_limit_buckets.expires_at < v_now THEN 1
+          ELSE rate_limit_buckets.request_count + 1
+        END,
+        expires_at = CASE
+          WHEN rate_limit_buckets.expires_at < v_now THEN v_now + (p_window_seconds || ' seconds')::interval
+          ELSE rate_limit_buckets.expires_at
+        END
+  RETURNING request_count, expires_at INTO v_count, v_expires_at;
+
+  IF v_count > p_max_requests THEN
+    v_retry_after := CEIL(EXTRACT(EPOCH FROM (v_expires_at - v_now)))::INT;
+    IF v_retry_after < 1 THEN v_retry_after := 1; END IF;
+    RETURN jsonb_build_object(
+      'allowed', false,
+      'retry_after_seconds', v_retry_after,
+      'request_count', v_count
+    );
+  END IF;
+
+  RETURN jsonb_build_object(
+    'allowed', true,
+    'retry_after_seconds', 0,
+    'request_count', v_count
+  );
+END;
+$$;
+
+-- Restrict execution to service_role only
+REVOKE ALL ON FUNCTION public.check_rate_limit(TEXT, INT, INT) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.check_rate_limit(TEXT, INT, INT) TO service_role;

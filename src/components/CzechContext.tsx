@@ -62,7 +62,7 @@ export const CzechContext: React.FC = () => {
                 2. Měnové poplatky (CZK &rarr; USD)
               </h3>
               <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.55 }}>
-                Všechny tři fondy jsou kótovány v USD. Poplatek brokera za směnu měny (často 0,5 % až 1,5 %) může převýšit i několikaletý rozdíl v roční nákladovosti samotného fondu. Vždy si zjistěte kurzové podmínky u své platformy.
+                Všechny tři fondy jsou kótovány v USD. Případný poplatek či kurzové rozpětí brokera za konverzi z CZK do USD může představovat nezanedbatelný vstupní náklad převyšující i roční nákladovost fondu. Před nákupem si ověřte přesné podmínky směny u své platformy.
               </p>
             </div>
 
@@ -78,7 +78,7 @@ export const CzechContext: React.FC = () => {
                 3. Daně a dividendy (Formulář W-8BEN)
               </h3>
               <p style={{ fontSize: "0.88rem", color: "var(--text-muted)", lineHeight: 1.55 }}>
-                Jelikož jde o fondy se sídlem v USA s kvartální výplatou dividend, u amerického brokera je nutné mít podepsaný formulář W-8BEN, který snižuje srážkovou daň z dividend na 15 % dle smlouvy o zamezení dvojího zdanění.
+                Jelikož jde o fondy se sídlem v USA s kvartální výplatou dividend, u brokera je obvyklé podepsat formulář W-8BEN. Ten českým daňovým rezidentům umožňuje uplatnit 15% sazbu srážkové daně dle česko-americké smlouvy o zamezení dvojího zdanění namísto standardní 30% sazby.
               </p>
             </div>
           </div>

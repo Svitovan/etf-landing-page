@@ -25,14 +25,27 @@ interface ReportPageProps {
   };
 }
 
+const VALID_TICKERS = ["VOO", "IVV", "SPY"] as const;
+type Ticker = (typeof VALID_TICKERS)[number];
+
 export default function ReportPage({ searchParams }: ReportPageProps) {
   const allEtfs = etfData.etfs as unknown as EtfRecord[];
 
   // Safe parsing of amount and selected ETFs parameters
   const rawAmount = searchParams?.amount || String(DEFAULT_POSITION_CZK);
-  const rawEtfs = searchParams?.etfs || "VOO,IVV,SPY";
   const parsed = parseCzkInput(rawAmount);
   const positionValueCzk = parsed.value !== null ? parsed.value : DEFAULT_POSITION_CZK;
+
+  // Safe allowlist filtering of requested tickers (B04)
+  const rawEtfs = searchParams?.etfs || "";
+  const parsedTickers: Ticker[] = rawEtfs
+    .split(",")
+    .map((t) => t.trim().toUpperCase())
+    .filter((t): t is Ticker => (VALID_TICKERS as readonly string[]).includes(t));
+
+  const activeSelectedEtfs: Ticker[] =
+    parsedTickers.length > 0 ? parsedTickers : ["VOO", "IVV", "SPY"];
+  const isFilteredSelection = parsedTickers.length > 0 && parsedTickers.length < 3;
 
   // Comparison calculation
   const comparison = calculateComparison(positionValueCzk, allEtfs);
@@ -46,7 +59,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
         paddingBottom: "4rem",
       }}
     >
-      <ReportViewTracker amount={positionValueCzk} etfs={rawEtfs} />
+      <ReportViewTracker selectedEtfs={activeSelectedEtfs.join(",")} />
       <div className="container print-page" style={{ maxWidth: "780px" }}>
         {/* Navigation & Print Actions bar (hidden in print) */}
         <div
@@ -132,6 +145,32 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
             <p style={{ color: "var(--text-muted)", fontSize: "0.92rem", lineHeight: 1.5 }}>
               Tento materiál shrnuje klíčové parametry amerických fondů VOO, IVV a SPY obchodovaných na NYSE Arca a přináší praktická doporučení pro české retailové investory.
             </p>
+
+            {/* B04: Highlight chosen selection if user specified a subset */}
+            {isFilteredSelection && (
+              <div
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.75rem 1rem",
+                  backgroundColor: "rgba(0, 136, 85, 0.08)",
+                  borderRadius: "var(--radius-md)",
+                  border: "1px solid var(--accent)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.6rem",
+                  fontSize: "0.9rem",
+                  color: "var(--text-main)",
+                }}
+              >
+                <span style={{ fontSize: "1.2rem" }}>🎯</span>
+                <div>
+                  <strong>Váš vybraný fond:</strong> {activeSelectedEtfs.join(", ")}
+                  <span style={{ fontSize: "0.82rem", color: "var(--text-muted)", marginLeft: "0.4rem" }}>
+                    (v tabulce a kalkulaci je níže zvýrazněn pro snadné srovnání s alternativami)
+                  </span>
+                </div>
+              </div>
+            )}
           </header>
 
           {/* Section 1: Comparison Table */}
@@ -159,47 +198,73 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
                 <thead>
                   <tr style={{ backgroundColor: "var(--bg-page)", borderBottom: "2px solid var(--border-light)" }}>
                     <th style={{ padding: "0.6rem 0.75rem", fontWeight: 700 }}>Ukazatel</th>
-                    <th style={{ padding: "0.6rem 0.75rem", fontWeight: 700 }}>VOO</th>
-                    <th style={{ padding: "0.6rem 0.75rem", fontWeight: 700 }}>IVV</th>
-                    <th style={{ padding: "0.6rem 0.75rem", fontWeight: 700 }}>SPY</th>
+                    {(["VOO", "IVV", "SPY"] as const).map((ticker) => {
+                      const isChosen = isFilteredSelection && activeSelectedEtfs.includes(ticker);
+                      return (
+                        <th
+                          key={ticker}
+                          style={{
+                            padding: "0.6rem 0.75rem",
+                            fontWeight: 700,
+                            backgroundColor: isChosen ? "rgba(0, 136, 85, 0.12)" : undefined,
+                            borderLeft: isChosen ? "2px solid var(--accent)" : undefined,
+                            borderRight: isChosen ? "2px solid var(--accent)" : undefined,
+                          }}
+                        >
+                          {ticker}
+                          {isChosen && (
+                            <span
+                              style={{
+                                display: "block",
+                                fontSize: "0.65rem",
+                                color: "var(--accent)",
+                                fontWeight: 800,
+                              }}
+                            >
+                              ★ VÁŠ VÝBĚR
+                            </span>
+                          )}
+                        </th>
+                      );
+                    })}
                   </tr>
                 </thead>
                 <tbody>
                   <tr style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "0.55rem 0.75rem", fontWeight: 600 }}>Správce</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Vanguard</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>BlackRock</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>State Street</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("VOO") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Vanguard</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("IVV") ? "rgba(0, 136, 85, 0.04)" : undefined }}>BlackRock</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("SPY") ? "rgba(0, 136, 85, 0.04)" : undefined }}>State Street</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "0.55rem 0.75rem", fontWeight: 600 }}>Burza</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>NYSE Arca</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>NYSE Arca</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>NYSE Arca</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("VOO") ? "rgba(0, 136, 85, 0.04)" : undefined }}>NYSE Arca</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("IVV") ? "rgba(0, 136, 85, 0.04)" : undefined }}>NYSE Arca</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("SPY") ? "rgba(0, 136, 85, 0.04)" : undefined }}>NYSE Arca</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "0.55rem 0.75rem", fontWeight: 600 }}>Expense Ratio</td>
-                    <td style={{ padding: "0.55rem 0.75rem", fontWeight: 700, color: "var(--accent)" }}>0,03 % (Net)</td>
-                    <td style={{ padding: "0.55rem 0.75rem", fontWeight: 700, color: "var(--accent)" }}>0,03 % (Net)</td>
-                    <td style={{ padding: "0.55rem 0.75rem", fontWeight: 700, color: "var(--color-warning)" }}>0,0945 % (Gross)</td>
+                    <td style={{ padding: "0.55rem 0.75rem", fontWeight: 700, color: "var(--accent)", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("VOO") ? "rgba(0, 136, 85, 0.04)" : undefined }}>0,03 % (Net)</td>
+                    <td style={{ padding: "0.55rem 0.75rem", fontWeight: 700, color: "var(--accent)", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("IVV") ? "rgba(0, 136, 85, 0.04)" : undefined }}>0,03 % (Net)</td>
+                    <td style={{ padding: "0.55rem 0.75rem", fontWeight: 700, color: "var(--color-warning)", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("SPY") ? "rgba(0, 136, 85, 0.04)" : undefined }}>0,0945 % (Gross)</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "0.55rem 0.75rem", fontWeight: 600 }}>Právní forma</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Open-End Fund</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Open-End Fund</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Unit Investment Trust</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("VOO") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Open-End Fund</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("IVV") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Open-End Fund</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("SPY") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Unit Investment Trust</td>
                   </tr>
                   <tr style={{ borderBottom: "1px solid var(--border-light)" }}>
                     <td style={{ padding: "0.55rem 0.75rem", fontWeight: 600 }}>Měna &amp; Domicil</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>USD / USA</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>USD / USA</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>USD / USA</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("VOO") ? "rgba(0, 136, 85, 0.04)" : undefined }}>USD / USA</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("IVV") ? "rgba(0, 136, 85, 0.04)" : undefined }}>USD / USA</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("SPY") ? "rgba(0, 136, 85, 0.04)" : undefined }}>USD / USA</td>
                   </tr>
                   <tr>
                     <td style={{ padding: "0.55rem 0.75rem", fontWeight: 600 }}>Dividendy</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Kvartální výplata</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Kvartální výplata</td>
-                    <td style={{ padding: "0.55rem 0.75rem" }}>Kvartální výplata</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("VOO") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Kvartální výplata</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("IVV") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Kvartální výplata</td>
+                    <td style={{ padding: "0.55rem 0.75rem", backgroundColor: isFilteredSelection && activeSelectedEtfs.includes("SPY") ? "rgba(0, 136, 85, 0.04)" : undefined }}>Kvartální výplata</td>
                   </tr>
                 </tbody>
               </table>
@@ -236,24 +301,50 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
                 textAlign: "center",
               }}
             >
-              <div style={{ backgroundColor: "#ffffff", padding: "0.6rem", borderRadius: "var(--radius-sm)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-light)" }}>VOO</div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--accent)" }}>
-                  {formatCzk(comparison.costs["VOO"]?.annualCostCzk ?? 0, true)}
-                </div>
-              </div>
-              <div style={{ backgroundColor: "#ffffff", padding: "0.6rem", borderRadius: "var(--radius-sm)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-light)" }}>IVV</div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--accent)" }}>
-                  {formatCzk(comparison.costs["IVV"]?.annualCostCzk ?? 0, true)}
-                </div>
-              </div>
-              <div style={{ backgroundColor: "#ffffff", padding: "0.6rem", borderRadius: "var(--radius-sm)" }}>
-                <div style={{ fontSize: "0.75rem", color: "var(--text-light)" }}>SPY</div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 800, color: "var(--color-warning)" }}>
-                  {formatCzk(comparison.costs["SPY"]?.annualCostCzk ?? 0, true)}
-                </div>
-              </div>
+              {(["VOO", "IVV", "SPY"] as const).map((ticker) => {
+                const isChosen = isFilteredSelection && activeSelectedEtfs.includes(ticker);
+                const isSpy = ticker === "SPY";
+                const cost = comparison.costs[ticker]?.annualCostCzk ?? 0;
+                return (
+                  <div
+                    key={ticker}
+                    style={{
+                      backgroundColor: "#ffffff",
+                      padding: "0.75rem 0.5rem",
+                      borderRadius: "var(--radius-sm)",
+                      border: isChosen ? "2px solid var(--accent)" : "1px solid var(--border-light)",
+                      boxShadow: isChosen ? "0 2px 8px rgba(0, 136, 85, 0.15)" : "none",
+                    }}
+                  >
+                    {isChosen && (
+                      <span
+                        style={{
+                          fontSize: "0.65rem",
+                          backgroundColor: "var(--accent)",
+                          color: "#ffffff",
+                          padding: "0.15rem 0.4rem",
+                          borderRadius: "3px",
+                          fontWeight: 700,
+                          display: "inline-block",
+                          marginBottom: "0.25rem",
+                        }}
+                      >
+                        VÁŠ VÝBĚR
+                      </span>
+                    )}
+                    <div style={{ fontSize: "0.75rem", color: "var(--text-light)" }}>{ticker}</div>
+                    <div
+                      style={{
+                        fontSize: "1.1rem",
+                        fontWeight: 800,
+                        color: isSpy ? "var(--color-warning)" : "var(--accent)",
+                      }}
+                    >
+                      {formatCzk(cost, true)}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             <p style={{ fontSize: "0.82rem", color: "var(--text-muted)", lineHeight: 1.5 }}>
@@ -280,22 +371,22 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", fontSize: "0.88rem" }}>
               <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 1. Dostupnost fondu a nařízení PRIIPs: </strong>
-                Ověřte si ve své klientské zóně, zda vám broker umožňuje přímý nákup US tickerů (VOO, IVV, SPY). Pokud ne z důvodu absence KID dokumentu, požádejte o ekvivalent UCITS (např. SXR8 nebo VUAA).
+                Ověřte si ve své klientské zóně, zda vám broker umožňuje přímý nákup US tickerů (VOO, IVV, SPY). Pokud ne z důvodu absence KID dokumentu v češtině, zjistěte dostupnost evropských UCITS alternativ sledujících index S&amp;P 500 (např. SXR8 nebo VUAA).
               </div>
 
               <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 2. Měnová konverze (CZK &rarr; USD): </strong>
-                Zkontrolujte poplatek brokera za směnu. Rozpětí či poplatek přesahující 0,5 % může znamenat vyšší náklad než samotná roční správa fondu.
+                Zkontrolujte poplatky a kurzové rozpětí svého brokera za směnu měny z CZK do USD před nákupem, neboť měnová konverze může představovat významný vstupní náklad.
               </div>
 
               <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 3. Formulář W-8BEN: </strong>
-                Mějte u brokera podepsaný formulář W-8BEN, aby dividendy podléhaly 15% srážkové dani v USA namísto standardních 30 %.
+                Mějte u brokera podepsaný formulář W-8BEN, který pro české daňové rezidenty umožňuje uplatnit sníženou 15% sazbu srážkové daně z dividend v USA dle smlouvy o zamezení dvojího zdanění namísto standardní 30% sazby.
               </div>
 
               <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
                 <strong style={{ color: "var(--accent)" }}>[ ] 4. Poplatky za nákup a custody: </strong>
-                Zjistěte, zda broker účtuje fixní poplatek za realizaci pokynu a zda neúčtuje měsíční/roční poplatek za úschovu zahraničních cenných papírů.
+                Zjistěte, zda broker účtuje fixní poplatek za realizaci pokynu a zda neúčtuje měsíční či roční poplatek za úschovu zahraničních cenných papírů.
               </div>
 
               <div style={{ padding: "0.75rem 1rem", border: "1px solid var(--border-light)", borderRadius: "var(--radius-sm)" }}>
@@ -336,7 +427,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
               <div>
                 <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>Bid-Ask Spread (Rozpětí nákupní a prodejní ceny):</dt>
                 <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
-                  Rozdíl mezi nejvyšší nabídkou k nákupu (Bid) a nejnižší nabídkou k prodeji (Ask) na burze NYSE Arca. U vysoce likvidních fondů SPY, VOO a IVV činí běžně pouhý 1 cent (setiny procenta), což minimalizuje skryté náklady obchodu.
+                  Rozdíl mezi nejvyšší nabídkou k nákupu (Bid) a nejnižší nabídkou k prodeji (Ask) na burze NYSE Arca. U velkých a likvidních indexových fondů bývá spread úzký, přesto představuje implicitní transakční náklad při realizaci každého pokynu.
                 </dd>
               </div>
 
@@ -350,7 +441,7 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
               <div>
                 <dt style={{ fontWeight: 700, color: "var(--text-main)" }}>Reinvestování dividend (Akumulační vs. Distribuční fondy):</dt>
                 <dd style={{ color: "var(--text-muted)", marginLeft: 0 }}>
-                  US ETF fondy jsou ze zákona distribuční (vyplácejí dividendy v hotovosti na účet investora, kde podléhají 15% srážkové dani). Evropské ekvivalenty (UCITS) často nabízejí akumulační třídu („Acc“), která dividendy automaticky reinvestuje uvnitř fondu bez vzniku zdanitelného příjmu.
+                  US ETF fondy jsou distribuční a dividendy vyplácejí v hotovosti na účet investora (u amerických dividend se obvykle uplatňuje srážková daň, v ČR se daňové dopady řídí zákonem o daních z příjmů). Evropské alternativy (UCITS) často nabízejí akumulační třídu („Acc“), která dividendy reinvestuje uvnitř fondu.
                 </dd>
               </div>
 
@@ -377,16 +468,36 @@ export default function ReportPage({ searchParams }: ReportPageProps) {
               <strong>Ověřené primární zdroje dat (NYSE Arca):</strong>
             </div>
             <div style={{ marginTop: "0.3rem", display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
-              <a href="https://corporate.vanguard.com" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
-                Vanguard VOO Prospectus &rarr;
+              <a
+                href="https://investor.vanguard.com/investment-products/etfs/profile/voo"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--accent)" }}
+              >
+                Vanguard VOO Profile &amp; Prospectus &rarr;
               </a>
-              <a href="https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+              <a
+                href="https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf-ivv"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--accent)" }}
+              >
                 iShares IVV Factsheet &rarr;
               </a>
-              <a href="https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+              <a
+                href="https://www.ssga.com/us/en/individual/etfs/state-street-spdr-sp-500-etf-trust-spy"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--accent)" }}
+              >
                 State Street SPY Prospectus &rarr;
               </a>
-              <a href="https://www.nyse.com/markets/nyse-arca" target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>
+              <a
+                href="https://www.nyse.com/markets/nyse-arca"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "var(--accent)" }}
+              >
                 NYSE Arca Trading &rarr;
               </a>
             </div>

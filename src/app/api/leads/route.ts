@@ -4,10 +4,20 @@ import { checkRateLimit } from "../../../lib/server/rate-limit";
 import { saveLeadSubmission } from "../../../lib/server/lead-service";
 import { isSessionValid } from "../../../lib/server/analytics";
 
+import { isAllowedOrigin } from "../../../lib/server/security";
+
 const MAX_PAYLOAD_BYTES = 8 * 1024; // 8 KB
 
 export async function POST(req: NextRequest) {
   try {
+    // A07 / B03: Origin / Referer check
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json(
+        { success: false, error: "Neplatný původ požadavku." },
+        { status: 403 }
+      );
+    }
+
     // A07: Content-Type verification
     const contentType = req.headers.get("content-type");
     if (!contentType || !contentType.toLowerCase().includes("application/json")) {
@@ -15,24 +25,6 @@ export async function POST(req: NextRequest) {
         { success: false, error: "Neplatný formát požadavku (očekáván application/json)." },
         { status: 415 }
       );
-    }
-
-    // A07: Origin / Referer check in production if APP_ORIGIN is specified
-    const appOrigin = process.env.APP_ORIGIN;
-    if (appOrigin && process.env.NODE_ENV === "production") {
-      const origin = req.headers.get("origin");
-      const referer = req.headers.get("referer");
-      const expectedHost = new URL(appOrigin).host;
-
-      const originHost = origin ? new URL(origin).host : null;
-      const refererHost = referer ? new URL(referer).host : null;
-
-      if ((originHost && originHost !== expectedHost) || (refererHost && refererHost !== expectedHost)) {
-        return NextResponse.json(
-          { success: false, error: "Neplatný původ požadavku." },
-          { status: 403 }
-        );
-      }
     }
 
     // 1. Content size check (header)

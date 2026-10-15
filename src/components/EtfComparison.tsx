@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { EtfRecord } from "../types/etf";
-import { trackEvent } from "../lib/analytics-client";
+import { trackEvent, getConsentStatus } from "../lib/analytics-client";
 
 interface EtfComparisonProps {
   etfs: EtfRecord[];
@@ -13,15 +13,52 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
   const [activeTab, setActiveTab] = useState<string>("all");
   const [showSources, setShowSources] = useState<boolean>(false);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
+  const sectionRef = useRef<HTMLElement>(null);
   const hasTrackedViewRef = useRef<boolean>(false);
+  const inViewportRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!hasTrackedViewRef.current) {
-      hasTrackedViewRef.current = true;
-      trackEvent("comparison_viewed", {
-        selectedEtfs: activeTab === "all" ? "VOO,IVV,SPY" : activeTab.toUpperCase(),
-      });
+    const attemptTrack = () => {
+      if (hasTrackedViewRef.current || !inViewportRef.current) return;
+      if (getConsentStatus() === "granted") {
+        hasTrackedViewRef.current = true;
+        trackEvent("comparison_viewed", {
+          selectedEtfs: activeTab === "all" ? "VOO,IVV,SPY" : activeTab.toUpperCase(),
+        });
+      }
+    };
+
+    const el = sectionRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      inViewportRef.current = true;
+      attemptTrack();
+      return;
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            inViewportRef.current = true;
+            attemptTrack();
+          }
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+
+    const handleConsent = () => {
+      attemptTrack();
+    };
+
+    window.addEventListener("etf_consent_changed", handleConsent);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("etf_consent_changed", handleConsent);
+    };
   }, [activeTab]);
 
   const handleTabChange = (tabId: string) => {
@@ -49,6 +86,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
 
   return (
     <section
+      ref={sectionRef}
       id="srovnani"
       style={{
         paddingTop: "2.5rem",
@@ -236,7 +274,7 @@ export const EtfComparison: React.FC<EtfComparisonProps> = ({ etfs, onSelectEtfs
                       {etf.expenseRatio.value.displayPercent}
                     </span>
                     <span style={{ fontSize: "0.72rem", color: "var(--text-light)" }}>
-                      ročně (gross)
+                      ročně ({etf.expenseRatio.value.kind})
                     </span>
                   </div>
                 </div>

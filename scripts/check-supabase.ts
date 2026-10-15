@@ -113,16 +113,58 @@ async function runDiagnostics() {
   } else {
     console.log(`   ✅ Zkušební kontakt úspěšně vytvořen (ID: ${insertedLead.id})`);
 
-    // Clean up test row
-    const { error: delError } = await client
-      .from("leads")
-      .delete()
-      .eq("id", insertedLead.id);
+    console.log("\n3. Kontrola atomických RPC funkcí (B01 & B03):");
+    
+    // Check submit_lead RPC
+    const testRequestId = "00000000-0000-4000-8000-000000000001";
+    const { data: rpcLeadData, error: rpcLeadError } = await client.rpc("submit_lead", {
+      p_request_id: testRequestId,
+      p_email: "diagnostic_rpc_test@example.com",
+      p_normalized_email: "diagnostic_rpc_test@example.com",
+      p_selected_etfs: ["VOO"],
+      p_position_value_czk: 100000,
+      p_privacy_version: "2026-10-15",
+      p_dataset_version: "2026-10-11",
+      p_analytics_session_id: null,
+    });
 
-    if (delError) {
-      console.log(`   ⚠️  Úklid testovacího záznamu selhal: ${delError.message}`);
+    let submitLeadOk = false;
+    if (rpcLeadError) {
+      console.log(`   ❌ RPC 'submit_lead': ${rpcLeadError.code} - ${rpcLeadError.message}`);
     } else {
-      console.log("   ✅ Testovací záznam byl okamžitě smazán (databáze zůstala čistá).");
+      console.log(`   ✅ RPC 'submit_lead': funkční (vráceno ID: ${rpcLeadData?.submission_id || rpcLeadData?.id || "OK"})`);
+      submitLeadOk = true;
+
+      // Clean up test RPC lead
+      await client.from("lead_submissions").delete().eq("request_id", testRequestId);
+      await client.from("leads").delete().eq("normalized_email", "diagnostic_rpc_test@example.com");
+    }
+
+    // Check check_rate_limit RPC
+    const testBucketKey = "test_rate_bucket_check";
+    const { data: rpcRateData, error: rpcRateError } = await client.rpc("check_rate_limit", {
+      p_bucket_key: testBucketKey,
+      p_max_requests: 100,
+      p_window_seconds: 60,
+    });
+
+    let checkRateOk = false;
+    if (rpcRateError) {
+      console.log(`   ❌ RPC 'check_rate_limit': ${rpcRateError.code} - ${rpcRateError.message}`);
+    } else {
+      console.log(`   ✅ RPC 'check_rate_limit': funkční (povoleno: ${rpcRateData?.allowed}, zbývá: ${rpcRateData?.remaining})`);
+      checkRateOk = true;
+
+      // Clean up rate bucket
+      await client.from("rate_limit_buckets").delete().eq("bucket_key", testBucketKey);
+    }
+
+    if (!submitLeadOk || !checkRateOk) {
+      console.log("\n⚠️  UPOZORNĚNÍ: Jedna nebo obě atomické RPC funkce chybí v PostgreSQL databázi!");
+      console.log("   Je potřeba otevřít Supabase Dashboard -> SQL Editor a spustit kód z migrace:");
+      console.log("   supabase/migrations/20261015000000_atomic_lead_submission.sql\n");
+    } else {
+      console.log("\n🎉 Všechny atomické RPC funkce (submit_lead, check_rate_limit) jsou aktivní a ověřeny!");
     }
 
     console.log("\n🎉 Supabase je kompletně a bezpečně propojen s projektem!");

@@ -3,9 +3,25 @@ import {
   createAnalyticsSession,
   deactivateAnalyticsSession,
 } from "../../../lib/server/analytics";
+import { isAllowedOrigin } from "../../../lib/server/security";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isAllowedOrigin(req)) {
+      return NextResponse.json(
+        { success: false, error: "Neplatný původ požadavku." },
+        { status: 403 }
+      );
+    }
+
+    const contentType = req.headers.get("content-type");
+    if (contentType && !contentType.toLowerCase().includes("application/json")) {
+      return NextResponse.json(
+        { success: false, error: "Neplatný formát požadavku (očekáván application/json)." },
+        { status: 415 }
+      );
+    }
+
     const body = await req.json().catch(() => ({}));
     const consentVersion = String(body.consentVersion || "2026-10-11");
     const utmContent =

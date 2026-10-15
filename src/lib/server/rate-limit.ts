@@ -19,40 +19,22 @@ export async function checkRateLimit(
   const supabase = getSupabaseServerClient();
 
   if (supabase) {
-    try {
-      const { data } = await supabase
-        .from("rate_limit_buckets")
-        .select("request_count, expires_at")
-        .eq("bucket_key", bucketKey)
-        .single();
+    const { data, error } = await supabase.rpc("check_rate_limit", {
+      p_bucket_key: bucketKey,
+      p_max_requests: MAX_REQUESTS,
+      p_window_seconds: Math.floor(WINDOW_MS / 1000),
+    });
 
-      if (data) {
-        const expiresAt = new Date(data.expires_at).getTime();
-        if (now < expiresAt) {
-          if (data.request_count >= MAX_REQUESTS) {
-            return {
-              allowed: false,
-              retryAfterSeconds: Math.ceil((expiresAt - now) / 1000),
-            };
-          }
-          await supabase
-            .from("rate_limit_buckets")
-            .update({ request_count: data.request_count + 1 })
-            .eq("bucket_key", bucketKey);
-          return { allowed: true, retryAfterSeconds: 0 };
-        }
+    if (error) {
+      console.error("Supabase rate limit RPC error:", error);
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(`RATE_LIMIT_STORAGE_ERROR: ${error.message}`);
       }
-
-      // Create new or reset expired bucket
-      const expiresAtIso = new Date(now + WINDOW_MS).toISOString();
-      await supabase.from("rate_limit_buckets").upsert({
-        bucket_key: bucketKey,
-        request_count: 1,
-        expires_at: expiresAtIso,
-      });
-      return { allowed: true, retryAfterSeconds: 0 };
-    } catch {
-      // In case of transient rate limit db error, fall through safely
+    } else if (data && typeof data.allowed === "boolean") {
+      return {
+        allowed: data.allowed,
+        retryAfterSeconds: data.retry_after_seconds || 0,
+      };
     }
   }
 
