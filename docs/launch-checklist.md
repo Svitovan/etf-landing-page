@@ -15,7 +15,7 @@ Tato úroveň pokrývá všechny požadavky zadání pro úspěšnou kontrolu ho
 - [x] **R11 (Měření cesty a konverze):** Souhlasové měření s 30min relacemi a skriptem `npm run report:funnel`.
 - [x] **R12 (Odůvodnění pořadí sekcí):** Popsáno v README a v implementačním plánu.
 - [x] **R13–R14 (Očekávaná konverze a A/B hypotézy):** Odhad 3–7 % a 3 seřazené hypotézy v `docs/experiments.md`.
-- [x] **R15–R16 (Hosting a Git):** Připraveno pro Vercel a Git historie s průběžnými commity.
+- [x] **R15–R16 (Hosting a Git):** Živě nasazeno na Vercelu (https://etf-landing-page-phi.vercel.app/) s reálnou databází Supabase a Git historie s průběžnými commity na GitHubu (https://github.com/Svitovan/etf-landing-page).
 - [x] **R17 (Transparentní práce s AI):** Dokumentováno v `ai-log/README.md` a reálné chyby v `ai-log/mistakes.md`.
 - [x] **R18 (Návrh odpovědi na e-mail):** Připraven v sekci 21 plánu a v README.
 

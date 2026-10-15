@@ -3,7 +3,7 @@
 Tento scénář slouží pro rychlou obhajobu projektu nebo demonstraci hodnotiteli:
 
 ## 1. Vstup z mobilní reklamy (0:00 – 0:30)
-- **Krok:** Otevřete `/?utm_content=ad_a` nebo soubor `ads/ad-a.html`.
+- **Krok:** Otevřete živou stránku [https://etf-landing-page-phi.vercel.app/?utm_content=ad_a](https://etf-landing-page-phi.vercel.app/?utm_content=ad_a) (případně lokálně `http://localhost:3000/?utm_content=ad_a` či soubor `ads/ad-a.html`).
 - **Komentář:**  
   *„Uživatel přichází z mobilní reklamy s příslibem vysvětlení rozdílů mezi fondy. Během prvních dvou sekund vidí na prvním displeji (Hero) přesně to, co reklama slíbila: srovnání VOO, IVV a SPY na NYSE Arca a okamžitou ochutnávku jejich roční nákladovosti (0,03 % vs. 0,0945 %).“*
 

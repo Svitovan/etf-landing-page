@@ -1,5 +1,14 @@
 # Handoff Report
 
+## Production Deployment & Final Submission (E9) — 2026-10-15
+
+- **Živé nasazení na Vercelu (R15):** Aplikace je úspěšně nasazena a veřejně dostupná na produkční adrese:
+  `https://etf-landing-page-phi.vercel.app/`
+- **Reálná databáze Supabase (R04, R11):** Propojeno na produkční instanci (`hozaudrjlouiggtliwzs.supabase.co`). Ověřena funkčnost zápisu kontaktů, atomické ukládání přes PostgreSQL funkci `submit_lead(...)` a sběr analytických událostí s RLS ochranou. `npm run check:supabase` i `npm run report:funnel` komunikují přímo s live databází.
+- **Git repozitář (R16):** Veřejný GitHub repozitář `https://github.com/Svitovan/etf-landing-page` synchronizován s větví `origin/master`.
+- **Stav akceptačních kritérií:** Všech 18 požadavků zadání (R01–R18) je 100% splněno a ověřeno.
+- **Příští krok:** Odeslání závěrečného e-mailu zadavateli (Matej Lörinc, `matej@clientelo.cz`) dle šablony v `README.md`.
+
 ## Audit Resolution & System Hardening — 2026-10-15 (Audit defect closure)
 
 - **Vyřešeny kritické nálezy z nezávislého auditu (`docs/readiness-audit-2026-10-11.ru.md`):**
@@ -56,9 +65,6 @@ Read [readiness-audit-2026-10-11.ru.md](readiness-audit-2026-10-11.ru.md) before
   - **E6 (Reklamy a hypotézy):** Dva reklamní koncepty a HTML vizuály `ads/ad-a.html`, `ads/ad-b.html`; 3 seřazené hypotézy v `docs/experiments.md`.
   - **E7 (QA):** 31/31 testů ve Vitestu úspěšných (`tests/calculations.test.ts`, `tests/backend.test.ts`), `next lint` bez varování, `next build` bez chyb, QA protokol `docs/qa-report.md`.
   - **E8 (Dokumentace a AI log):** Kompletní `README.md`, reálný log chyb v `ai-log/mistakes.md`, záznam sezení v `ai-log/sessions/`, scénář prezentace `docs/demo-script.md`, launch checklist `docs/launch-checklist.md`.
-- **Aktuální stav změn:** Všechny fáze E0–E8 dokončeny. Kód je připraven k nasazení na Vercel a nahrání do veřejného GitHub repozitáře (E9).
-- **Příští kroky pro uživatele (E9):**
-  1. Vytvořit prázdný veřejný repozitář na GitHubu a provést `git remote add origin <URL>; git push -u origin master`.
-  2. Importovat repozitář do Vercelu (bezplatný Hobby tier, Next.js detekován automaticky).
-  3. (Volitelné) Propojit reálný projekt v Supabase a zadat `SUPABASE_URL` a `SUPABASE_SECRET_KEY` do Environment Variables na Vercelu.
-  4. Odeslat e-mail zadavateli podle připraveného vzoru v README.
+- **Aktuální stav změn:** Všechny fáze E0–E9 dokončeny. Aplikace běží na produkčním Vercelu, databáze Supabase je připojena a ověřena, GitHub repozitář je synchronizován.
+- **Závěrečný krok (R18):**
+  1. Odeslat e-mail zadavateli podle připraveného vzoru v sekci 10 souboru README.md.

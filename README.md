@@ -25,7 +25,8 @@ npm run dev
 npm run report:funnel
 ```
 
-Otevřete v prohlížeči: [http://localhost:3000/?utm_content=ad_a](http://localhost:3000/?utm_content=ad_a)
+- **Živá produkční verze:** [https://etf-landing-page-phi.vercel.app/?utm_content=ad_a](https://etf-landing-page-phi.vercel.app/?utm_content=ad_a)
+- **Lokální verze:** [http://localhost:3000/?utm_content=ad_a](http://localhost:3000/?utm_content=ad_a)
 
 ---
 
@@ -59,7 +60,7 @@ Otevřete v prohlížeči: [http://localhost:3000/?utm_content=ad_a](http://loca
 | **R12** | Odůvodnění pořadí sekcí | Logika uživatelské cesty od reklamy po materiál | Sekce 4 tohoto README |
 | **R13** | Očekávaná konverze | 3–7 % s jasně definovaným jmenovatelem | `docs/experiments.md` |
 | **R14** | Tři A/B hypotézy dle dopadu | 3 seřazené hypotézy s metrikami a pravidly | `docs/experiments.md` |
-| **R15** | Bezplatný hosting | Připraveno pro Vercel (Next.js App Router) | `next.config.js`, `package.json` |
+| **R15** | Bezplatný hosting | Nasazeno na Vercelu (Next.js App Router) | [https://etf-landing-page-phi.vercel.app/](https://etf-landing-page-phi.vercel.app/) |
 | **R16** | Git s historií commitů | Čistá historie s atomickými commity | `git log` |
 | **R17** | Dokumentace práce s AI | Reálné prompty, kontroly a opravy chyb AI | `ai-log/README.md`, `ai-log/mistakes.md` |
 | **R18** | Odpověď na e-mail | Připravený text odpovědi pro odeslání | Sekce 10 tohoto README |
@@ -144,7 +145,7 @@ Dobrý den, pane Lörinci,
 zasílám řešení zadání B – konverzní landing page se srovnáním ETF pro českého investora.
 
 GitHub repozitář: https://github.com/Svitovan/etf-landing-page
-Živá verze stránky: [URL nasazeného webu na Vercelu]
+Živá verze stránky: https://etf-landing-page-phi.vercel.app/
 
 V repozitáři najdete:
 - Funkční aplikaci (Next.js / TypeScript) se srovnáním VOO, IVV a SPY na NYSE Arca,
