@@ -11,17 +11,23 @@ Projekt vznikal s asistenty Antigravity / Codex. Tento soubor je česky; histori
 - Skutečné omyly a jejich opravy jsou v [mistakes](mistakes.md): například falešný úspěch bez DB, chybějící atomická RPC, přeceňování testů, ztracené části PDF, závody relace a započítávání demonstrací do CVR. Nejde o syntetické příklady.
 - Aktuální výsledky a hranice důkazů shrnuje [QA](../docs/qa-report.md); starší odpovědi nebo souhrny mohou popisovat již opravený stav.
 
-## Původní export
+## Původní exporty
 
-- [Čitelný export](exports/codex-project-conversation-2026-10-15.md)
+### Codex
+- [Čitelný export Codex](exports/codex-project-conversation-2026-10-15.md)
 - [Stejné zprávy v JSONL](exports/codex-project-conversation-2026-10-15.jsonl)
 - [Manifest: zdroje, SHA-256, počty a redakce](exports/codex-project-conversation-2026-10-15.manifest.json)
 
 Export má **56 skutečných viditelných zpráv**, od 2026-10-11 19:22:04 UTC do 2026-10-15 10:24:28 UTC. Text zůstává původní kromě označené redakce; není překladem ani shrnutím.
 
-Vynechává system/developer obsah, interní reasoning, nástroje a jejich výstupy, automatický kontext prostředí a binární obrázky. Rozpoznané klíče, emaily, IP, lokální cesty a identifikátory jsou redigovány. Bez obrázků může být okolní text neúplný. Obrázky tabulek mohly obsahovat kontakty a nejsou přiloženy.
+### Antigravity IDE
+- [Přehled a jednotlivé relace Antigravity](exports/antigravity/README.md)
+- [Společný export vybraných relací v jediném Markdownu](exports/antigravity/all-antigravity-sessions-combined.md)
+- [Manifest Antigravity: zdroje, SHA-256 a redakce](exports/antigravity/manifest.json)
 
-**Není to úplná raw trajektorie ani nativní Claude /export. Nepokrývá všechny původní relace Antigravity ani zprávy po uvedeném časovém konci.** Tato mez není nahrazována vymyšlenou historií; uvádí ji i návrh emailu.
+Export zahrnuje **8 vybraných projektových relací Antigravity a 49 dostupných zpráv** (11.–15. 10. 2026). U **10 zpráv** už zdroj uvádí zkrácený obsah; chybějící text nebyl doplněn. Hlavičky jsou redakční metadata. Žádná umělá odpověď se nevkládá; zahrnutí všech relací IDE se netvrdí.
+
+Vynechává system/developer obsah, interní reasoning, nástroje a jejich výstupy, automatický kontext prostředí a binární obrázky. Rozpoznané klíče, emaily, IP, lokální cesty a identifikátory jsou redigovány. Bez obrázků může být okolní text neúplný. Obrázky tabulek mohly obsahovat kontakty a nejsou přiloženy. Není to úplná raw trajektorie ani nativní Claude /export. Tato mez není nahrazována vymyšlenou historií.
 
 ## Kurátorské souhrny
 
@@ -37,5 +43,6 @@ Složka sessions/ obsahuje záznamy jednotlivých etap, nikoli doslovný export.
 - [Bezpečnost](sessions/session-security-2026-10-15.md)
 - [Testovací kohorta](sessions/session-test-traffic-2026-10-15.md)
 - [Příprava odevzdání](sessions/session-submission-2026-10-15.md)
+- [Kontrola exportu Antigravity](sessions/session-antigravity-export-2026-10-15.md)
 
-Reprodukční nástroj: `node scripts/export-ai-conversation.mjs <source.jsonl> [continuation.jsonl ...]`. Přijímá pouze logy tohoto projektu, nic sám nepublikuje. Nový výstup musí před zařazením do Git projít kontrolou citlivých dat. Původní lokální logy se nekopírují. Při úpravě kompletu odevzdání nebyly existující exporty přegenerovány ani změněny.
+Reprodukční nástroje: `node scripts/export-ai-conversation.mjs <source.jsonl> [continuation.jsonl ...]` pro Codex a `node scripts/export-antigravity-sessions.mjs` pro Antigravity IDE. Přijímají pouze logy tohoto projektu, nic samy nepublikují. Nový výstup musí před zařazením do Git projít kontrolou citlivých dat. Původní lokální logy se nekopírují. Původní Codex export nebyl změněn. Antigravity export byl při přidání znovu vytvořen ze stejných osmi explicitních zdrojů po odstranění větve, která mohla vložit neexistující odpověď; manifest zaznamenává aktuální zdrojové i výsledné hashe a omezení.

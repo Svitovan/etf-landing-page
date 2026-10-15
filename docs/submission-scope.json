@@ -35,7 +35,17 @@
     "ai-log/sessions/session-dataset-ui-2026-10-15.md",
     "ai-log/sessions/session-documentation-evidence-2026-10-15.md",
     "ai-log/sessions/session-financial-context-2026-10-15.md",
-    "ai-log/sessions/session-retention-2026-10-15.md"
+    "ai-log/sessions/session-retention-2026-10-15.md",
+    "ai-log/exports/antigravity/01-session-2026-10-11-initial-implementation-e74b3c28.md",
+    "ai-log/exports/antigravity/02-session-2026-10-11-readiness-audit-setup-e1798fde.md",
+    "ai-log/exports/antigravity/03-session-2026-10-15-stitch-mcp-design-80ff471b.md",
+    "ai-log/exports/antigravity/04-session-2026-10-15-supabase-vercel-integration-b27df57e.md",
+    "ai-log/exports/antigravity/05-session-2026-10-15-priority-fixes-hardening-50d92dc2.md",
+    "ai-log/exports/antigravity/06-session-2026-10-15-git-sync-docs-e8fe8e10.md",
+    "ai-log/exports/antigravity/07-session-2026-10-15-desktop-centering-f8e91b8f.md",
+    "ai-log/exports/antigravity/08-session-2026-10-15-chat-export-12c86b56.md",
+    "ai-log/exports/antigravity/all-antigravity-sessions-combined.md",
+    "ai-log/exports/antigravity/manifest.json"
   ],
   "recommendedCleanupCompleted": true
 }

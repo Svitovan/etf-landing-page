@@ -146,7 +146,8 @@ Vývoj a následné kontroly probíhaly s asistenty Antigravity / Codex; záznam
 1. **Nulová tolerance halucinací:** Žádné fiktivní recenze, smyšlené statistiky ani vygenerovaná čísla. Všechny finanční hodnoty pocházejí z auditovaných primárních odkazů.
 2. **Deterministické testování:** Zjištěné floating-point nepřesnosti v JavaScriptu (např. `100 000 * 0.0003 = 29.999999999999996`) byly zachyceny testy Vitest a opraveny zaokrouhlováním na 4 desetinná místa.
 3. **Log chyb:** Skutečné odhalené nepřesnosti AI jsou zaznamenány v [ai-log/mistakes.md](ai-log/mistakes.md).
-4. **Export rozhovoru:** [Redigované skutečné zprávy Codex](ai-log/exports/codex-project-conversation-2026-10-15.md), [JSONL](ai-log/exports/codex-project-conversation-2026-10-15.jsonl) a [manifest zdrojů](ai-log/exports/codex-project-conversation-2026-10-15.manifest.json). Nejde o shrnutí ani kompletní raw export všech vývojových relací; obrázky, nástroje, interní instrukce a osobní údaje jsou vynechány nebo redigovány.
+4. **Antigravity:** [8 vybraných projektových relací, 49 zpráv](ai-log/exports/antigravity/README.md), včetně informace o 10 zprávách zkrácených už ve zdroji.
+5. **Export Codex:** [Redigované skutečné zprávy Codex](ai-log/exports/codex-project-conversation-2026-10-15.md), [JSONL](ai-log/exports/codex-project-conversation-2026-10-15.jsonl) a [manifest zdrojů](ai-log/exports/codex-project-conversation-2026-10-15.manifest.json). Nejde o shrnutí ani kompletní raw export všech vývojových relací; obrázky, nástroje, interní instrukce a osobní údaje jsou vynechány nebo redigovány.
 
 ---
 

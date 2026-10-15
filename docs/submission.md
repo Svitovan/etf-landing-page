@@ -23,7 +23,7 @@ Zdrojový kód, dataset s primárními zdroji, migrace, testy a obě reklamy jso
 - Dosavadní návštěvy byly testovací a jsou vyloučeny z konverzního reportu. CVR N/A není výsledek placené reklamy.
 - Odhad 3–7 % je plánovací hypotéza. Randomizované A/B testy nebyly spuštěny.
 - Production audit byl čistý; ve vývojových nástrojích zůstává přesně omezená bezpečnostní výjimka.
-- Dostupný export Codex má 56 viditelných zpráv do 15. 10. 2026 10:24:28 UTC. Nepokrývá všechny relace Antigravity a není nativním Claude `/export`.
+- Codex export má 56 viditelných zpráv do 15. 10. 2026 10:24:28 UTC. Doplněn [Antigravity export](../ai-log/exports/antigravity/README.md): 8 vybraných relací, 49 zpráv; 10 zpráv je zkrácených už ve zdroji. Nejde o nativní Claude `/export` ani zaručeně úplnou historii IDE.
 
 ## Jazyk a úklid
 
@@ -50,7 +50,8 @@ do PDF. Dosavadní provoz byl testovací a je vyloučen z konverzního reportu;
 neprezentuji jej jako změřenou reklamní konverzi.
 
 V ai-log/ je popis spolupráce s AI, skutečné chyby a redigovaný export dostupného
-rozhovoru Codex v původním jazyce. Export nepokrývá všechny relace Antigravity;
+rozhovoru Codex a 8 vybraných relací Antigravity v původním jazyce. Některé zprávy
+Antigravity jsou zkrácené již v místním zdroji; úplnost všech relací se netvrdí;
 jeho přesný rozsah a vynechaný obsah jsou uvedeny v ai-log/README.md.
 
 Děkuji za možnost zpracovat zadání a těším se na zpětnou vazbu.

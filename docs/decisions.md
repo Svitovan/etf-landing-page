@@ -94,3 +94,8 @@
   4. Striktní `AnalyticsPropertiesSchema` zakazující jakákoliv PII pole (email, rawUrl, ip) a serverová validace platnosti relace před asociací s kontaktem.
 
 
+
+## ADR-017: Export Antigravity bez domýšlení historie (2026-10-15)
+- **Rozhodnutí:** Exportovat pouze USER_INPUT a neprázdné PLANNER_RESPONSE.content z osmi explicitních projektových zdrojů. Nesmí vznikat syntetický text asistenta.
+- **Provenience:** Zdrojový SHA-256 a hash exportu jsou oddělené; zkrácení už ve zdroji se označuje u zpráv i v manifestu. Chybějící relace či neplatné JSONL mají zastavit export.
+- **Jazyk:** Těla zpráv zůstávají původní, pouze s označenou redakcí soukromých údajů. Index pro hodnotitele je česky; úplnost všech relací IDE není deklarována.

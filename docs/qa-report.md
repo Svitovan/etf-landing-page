@@ -37,4 +37,4 @@ Konsolidováno 15. 10. 2026 z provedených kontrol a uložených artefaktů. Sta
 
 ## Omezení
 
-CVR 3–7 % je odhad, nikoli marketingový výsledek. Randomizované A/B testy nejsou spuštěny. AI export má pevný časový konec a nepokrývá všechny původní relace. Production audit není nulový bezpečnostní problém všech nástrojů. [Checklist](launch-checklist.md) odděluje odevzdání od skutečné kampaně.
+CVR 3–7 % je odhad, nikoli marketingový výsledek. Randomizované A/B testy nejsou spuštěny. Codex export má pevný časový konec; Antigravity doplňuje 8 vybraných relací a 49 zpráv, z nichž 10 má ve zdroji zkrácený obsah. Úplnost všech původních relací se netvrdí. Production audit není nulový bezpečnostní problém všech nástrojů. [Checklist](launch-checklist.md) odděluje odevzdání od skutečné kampaně.
