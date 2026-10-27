@@ -21,15 +21,19 @@
     "audit:dependencies": "node scripts/audit-dependencies.mjs",
     "check:secret-exposure": "node scripts/check-secret-exposure.mjs"
   },
-  "engines": { "node": "24.x" },
-  "overrides": { "postcss": "8.5.30" },
+  "engines": {
+    "node": "24.x"
+  },
+  "overrides": {
+    "postcss": "8.5.30"
+  },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.117.3",
     "next": "15.5.28",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zod": "^3.23.8"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20.16.11",
@@ -39,6 +43,6 @@
     "eslint-config-next": "15.5.28",
     "tsx": "^4.19.1",
     "typescript": "^5.6.3",
-    "vitest": "4.1.11"
+    "vitest": "^4.1.12"
   }
 }
