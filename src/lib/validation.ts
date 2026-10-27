@@ -37,7 +37,7 @@ export const AnalyticsPropertiesSchema = z
     amount: z.number().max(100_000_000).optional(),
     etfs: z.string().max(50).optional(),
   })
-  .strict("Nepovolené vlastnosti analytické události (PII a neznámé klíče jsou zakázány)");
+  .strict();
 
 export const AnalyticsEventSchema = z.object({
   eventId: z.string().uuid("Neplatné eventId"),

@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
 
     const validationResult = LeadSubmissionSchema.safeParse(parsedJson);
     if (!validationResult.success) {
-      const firstError = validationResult.error.errors[0]?.message || "Neplatná data formuláře.";
+      const firstError = validationResult.error.issues[0]?.message || "Neplatná data formuláře.";
       return NextResponse.json(
         { success: false, error: firstError },
         { status: 400 }
