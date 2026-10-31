@@ -1,3 +1,0 @@
-# Preserve exported-byte checksums across Windows and Unix checkouts.
-ai-log/exports/antigravity/*.md text eol=lf
-ai-log/exports/antigravity/*.json text eol=lf

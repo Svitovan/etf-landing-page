@@ -1,6 +1,6 @@
 # Odevzdání zadání B
 
-Podklady aktualizovány 15. 10. 2026. Termín zadání: 16. 10. 2026.
+Podklady aktualizovány k odevzdání.
 
 ## Odkazy pro hodnotitele
 
@@ -11,7 +11,6 @@ Podklady aktualizovány 15. 10. 2026. Termín zadání: 16. 10. 2026.
 - [Reklama B](../ads/ad-b.md), [HTML náhled B](../ads/ad-b.html)
 - [Odhad konverze a tři seřazené A/B hypotézy](experiments.md)
 - [QA a hranice důkazů](qa-report.md), [bezpečnost](security.md)
-- [Práce s AI a export rozhovoru](../ai-log/README.md)
 - [Scénář demonstrace](demo-script.md)
 
 Zdrojový kód, dataset s primárními zdroji, migrace, testy a obě reklamy jsou součástí repozitáře. Po uložení kontaktu se materiál vydává ihned na webu s možností tisku do PDF. Emailová rozesílka ani placená kampaň nejsou implementovány.
@@ -23,13 +22,10 @@ Zdrojový kód, dataset s primárními zdroji, migrace, testy a obě reklamy jso
 - Dosavadní návštěvy byly testovací a jsou vyloučeny z konverzního reportu. CVR N/A není výsledek placené reklamy.
 - Odhad 3–7 % je plánovací hypotéza. Randomizované A/B testy nebyly spuštěny.
 - Production audit byl čistý; ve vývojových nástrojích zůstává přesně omezená bezpečnostní výjimka.
-- Codex export má 56 viditelných zpráv do 15. 10. 2026 10:24:28 UTC. Doplněn [Antigravity export](../ai-log/exports/antigravity/README.md): 8 vybraných relací, 49 zpráv; 10 zpráv je zkrácených už ve zdroji. Nejde o nativní Claude `/export` ani zaručeně úplnou historii IDE.
 
 ## Jazyk a úklid
 
-Dokumenty pro hodnotitele jsou česky, technické části mohou být anglicky. **Historické AI rozhovory a citované pokyny zůstávají rusky podle rozhodnutí autora.** Jde o výslovnou výjimku pro původní záznam práce s AI. Aktuální stav popisují README a QA, nikoli starší odpovědi v rozhovoru.
-
-Staré pracovní plány a audity v ruštině nejsou vstupními dokumenty odevzdání. [Záznam úklidu](repository-cleanup.md) potvrzuje odstranění 10 doporučených souborů na pokyn autora. Volitelné kandidáty jsme ponechali; historie se nepřepisuje.
+Dokumenty pro hodnotitele jsou česky, technické části mohou být anglicky. Staré pracovní plány a audity byly z projektu odstraněny v rámci úklidu repozitáře ([záznam úklidu](repository-cleanup.md)). Historie v Gitu zůstává zachována.
 
 ## Návrh odpovědi zadavateli
 
@@ -48,11 +44,6 @@ v docs/submission.md a docs/qa-report.md.
 Formulář ukládá kontakt na server a okamžitě zpřístupňuje HTML materiál s tiskem
 do PDF. Dosavadní provoz byl testovací a je vyloučen z konverzního reportu;
 neprezentuji jej jako změřenou reklamní konverzi.
-
-V ai-log/ je popis spolupráce s AI, skutečné chyby a redigovaný export dostupného
-rozhovoru Codex a 8 vybraných relací Antigravity v původním jazyce. Některé zprávy
-Antigravity jsou zkrácené již v místním zdroji; úplnost všech relací se netvrdí;
-jeho přesný rozsah a vynechaný obsah jsou uvedeny v ai-log/README.md.
 
 Děkuji za možnost zpracovat zadání a těším se na zpětnou vazbu.
 

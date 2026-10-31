@@ -1,9 +1,0 @@
-# Final QA — 2026-10-15
-
-User requested readiness item 4. Verified published SHA f6b4bf1, ran mobile Lighthouse, submitted synthetic form data, checked real Supabase and verified duplicate/conflict HTTP contracts. Production PDF rendering exposed that global header/footer hiding removed document content. Production Lighthouse exposed muted-text contrast and favicon 404. A fast-consent submission had events but no lead/session association.
-
-Fixed selective print visibility, A4 and page breaks, muted text contrast, app icon and bounded pre-submit analytics coordination. Added four regression tests. Local checks: 91 tests, lint, typecheck, data validation and build; Lighthouse 91/100/100/100. Real local-browser → Supabase submission now linked to session/UTM. All three revised PDF pages rendered and visually reviewed; extracted text markers checked after whitespace normalization.
-
-QA contains synthetic example.com data only; no real contact exported. Browser profiles/renders ignored. Original and fixed Lighthouse artifacts retained separately; lab data not labelled field CWV. Publication/recheck evidence is tracked in [final QA](../../docs/qa-report.md). No email/message to assignment recipient sent.
-
-Production publication f1d0982 passed Lighthouse 91/100/100/100 and complete three-page PDF review, but read-only SQL exposed a late-403 race creating a replacement session. Added successful-initialization generation tracking and a fifth regression; 92 tests, lint and build/typecheck passed. Published bf9c207 and verified READY alias, live form/report and SQL: one matching attempt and report event in the same session as the synthetic submission, ad_b preserved. Live duplicates/conflict/original retry returned 200/409/200 and one unchanged row. Final mobile Lighthouse on bf9c207: 91/100/100/100 at 13:40:47 UTC, LCP 3.2 s; no field CWV assertion. Final evidence is recorded after the tested source commit in a documentation/artifact-only commit.

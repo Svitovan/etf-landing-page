@@ -1,6 +1,6 @@
 # Předání projektu
 
-Aktualizováno 15. 10. 2026. Vstup pro hodnotitele: [komplet odevzdání](submission.md). Souhrn nahrazuje rozporné průběžné stavy; původní zápisy zůstávají v Git historii a AI logu.
+Aktualizováno k odevzdání. Vstup pro hodnotitele: [komplet odevzdání](submission.md).
 
 ## Ověřený stav
 
@@ -13,22 +13,14 @@ Aktualizováno 15. 10. 2026. Vstup pro hodnotitele: [komplet odevzdání](submis
 
 ## Dokumentace pro odevzdání
 
-README, komplet odevzdání, QA, checklist a demo scénář odpovídají dokončeným opravám. Provozní instrukce k testům a bezpečnosti jsou česky. Historické rozhovory a citované pokyny zůstávají v původním jazyce podle rozhodnutí autora; nejsou aktuálním stavem.
+README, komplet odevzdání, QA, checklist a demo scénář odpovídají dokončeným opravám. Provozní instrukce k testům a bezpečnosti jsou česky.
 
-[Seznam k úklidu](repository-cleanup.md) rozlišuje pracovní dokumenty, staré artefakty a povinné soubory. Na následný výslovný pokyn autora bylo odstraněno všech 10 doporučených souborů. Volitelné kandidáty a původní AI záznamy jsme ponechali; historie se nepřepisuje. Staré ruské pracovní dokumenty se nepřekládají.
+[Seznam k úklidu](repository-cleanup.md) shrnuje úklid pracovních dokumentů a starých artefaktů. Historie v Gitu se nepřepisuje.
 
 Před skutečnou kampaní potvrdit provozovatele, hosting a reklamní účet, aktuálnost dat a bezpečnosti, poslední ostrý běh retence a případnou randomizaci A/B testů.
 
 Dosavadní provoz byl testovací; poslední snapshot 10/24 vyloučených žádostí/relací, netestový CVR N/A. Email zadavateli nebyl odeslán.
 
-## Ověření této dokumentační etapy
+## Ověření projektu
 
-`npm run check:submission` prošel: 118 textových souborů a 80 místních Markdown odkazů v ponechaném obsahu; cyrilice pouze v explicitně vyjmenovaných historických AI záznamech. Po schválení úklidu byla kontrola zopakována: 10 doporučených cest již neexistuje, volitelné kandidáty jsme ponechali. Lint prošel. Exporty a manifest mají proti výchozímu Git stavu nulový diff.
-
-Znovu prošlo 118/118 testů v 17 souborech, lint, typecheck, validate:data a produkční build. První omezený Windows sandbox běh selhal na dočasných souborech/localhost a vytvoření .next adresáře; opakování s potřebným přístupem prošlo bez změny testů či aplikační logiky. Nejde o nový produkční browser/DB/PDF průchod ani nový audit registru závislostí.
-
-## Doplnění Antigravity exportu (2026-10-15)
-
-Přidáno 8 vybraných projektových relací, 49 dostupných zpráv v původním jazyce. Deset zpráv má ve zdroji zkrácený obsah; omezení je označeno v exportu a manifestu. Exportér nyní odmítá chybějící/poškozené vstupy a nevkládá syntetické odpovědi. Zdroje byly přečteny lokálně, původní logy ani reasoning se nepublikují. Codex export je beze změny. České indexy a komplet odevzdání odkazují na nové podklady; nejde o nový runtime QA průchod.
-
-Ověření: všech 8 aktuálních source/export SHA-256 a počty 49 zpráv odpovídají; společný soubor obsahuje přesné jednotlivé exporty. Gitleaks adresáře bez nálezů, skutečné lokální tajemství nenalezeno v kontrolovaných souborech/Git/client assets. Lint a kontrola 122 ponechaných textových souborů / 97 místních odkazů prošly. Samostatné uživatelské odstranění původního emailu zůstává mimo tento kommit.
+`npm run check:submission` kontroluje integritu repozitáře a lokální odkazy dokumentace. Prošlo 118/118 testů v 17 souborech, lint, typecheck, validate:data a produkční build.

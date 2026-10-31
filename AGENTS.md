@@ -4,10 +4,9 @@ Tento repozitář implementuje praktické zadání B pro pozici Junior AI Develo
 
 ## 1. Primární dokumenty a pravidla
 
-1. **Aktuální podklady:** [docs/submission.md](docs/submission.md), [docs/product-brief.md](docs/product-brief.md) a [docs/qa-report.md](docs/qa-report.md). Původní interní plán byl na pokyn autora odstraněn při finálním úklidu; zůstává v Git historii.
-2. **Výchozí zadání:** Původní email zadavatele v kořeni repozitáře; přehled požadavků a termínu je v [docs/submission.md](docs/submission.md).
+1. **Aktuální podklady:** [docs/submission.md](docs/submission.md), [docs/product-brief.md](docs/product-brief.md) a [docs/qa-report.md](docs/qa-report.md).
+2. **Výchozí zadání:** Přehled požadavků a termínu je v [docs/submission.md](docs/submission.md).
 3. **Handoff a kontinuita:** [docs/handoff.md](docs/handoff.md) a [docs/decisions.md](docs/decisions.md) — po každé etapě aktualizovat skutečný stav, ověřené kroky a co zbývá.
-4. **Záznam práce s AI:** [ai-log/README.md](ai-log/README.md) a [ai-log/mistakes.md](ai-log/mistakes.md) — evidovat pouze reálné zásahy a zjištěné omyly, nevymýšlet syntetické chyby.
 
 ## 2. Závazná pravidla vývoje
 

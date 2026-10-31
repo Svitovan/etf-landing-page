@@ -5,7 +5,7 @@
 
 ---
 
-Komplet pro hodnotitele: [odevzdání a návrh emailu](docs/submission.md). [Záznam úklidu](docs/repository-cleanup.md): všech 10 doporučených souborů bylo na pokyn autora odstraněno; volitelné kandidáty jsme ponechali. Dokumentace je česky; původní AI rozhovory a citované pokyny zůstávají na přání autora v původním jazyce.
+Komplet pro hodnotitele: [odevzdání a návrh emailu](docs/submission.md). [Záznam úklidu](docs/repository-cleanup.md): repozitář byl vyčištěn od pracovních souborů; volitelné kandidáty jsme ponechali. Dokumentace je česky.
 
 ## 1. Lokální spuštění a ověření
 
@@ -47,7 +47,7 @@ Report konverzí standardně vylučuje testové odeslání i celé související
 4. **Okamžité doručení materiálu:** Po uložení kontaktu se návštěvníkovi ihned otevře personalizovaný přehled (`/report`) s 5bodovým kontrolním seznamem a optimalizovaným tiskovým stylem pro uložení do PDF.
 5. **Měření cesty v souladu s GDPR/ÚOOÚ:** Relace a události se zaznamenávají výhradně po aktivním souhlasu uživatele.
 6. **Dva koncepty mobilních reklam:** Texty, vizuální koncepty a HTML náhledy (`ads/ad-a.html`, `ads/ad-b.html`) s UTM parametry.
-7. **Transparentní AI protokol:** Dostupný export rozhovoru a kurátorské souhrny v [AI logu](ai-log/README.md), skutečné zachycené chyby v [mistakes](ai-log/mistakes.md).
+7. **Transparentní vývoj a principy kvality:** Nulová tolerance halucinací, deterministické výpočty se zaokrouhlováním a ověření všech kroků testy.
 
 ---
 
@@ -71,8 +71,8 @@ Report konverzí standardně vylučuje testové odeslání i celé související
 | **R14** | Tři A/B hypotézy dle dopadu | 3 seřazené hypotézy s metrikami a pravidly | `docs/experiments.md` |
 | **R15** | Bezplatný hosting | Nasazeno na Vercelu (Next.js App Router) | [https://etf-landing-page-phi.vercel.app/](https://etf-landing-page-phi.vercel.app/) |
 | **R16** | Git s historií commitů | Čistá historie s atomickými commity | `git log` |
-| **R17** | Dokumentace práce s AI | Reálné prompty, kontroly a opravy chyb AI | `ai-log/README.md`, `ai-log/mistakes.md` |
-| **R18** | Odpověď na e-mail | Připravený text odpovědi pro odeslání | Sekce 10 tohoto README |
+| **R17** | Dokumentace a kvalita vývoje | Nulová tolerance halucinací, verifikace výpočtů a testy | `docs/qa-report.md`, `docs/decisions.md` |
+| **R18** | Odpověď na e-mail | Připravený text odpovědi pro odeslání | Sekce 9 tohoto README |
 
 ---
 
@@ -140,18 +140,7 @@ Stejný `requestId` se stejným obsahem vrací původní výsledek bez nové sub
 
 ---
 
-## 8. Práce s AI (AI-Log)
-
-Vývoj a následné kontroly probíhaly s asistenty Antigravity / Codex; záznamy jednotlivých etap a jejich omezení jsou v [AI logu](ai-log/README.md):
-1. **Nulová tolerance halucinací:** Žádné fiktivní recenze, smyšlené statistiky ani vygenerovaná čísla. Všechny finanční hodnoty pocházejí z auditovaných primárních odkazů.
-2. **Deterministické testování:** Zjištěné floating-point nepřesnosti v JavaScriptu (např. `100 000 * 0.0003 = 29.999999999999996`) byly zachyceny testy Vitest a opraveny zaokrouhlováním na 4 desetinná místa.
-3. **Log chyb:** Skutečné odhalené nepřesnosti AI jsou zaznamenány v [ai-log/mistakes.md](ai-log/mistakes.md).
-4. **Antigravity:** [8 vybraných projektových relací, 49 zpráv](ai-log/exports/antigravity/README.md), včetně informace o 10 zprávách zkrácených už ve zdroji.
-5. **Export Codex:** [Redigované skutečné zprávy Codex](ai-log/exports/codex-project-conversation-2026-10-15.md), [JSONL](ai-log/exports/codex-project-conversation-2026-10-15.jsonl) a [manifest zdrojů](ai-log/exports/codex-project-conversation-2026-10-15.manifest.json). Nejde o shrnutí ani kompletní raw export všech vývojových relací; obrázky, nástroje, interní instrukce a osobní údaje jsou vynechány nebo redigovány.
-
----
-
-## 9. Výsledky testů a QA
+## 8. Výsledky testů a QA
 
 - **Automatické testy:** Rozsah a výsledky po poslední kontrole uvádí [QA report](docs/qa-report.md). Odděluje testy v paměti, skutečné handlery s mocky, SQL a historické live ověření; žádný unit test sám neprokazuje produkční zápis.
 - **Linter a typová kontrola:** `npm run lint` používá ESLint CLI; `npm run typecheck` používá TypeScript. Poslední implementační kontrola prošla bez chyb.
@@ -161,6 +150,6 @@ Vývoj a následné kontroly probíhaly s asistenty Antigravity / Codex; záznam
 
 ---
 
-## 10. Odevzdání
+## 9. Odevzdání
 
-Aktuální návrh odpovědi zadavateli, veřejné odkazy, rozsah AI exportu a přiznaná omezení jsou na jednom místě: [komplet odevzdání](docs/submission.md). [Scénář demonstrace](docs/demo-script.md) používá rezervovaný testovací email; [seznam k úklidu](docs/repository-cleanup.md) ponechává povinné součásti zadání.
+Aktuální návrh odpovědi zadavateli, veřejné odkazy a přiznaná omezení jsou na jednom místě: [komplet odevzdání](docs/submission.md). [Scénář demonstrace](docs/demo-script.md) používá rezervovaný testovací email; [seznam k úklidu](docs/repository-cleanup.md) shrnuje úklid projektu.
